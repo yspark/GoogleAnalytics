@@ -1,0 +1,50 @@
+\documentclass[12pt]{article}
+                                       % full page dimensions
+\usepackage[letterpaper,hmargin=1in,vmargin=1.25in]{geometry}
+\usepackage{graphicx}                   % graphics
+\usepackage{amsmath}                    % special AMS math symbols
+\usepackage{amssymb}                    % special AMS math symbols
+\usepackage{color}                      % colored text and backgrounds
+
+\usepackage{epstopdf}
+\usepackage{amsthm}
+\usepackage{subcaption}
+%\usepackage{comment}
+\usepackage{framed}
+%\usepackage{hyperref}
+\usepackage{indentfirst}
+
+\begin{document}
+
+\title{Big Data, Small Proof}
+\date{2/26/2013}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Entity Notation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+\begin{tabular}{ | l | l | }
+\hline 
+Entity	& Meaning	\\
+\hline \hline    
+AS	& Analytic server	\\
+\hline
+WS	& Web server	\\
+\hline
+CL 	& Client who owns the web site associated to analytic service	\\
+\hline
+WB	& Web browser of web site users	\\
+\hline
+\end{tabular}
+\end{center}
+
+\input{architecture}
+\input{protocol}
+
+
+%\bibliographystyle{unsrt}   
+%\bibliography{reference}  
+
+\end{document}
