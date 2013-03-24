@@ -4,8 +4,8 @@
 
 #define UINT unsigned int
 #define INT	int
-#define ULONG	unsigned long
-#define LONG long
+#define ULONG unsigned long long
+#define LONG long long
 
 typedef enum { false, true } BOOL;
 

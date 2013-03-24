@@ -4,12 +4,28 @@
 #include "typedef.h"
 #include "sads_common.h"
 
+/** variables **/
+MYSQL *smysql_conn;
 
+
+/** functions **/
 void smysql_init();
+void smysql_close();
 void smysql_table_init();
 
-BOOL smysql_get_node_info(UINT ip_addr, UINT *curr_count, gsl_vector *digest, gsl_vector *label);
-void smysql_add_leaf(UINT ip_addr, char *digest_buffer, UINT digest_buffer_len, char *label_buffer, UINT label_buffer_len);
-void smysql_update_leaf(UINT ip_addr);
+MYSQL_RES* smysql_query(char *query);
+MYSQL_RES* smysql_real_query(char *query, int query_len);
 
-MYSQL *smysql_conn;
+UINT smysql_get_leaf_val(ULONG nodeid);
+void smysql_add_leaf(ULONG nodeid, char *digest_buffer, UINT digest_buffer_len, char *label_buffer, UINT label_buffer_len);
+void smysql_update_leaf(ULONG nodeid, UINT new_visit_count);
+
+void smysql_add_inter_node(ULONG nodeid, char *label_buffer, UINT label_buffer_len);
+void smysql_update_inter_node(ULONG nodeid, char *label_buffer, UINT label_buffer_len);
+char *smysql_get_node_label(ULONG nodeid);
+
+#if 0
+void smysql_add_element(UINT ip_addr);
+#endif
+
+

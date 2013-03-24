@@ -13,8 +13,8 @@ int calculate_q(int k, int n)
 
 
 
-gsl_vector *get_partial_label(ULONG index, ULONG wrtIndex);
-gsl_vector *get_partial_digest(ULONG index, ULONG wrtIndex);
+//gsl_vector *get_partial_label(ULONG index, ULONG wrtIndex);
+//gsl_vector *get_partial_digest(ULONG index, ULONG wrtIndex);
 //gsl_vector *get_
 
 

@@ -28,9 +28,23 @@ void read_params(char* filename);
 
 
 /** Update **/
+UINT update_leaf(ULONG nodeid);
+void update_path_labels(ULONG nodeid);
+
 gsl_vector* get_initial_digest(UINT size, BOOL isLeaf);
 gsl_vector *get_binary_representation(gsl_vector *digest);
+
+//gsl_vector *get_partial_label(ULONG nodeid, ULONG wrt_nodeid);
+gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid);
+void update_node_label(ULONG nodeid, gsl_vector *partial_label);
+
 
 char *encode_vector(gsl_vector  *vector);
 gsl_vector *decode_vector_blob(char *buffer);
 UINT get_vector_blob_size(char *buffer);
+
+
+/** Misc **/
+int get_number_of_bits(ULONG nodeid);
+ULONG get_nodeid(UINT ip_addr);
+
