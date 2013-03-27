@@ -4,6 +4,9 @@
 #include "typedef.h"
 #include "sads_common.h"
 
+#define SADS_TABLE sads_tree
+
+
 /** variables **/
 MYSQL *smysql_conn;
 
@@ -17,7 +20,7 @@ MYSQL_RES* smysql_query(char *query);
 MYSQL_RES* smysql_real_query(char *query, int query_len);
 
 UINT smysql_get_leaf_val(ULONG nodeid);
-void smysql_add_leaf(ULONG nodeid, char *digest_buffer, UINT digest_buffer_len, char *label_buffer, UINT label_buffer_len);
+void smysql_add_leaf(ULONG nodeid);
 void smysql_update_leaf(ULONG nodeid, UINT new_visit_count);
 
 void smysql_add_inter_node(ULONG nodeid, char *label_buffer, UINT label_buffer_len);

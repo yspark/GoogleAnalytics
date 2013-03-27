@@ -1,7 +1,11 @@
 #include "typedef.h"
 
 #define UNIVERSE_SIZE 4294967296	// 2^32
-
+#define ELEMENT_LEN sizeof(double)
+#define LABEL_LEN	m
+#define DIGEST_LEN	k
+#define LABEL_BUFFER_LEN (LABEL_LEN*ELEMENT_LEN)
+#define DIGEST_BUFFER_LEN (DIGEST_LEN*ELEMENT_LEN)
 
 /***********************************************************
 *	Parameters, Matrices, Vectors
@@ -40,11 +44,14 @@ void update_node_label(ULONG nodeid, gsl_vector *partial_label);
 
 
 char *encode_vector(gsl_vector  *vector);
-gsl_vector *decode_vector_blob(char *buffer);
+gsl_vector *decode_vector_blob(char *buffer, UINT size);
 UINT get_vector_blob_size(char *buffer);
 
 
 /** Misc **/
 int get_number_of_bits(ULONG nodeid);
 ULONG get_nodeid(UINT ip_addr);
+ULONG get_nodeid_from_string(char *ip_addr);
 
+UINT get_label_buffer_len();
+UINT get_digest_buffer_len();
