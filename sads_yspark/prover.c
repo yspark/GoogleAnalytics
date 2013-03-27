@@ -69,7 +69,6 @@ UINT update_leaf(ULONG nodeid) {
 	return (curr_count+1);
 }
 
-/*************/
 
 void update_path_labels(ULONG nodeid) {
 	ULONG child_of_root_nodeid = nodeid >> (get_number_of_bits(nodeid)-2);
@@ -82,12 +81,8 @@ void update_path_labels(ULONG nodeid) {
 
 gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 	gsl_vector *partial_digest = NULL, *partial_label = NULL;
-	int bit_shift_count =  get_number_of_bits(wrt_nodeid) - get_number_of_bits(nodeid);
-
-
-	///////////
 	gsl_vector *label = NULL;
-
+	int bit_shift_count =  get_number_of_bits(wrt_nodeid) - get_number_of_bits(nodeid);
 
 	DEBUG_TRACE(("update_partial_label(): nodeid(%llu), wrt_nodeid(%llu), bit_shift(%d)\n", nodeid, wrt_nodeid, bit_shift_count));
 
@@ -95,12 +90,13 @@ gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 		printf("Error get_partial_label(%llu: %llu)\n", nodeid, wrt_nodeid);
 		exit(1);
 	}
+	/* reaches a leaf node */
 	else if(bit_shift_count == 0) {
 		if(nodeid != wrt_nodeid) {
 			printf("Error nodeid(%llu) == wrt_nodeid(%llu)", nodeid, wrt_nodeid);
 			exit(1);
 		}
-		DEBUG_TRACE(("Reached leaf node\n"));
+		DEBUG_TRACE(("Reached a leaf node\n"));
 		label = get_binary_representation(get_initial_digest(DIGEST_LEN, TRUE));
 		//printf("label of leaf: %u\n", (UINT)label->size);
 		return label;
@@ -109,8 +105,8 @@ gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 	partial_digest = gsl_vector_alloc(DIGEST_LEN);
 	partial_label = gsl_vector_alloc(LABEL_LEN);
 	//printf("partial label: %u\n", (UINT)partial_label->size);
-	//printf("matrix: %d, %d\n", (UINT)R->size1, (UINT)R->size2);
 
+	/* Right child */
 	if(wrt_nodeid & ((ULONG)1 << (bit_shift_count-1))) {
 		gsl_blas_dgemv(CblasNoTrans,\
 				1.0, \
@@ -119,6 +115,7 @@ gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 				0.0, \
 				partial_digest);
 	}
+	/* Left child */
 	else {
 		gsl_blas_dgemv(CblasNoTrans,\
 				1.0, \
@@ -129,8 +126,6 @@ gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 	}
 
 	partial_label = get_binary_representation(partial_digest);
-
-	//printf("matrix vecotr product done\n");
 
 	update_node_label(nodeid, partial_label);
 
@@ -161,6 +156,54 @@ void update_node_label(ULONG nodeid, gsl_vector *partial_label) {
 	}
 }
 
+
+gsl_vector *get_initial_digest(UINT size, BOOL isLeaf) {
+
+	gsl_vector *digest = gsl_vector_alloc(size);
+	int i = 0;
+
+	if(isLeaf) {
+	  for (i = 0; i < size; i++)
+			gsl_vector_set(digest, i, 1);
+	}
+	else {
+	  for (i = 0; i < size; i++)
+			gsl_vector_set(digest, i, 0);
+	}
+
+	DEBUG_TRACE(("get_initial_digest(%u, %d)\n", size, isLeaf));
+	//gsl_vector_fprintf(stdout, digest, "%f");
+
+
+	return digest;
+}
+
+
+gsl_vector *get_binary_representation(gsl_vector *digest) {
+
+	gsl_vector *binary = gsl_vector_alloc((digest->size) * log_q_ceil);
+	int i = 0, j = 0, ele = 0;
+
+	DEBUG_TRACE(("get_binary_representation\n"));
+	DEBUG_TRACE(("digest(%d), binary(%d), log_q_ceil(%d)\n", (UINT)digest->size, (UINT)binary->size, log_q_ceil));
+
+	//printf("%lu, %lu, %lu\n", sizeof(size_t), sizeof(gsl_block), sizeof(int));
+	//printf("%f, %f, %f\n", *(digest->data), *(digest->data+32), *(digest->data+16));
+
+	for(i = 0; i < digest->size; i++) {
+		ele = (UINT)gsl_vector_get(digest, i);
+
+
+		for(j = log_q_ceil -1; j >= 0; j--) {
+
+			gsl_vector_set(binary, (i * log_q_ceil) + j, ele & 1);
+			ele = ele >> 1;
+		}
+
+	}
+
+	return binary;
+}
 
 
 /********************************************************
@@ -215,57 +258,6 @@ UINT get_label_buffer_len() {
 
 UINT get_digest_buffer_len() {
 	return DIGEST_LEN * ELEMENT_LEN;
-}
-
-
-gsl_vector *get_initial_digest(UINT size, BOOL isLeaf) {
-
-	gsl_vector *digest = gsl_vector_alloc(size);
-	int i = 0;
-
-	if(isLeaf) {
-	  for (i = 0; i < size; i++)
-			gsl_vector_set(digest, i, 1);
-	}
-	else {
-	  for (i = 0; i < size; i++)
-			gsl_vector_set(digest, i, 0);	
-	}
-	
-	DEBUG_TRACE(("get_initial_digest(%u, %d)\n", size, isLeaf));
-	//gsl_vector_fprintf(stdout, digest, "%f");
-	
-	
-	return digest;			
-}
-
-
-gsl_vector *get_binary_representation(gsl_vector *digest) {
-
-	gsl_vector *binary = gsl_vector_alloc((digest->size) * log_q_ceil);	
-	int i = 0, j = 0, ele = 0;
-
-	DEBUG_TRACE(("get_binary_representation\n"));
-	DEBUG_TRACE(("digest(%d), binary(%d), log_q_ceil(%d)\n", (UINT)digest->size, (UINT)binary->size, log_q_ceil));
-
-	//printf("%lu, %lu, %lu\n", sizeof(size_t), sizeof(gsl_block), sizeof(int));
-	//printf("%f, %f, %f\n", *(digest->data), *(digest->data+32), *(digest->data+16));
-		
-	for(i = 0; i < digest->size; i++) {		
-		ele = (UINT)gsl_vector_get(digest, i);
-		
-		
-		for(j = log_q_ceil -1; j >= 0; j--) {
-
-			gsl_vector_set(binary, (i * log_q_ceil) + j, ele & 1);					
-			ele = ele >> 1;
-		}
-		
-	}
-
-	//printf("get_binary_representation done\n");
-
-	return binary;
 }
 
 
