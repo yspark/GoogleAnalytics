@@ -19,7 +19,7 @@ char* temp_buffer;
 void initialize(char* filename) {
 	read_params(filename);
 	
-	root_digest = get_initial_digest(k, false);
+	root_digest = get_initial_digest(k, FALSE);
 }
 
 
@@ -126,6 +126,7 @@ gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 	}
 
 	partial_label = get_binary_representation(partial_digest);
+	mod_q(partial_label, q);
 
 	update_node_label(nodeid, partial_label);
 
@@ -150,6 +151,7 @@ void update_node_label(ULONG nodeid, gsl_vector *partial_label) {
 		//printf("label size:%d, partial_label:%d\n", (UINT)label->size, (UINT)partial_label->size);
 
 		gsl_vector_add(label, partial_label);
+		mod_q(label, q);
 
 		label_buffer = encode_vector(label);
 		smysql_update_inter_node(nodeid, label_buffer, LABEL_BUFFER_LEN);
@@ -172,8 +174,6 @@ gsl_vector *get_initial_digest(UINT size, BOOL isLeaf) {
 	}
 
 	DEBUG_TRACE(("get_initial_digest(%u, %d)\n", size, isLeaf));
-	//gsl_vector_fprintf(stdout, digest, "%f");
-
 
 	return digest;
 }
@@ -211,7 +211,62 @@ gsl_vector *get_binary_representation(gsl_vector *digest) {
 *	query()
 *
 *********************************************************/
+Proof *process_membership_query(ULONG nodeid) {
+	Proof *proof;
+	ULONG temp_nodeid_list[get_tree_height()*2];
+	UINT temp_nodeid_num = 0;
+	UINT i = 0;
 
+	/** 1. get nodeids on the path.  Build proof->nodeid_num, proof->nodeid_list **/
+	ULONG child_of_root_nodeid = nodeid >> (get_number_of_bits(nodeid)-2);
+
+	DEBUG_TRACE(("process_membership_query(%llu)\n", nodeid));
+
+	build_proof_path(child_of_root_nodeid, nodeid, &temp_nodeid_num, temp_nodeid_list);
+	DEBUG_TRACE(("build_proof_path done.\n"));
+
+	proof = malloc(sizeof(Proof));
+	proof->nodeid_num = temp_nodeid_num;
+	proof->nodeid_list = malloc(sizeof(ULONG)*get_tree_height()*2);
+	memcpy(proof->nodeid_list, temp_nodeid_list, sizeof(ULONG)*get_tree_height()*2);
+
+
+	/** 2. get labels of nodes included in proof->nodeid->list **/
+	proof->label_list = malloc(proof->nodeid_num * sizeof(char *));
+	for(i=0; i < proof->nodeid_num; i++) {
+		//proof->label_list[i] = malloc(get_label_buffer_len());
+		proof->label_list[i] = smysql_get_node_label(proof->nodeid_list[i]);
+	}
+
+	/** 3. return proof **/
+	return proof;
+}
+
+void build_proof_path(ULONG ancester_nodeid, ULONG decendent_nodeid, UINT *temp_nodeid_num, ULONG *temp_nodeid_list) {
+	UINT curr_nodeid_num = *temp_nodeid_num;
+
+	DEBUG_TRACE(("build_proof_path(%llu, %llu, %u).\n", ancester_nodeid, decendent_nodeid, *temp_nodeid_num));
+
+	/** Add ancester_nodeid and its sibling to the list **/
+	temp_nodeid_list[curr_nodeid_num++] = ancester_nodeid;
+	temp_nodeid_list[curr_nodeid_num++] = (ancester_nodeid ^ (ULONG)1);
+
+	*temp_nodeid_num = curr_nodeid_num;
+
+	switch(identifySubtree(ancester_nodeid, decendent_nodeid)){
+		case NOT_SUBTREE:
+			printf("Error buildProofPath(%llu, %llu)\n", ancester_nodeid, decendent_nodeid);
+			exit(1);
+		case IDENTICAL_NODES:
+			break;
+		case RIGHT_SUBTREE:
+			build_proof_path((ancester_nodeid<<1) + (ULONG)1, decendent_nodeid, temp_nodeid_num, temp_nodeid_list);
+			break;
+		case LEFT_SUBTREE:
+			build_proof_path(ancester_nodeid<<1, decendent_nodeid, temp_nodeid_num, temp_nodeid_list);
+			break;
+	}
+}
 
 /********************************************************
 *
@@ -288,6 +343,57 @@ gsl_vector *decode_vector_blob(char *buffer, UINT size) {
 	return vector;	
 }
 
+void mod_q(gsl_vector *vector, UINT q) {
+	/* Check if max(vector) > q */
+	if(gsl_vector_max(vector) < q) {
+		return;
+	}
+
+	DEBUG_TRACE(("mod_q\n"));
+
+	int i = 0;
+	for(i=0; i< vector->size; i++) {
+		if(vector->data[i] >= q) {
+			vector->data[i] = (ULONG)vector->data[i] % q;
+		}
+	}
+
+	return;
+}
+
+UINT get_tree_height() {
+	return ceil(log2(UNIVERSE_SIZE));
+}
+
+/***********************************************
+ * return -1: error (decendend_nodeid is not in any subtrees of ancester_nodeid
+ * return 0: identical nodeids
+ * return 1: right subtree
+ * return 2: left subtree
+************************************************/
+SUBTREE_TYPE identifySubtree(ULONG ancester_nodeid, ULONG decendent_nodeid) {
+	int bit_shift_count =  get_number_of_bits(decendent_nodeid) - get_number_of_bits(ancester_nodeid);
+
+	if(bit_shift_count < 0) {
+		return NOT_SUBTREE;
+	}
+	else if(bit_shift_count == 0) {
+		if(ancester_nodeid == decendent_nodeid)
+			return IDENTICAL_NODES;
+	}
+	else if((decendent_nodeid >> bit_shift_count) != ancester_nodeid) {
+		return NOT_SUBTREE;
+	}
+
+	if(decendent_nodeid & ((ULONG)1 << (bit_shift_count-1))) {
+		return RIGHT_SUBTREE;
+	}
+	else {
+		return LEFT_SUBTREE;
+	}
+
+}
+
 
 /********************************************************
 *
@@ -349,19 +455,19 @@ int main(int argc, char* argv[]) {
 
 	/** update() **/
 	nodeid = get_nodeid_from_string(argv[2]);
-	update_leaf(nodeid);
-	update_path_labels(nodeid);
 
-	update_leaf(nodeid);
-	update_path_labels(nodeid);
+	//update_leaf(nodeid);
+	//update_path_labels(nodeid);
 
+	//update_leaf(nodeid);
+	//update_path_labels(nodeid);
 
 
 	/** query() **/
+	process_membership_query(nodeid);
 
 
 	/** test **/
-
 
 	return 0;
 }

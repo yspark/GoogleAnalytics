@@ -43,15 +43,26 @@ gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid);
 void update_node_label(ULONG nodeid, gsl_vector *partial_label);
 
 
-char *encode_vector(gsl_vector  *vector);
-gsl_vector *decode_vector_blob(char *buffer, UINT size);
-UINT get_vector_blob_size(char *buffer);
+/** Query **/
+Proof *process_membership_query(ULONG nodeid);
+void build_proof_path(ULONG ancester_nodeid, ULONG decendent_nodeid, UINT *temp_nodeid_num, ULONG *temp_nodeid_list);
 
 
 /** Misc **/
+UINT get_tree_height();
+
 int get_number_of_bits(ULONG nodeid);
 ULONG get_nodeid(UINT ip_addr);
 ULONG get_nodeid_from_string(char *ip_addr);
 
 UINT get_label_buffer_len();
 UINT get_digest_buffer_len();
+
+char *encode_vector(gsl_vector  *vector);
+gsl_vector *decode_vector_blob(char *buffer, UINT size);
+UINT get_vector_blob_size(char *buffer);
+
+void mod_q(gsl_vector *vector, UINT q);
+
+
+SUBTREE_TYPE identifySubtree(ULONG ancester_nodeid, ULONG decendent_nodeid);
