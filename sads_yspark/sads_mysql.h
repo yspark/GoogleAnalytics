@@ -1,8 +1,11 @@
+#ifndef __SADS_MYSQL__
+#define __SADS_MYSQL__
+
 #include <my_global.h>
 #include <mysql.h>
 
 #include "typedef.h"
-#include "sads_common.h"
+//#include "sads_common.h"
 
 #define SADS_TABLE sads_tree
 
@@ -32,3 +35,6 @@ void smysql_add_element(UINT ip_addr);
 #endif
 
 
+
+
+#endif

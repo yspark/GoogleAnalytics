@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+
 #include "sads_mysql.h"
 
 
@@ -118,14 +119,19 @@ char *smysql_get_node_label(ULONG nodeid) {
 
 		DEBUG_TRACE(("MYSQL_RES rows(%d), num_field(%u), length(%u)\n", (UINT)mysql_num_rows(result), (UINT)num_fields, (UINT)lengths[0]));
 
-		label_buffer = malloc(lengths[0]);
-		memcpy(label_buffer, result_row[0], lengths[0]);
+		if(lengths[0]) {
+			if(lengths[0] != 3840) {
+				printf("wrong label_buffer_length(%llu)", nodeid);
+				exit(1);
+			}
+			label_buffer = malloc(lengths[0]);
+			memcpy(label_buffer, result_row[0], lengths[0]);
+		}
 	}
 
 	mysql_free_result(result);
 
 	return label_buffer;
-
 }
 
 
