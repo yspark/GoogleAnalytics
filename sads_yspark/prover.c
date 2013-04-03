@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
-//#include <gsl/gsl_matrix.h>
-//#include <gsl/gsl_blas.h>
+
+#include <glib.h>
 
 #include "prover.h"
 #include "sads_mysql.h"
@@ -36,15 +36,47 @@ void update_prover(ULONG nodeid) {
 UINT update_leaf(ULONG nodeid) {
 	UINT curr_count = 0;
 
-	DEBUG_TRACE(("update_leaf(%llu)\n", nodeid));
-
 	curr_count = smysql_get_leaf_val(nodeid);
 
+	/** Add a new leaf node */
 	if(curr_count == 0) {
-		smysql_add_leaf(nodeid);
+		DEBUG_TRACE(("update_leaf: add a new leaf(%llu)\n", nodeid));
+
+		smysql_add_node(nodeid, encode_vector(get_initial_label(TRUE)), (UINT)LABEL_BUFFER_LEN, TRUE);
+
+#if 0
+		if(nodeid == (ULONG)4469227523) {
+			//printf("read from mysql\n");
+
+			gsl_vector_fprintf(stdout, decode_vector_buffer(smysql_get_node_label(nodeid), LABEL_BUFFER_LEN), "%f");
+
+			/*
+			char *label_buffer = smysql_get_node_label(nodeid);
+			int i;
+			for(i=0; i<LABEL_BUFFER_LEN;i++)
+				printf("%x\n", label_buffer[i]);
+			*/
+		}
+#endif
+
 	}
+	/** Update an existing leaf node */
 	else {
-		smysql_update_leaf(nodeid, curr_count+1);
+		DEBUG_TRACE(("update_leaf: update a leaf(%llu)\n", nodeid));
+
+		gsl_vector *label = decode_vector_buffer(smysql_get_node_label(nodeid), LABEL_BUFFER_LEN);
+		gsl_vector *init_label = get_initial_label(TRUE);
+
+		if(label) {
+			//printf("label:%d, initial_label:%d\n", label->size, init_label->size);
+			gsl_vector_add(label, get_initial_label(TRUE));
+		}
+		else {
+			DEBUG_TRACE(("IT SHOULD BE UNREACHABLE\n"));
+			label = init_label;
+		}
+
+		smysql_update_node(nodeid, curr_count+1, encode_vector(label), (UINT)LABEL_BUFFER_LEN, TRUE);
 	}
 
 	return (curr_count+1);
@@ -54,7 +86,7 @@ UINT update_leaf(ULONG nodeid) {
 void update_path_labels(ULONG nodeid) {
 	ULONG child_of_root_nodeid = nodeid >> (get_number_of_bits(nodeid)-2);
 
-	DEBUG_TRACE(("update_path_labels %llu - %llu\n", child_of_root_nodeid, nodeid));
+	DEBUG_TRACE(("update_path_labels(%llu, %llu)\n", child_of_root_nodeid, nodeid));
 
 	update_partial_label(child_of_root_nodeid, nodeid);
 }
@@ -106,9 +138,17 @@ gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 				partial_digest);
 	}
 
-	partial_label = get_binary_representation(partial_digest);
-	mod_q(partial_label, q);
+	//printf("before modq\n");
+	//gsl_vector_fprintf(stdout, partial_digest, "%f");
 
+	mod_q(partial_digest, q);
+
+	//printf("after modq\n");
+	//gsl_vector_fprintf(stdout, partial_digest, "%f");
+
+	partial_label = get_binary_representation(partial_digest);
+
+	//printf("label\n");
 	//gsl_vector_fprintf(stdout, partial_label, "%f");
 
 	update_node_label(nodeid, partial_label);
@@ -127,7 +167,7 @@ void update_node_label(ULONG nodeid, gsl_vector *partial_label) {
 
 	if(label == NULL) {
 		label_buffer = encode_vector(partial_label);
-		smysql_add_inter_node(nodeid, label_buffer, LABEL_BUFFER_LEN);
+		smysql_add_node(nodeid, label_buffer, LABEL_BUFFER_LEN, FALSE);
 	}
 	else {
 
@@ -140,13 +180,116 @@ void update_node_label(ULONG nodeid, gsl_vector *partial_label) {
 
 		label_buffer = encode_vector(label);
 
-		smysql_update_inter_node(nodeid, label_buffer, LABEL_BUFFER_LEN);
+		smysql_update_node(nodeid, 0, label_buffer, LABEL_BUFFER_LEN, FALSE);
 	}
+
+
+	/******************* verify *****************/
+	if(label == NULL)
+		label = partial_label;
+	verify_label(nodeid, label);
 }
 
 
 
+void verify_label(ULONG nodeid, gsl_vector *label) {
 
+	gsl_vector *rchild=NULL, *lchild=NULL;
+	gsl_vector *v1_digest=NULL, *v2_digest = NULL;
+	gsl_vector *rchild_partial_digest = NULL, *lchild_partial_digest = NULL;
+
+	lchild = decode_vector_buffer(smysql_get_node_label(nodeid << 1), LABEL_BUFFER_LEN);
+	rchild = decode_vector_buffer(smysql_get_node_label((nodeid << 1) + (ULONG)1), LABEL_BUFFER_LEN);
+
+	//V2
+	lchild_partial_digest = gsl_vector_alloc(DIGEST_LEN);
+	rchild_partial_digest = gsl_vector_alloc(DIGEST_LEN);
+
+	if(lchild == NULL) {
+		lchild = gsl_vector_alloc(LABEL_LEN);
+		gsl_vector_set_zero(lchild);
+	}
+	if(rchild == NULL) {
+		rchild = gsl_vector_alloc(LABEL_LEN);
+		gsl_vector_set_zero(rchild);
+	}
+
+	printf("lchild:%llu, rchild:%llu\n", nodeid << 1, (nodeid << 1) + (ULONG)1);
+
+	/*
+	printf("L: %d, %d\n", L->size1, L->size2);
+	printf("R: %d, %d\n", R->size1, R->size2);
+	printf("label_lchild: %d\n", lchild->size);
+	printf("label_rchild: %d\n", rchild->size);
+	printf("left_partial_digest: %d\n", lchild_partial_digest->size);
+	printf("right_partial_digest: %d\n", rchild_partial_digest->size);
+	*/
+
+	/*
+	printf("label_lchild\n");
+	gsl_vector_fprintf(stdout, lchild, "%f");
+	printf("label_rchild\n");
+	gsl_vector_fprintf(stdout, rchild, "%f");
+	*/
+
+	gsl_blas_dgemv(CblasNoTrans,\
+			1.0, \
+			L, \
+			lchild, \
+			0.0, \
+			lchild_partial_digest);
+
+	gsl_blas_dgemv(CblasNoTrans,\
+			1.0, \
+			R, \
+			rchild, \
+			0.0, \
+			rchild_partial_digest);
+
+	gsl_vector_add(lchild_partial_digest, rchild_partial_digest);
+	v2_digest = lchild_partial_digest;
+	mod_q(v2_digest, q);
+
+
+	//V1
+	v1_digest = get_digest_from_label(label);
+	mod_q(v1_digest, q);
+
+
+	// compare
+	printf("verify_label(%llu)\n", nodeid);
+
+	if(!gsl_vector_equal(v1_digest, v2_digest)) {
+
+		printf("*** v2_digest ***\n");
+		gsl_vector_fprintf(stdout, v2_digest, "%f");
+
+		printf("*** v1_digest ***\n");
+		gsl_vector_fprintf(stdout, v1_digest, "%f");
+
+		exit(-1);
+	}
+
+}
+
+
+gsl_vector *get_digest_from_label(gsl_vector *label) {
+	gsl_vector *digest = gsl_vector_alloc(DIGEST_LEN);
+	UINT i=0, j=0;
+	UINT digest_value;
+
+	for(i=0; i<LABEL_LEN; i++) {
+		if(i % log_q_ceil == 0)
+			digest_value = 0;
+
+		digest_value += (UINT)(label->data[i]) << (log_q_ceil - 1 - (i % log_q_ceil) );
+
+		if(i % log_q_ceil == (log_q_ceil - 1))
+			digest->data[j++] = digest_value;
+	}
+
+	return digest;
+}
 
 
 
@@ -159,7 +302,7 @@ void update_node_label(ULONG nodeid, gsl_vector *partial_label) {
 Proof *process_membership_query(ULONG nodeid) {
 	Proof *proof;
 	ULONG nodeid_list[(get_tree_height()-1)*2];
-	UINT nodeid_num = 0;
+	UINT nodeid_num = (get_tree_height()-1)*2;
 	UINT i = 0;
 	char *label_buffer = NULL;
 
@@ -168,7 +311,7 @@ Proof *process_membership_query(ULONG nodeid) {
 
 	DEBUG_TRACE(("process_membership_query(%llu)\n", nodeid));
 
-	build_proof_path(child_of_root_nodeid, nodeid, &nodeid_num, nodeid_list);
+	build_proof_path(child_of_root_nodeid, nodeid, nodeid_num, nodeid_list);
 	DEBUG_TRACE(("build_proof_path done (%llu, %llu, %u)\n", child_of_root_nodeid, nodeid, nodeid_num));
 
 	proof = malloc(sizeof(Proof));
@@ -191,13 +334,23 @@ Proof *process_membership_query(ULONG nodeid) {
 
 			memcpy(proof->label_list[i], label_buffer, LABEL_BUFFER_LEN);
 
+#if 0
+			if(i == 0) {
+				printf("***process_membership_query\n");
+				gsl_vector_fprintf(stdout, decode_vector_buffer(proof->label_list[i], LABEL_BUFFER_LEN), "%f");
+			}
+
 			//gsl_vector_fprintf(stdout, decode_vector_buffer(proof->label_list[i], LABEL_BUFFER_LEN), "%f");
 			//proof->label_list[i] = label_buffer;
+#endif
 		}
 		else {
 			//printf("null label!!\n");
 			memset(proof->label_list[i], 0, LABEL_BUFFER_LEN);
 		}
+
+		printf("label %llu\n", nodeid_list[i]);
+		gsl_vector_fprintf(stdout, get_digest_from_label(decode_vector_buffer(proof->label_list[i], LABEL_BUFFER_LEN)), "%f");
 	}
 
 	/** 3. return proof **/
@@ -205,6 +358,30 @@ Proof *process_membership_query(ULONG nodeid) {
 	return proof;
 }
 
+void build_proof_path(ULONG child_of_root_nodeid, ULONG leaf_nodeid, UINT nodeid_num, ULONG *nodeid_list) {
+	UINT i = 0;
+	ULONG curr_nodeid = leaf_nodeid;
+
+	DEBUG_TRACE(("build_proof_path(%llu, %llu, %u).\n", child_of_root_nodeid, leaf_nodeid, nodeid_num));
+
+	for(i=0; i < nodeid_num; i+=2) {
+		if(child_of_root_nodeid > curr_nodeid) {
+			printf("Error build_proof_path(%llu, %llu): (%u, %llu)\n", child_of_root_nodeid, leaf_nodeid, i, curr_nodeid);
+			exit(1);
+		}
+
+		nodeid_list[i] = curr_nodeid;
+		nodeid_list[i+1] = (curr_nodeid ^ (ULONG)1);
+
+		printf("%llu, %llu\n", curr_nodeid, (curr_nodeid ^ (ULONG)1));
+
+		curr_nodeid = curr_nodeid >> 1;
+
+	}
+}
+
+
+#if 0
 void build_proof_path(ULONG child_of_root_nodeid, ULONG decendent_nodeid, UINT *temp_nodeid_num, ULONG *temp_nodeid_list) {
 	UINT curr_nodeid_num = *temp_nodeid_num;
 
@@ -224,23 +401,8 @@ void build_proof_path(ULONG child_of_root_nodeid, ULONG decendent_nodeid, UINT *
 	if(child_of_root_nodeid < decendent_nodeid)
 		build_proof_path(child_of_root_nodeid, decendent_nodeid >> 1, temp_nodeid_num, temp_nodeid_list);
 
-#if 0
-	switch(identifySubtree(ancester_nodeid, decendent_nodeid)){
-		case NOT_SUBTREE:
-			printf("Error buildProofPath(%llu, %llu)\n", ancester_nodeid, decendent_nodeid);
-			exit(1);
-		case IDENTICAL_NODES:
-			break;
-		case RIGHT_SUBTREE:
-			build_proof_path((ancester_nodeid<<1) + (ULONG)1, decendent_nodeid, temp_nodeid_num, temp_nodeid_list);
-			break;
-		case LEFT_SUBTREE:
-			build_proof_path(ancester_nodeid<<1, decendent_nodeid, temp_nodeid_num, temp_nodeid_list);
-			break;
-	}
-#endif
 }
-
+#endif
 
 void write_proof(Proof *proof, UINT index) {
 	char filename[20];
@@ -266,16 +428,15 @@ void write_proof(Proof *proof, UINT index) {
 
 		//gsl_vector_fprintf(stdout, decode_vector_buffer(proof->label_list[i], LABEL_BUFFER_LEN), "%f");
 
-		if(gsl_vector_max(decode_vector_buffer(proof->label_list[i], LABEL_BUFFER_LEN)) > 0) {
-			int j;
-			for(j=0; j<LABEL_BUFFER_LEN; j++) {
-				if(proof->label_list[i][j])
-					printf("(%d,%d): %x\n", i, j, proof->label_list[i][j]);
-			}
+		int j = 0;
+
+		for(j=0; j<LABEL_BUFFER_LEN; j++) {
+			printf("(%d,%d): %x\n", i, j, proof->label_list[i][j]);
 		}
 #endif
 
-		fwrite(proof->label_list[i], sizeof(char), LABEL_BUFFER_LEN, fp);
+		//fwrite(proof->label_list[i], sizeof(char), LABEL_BUFFER_LEN, fp);
+		fwrite(proof->label_list[i], ELEMENT_LEN, LABEL_LEN, fp);
 	}
 
 	fclose(fp);
@@ -286,6 +447,9 @@ void write_proof(Proof *proof, UINT index) {
 *	misc.
 *
 *********************************************************/
+
+
+
 #if 0
 gsl_vector* get_initial_label(BOOL isLeaf) {
 	if(isLeaf) {
@@ -366,7 +530,7 @@ void run_test(char* node_input_filename) {
 
 	/** Prover Benchmark **/
 	/** update() **/
-#if 0
+#if 1
 	for(i=0; i<num_nodes; i++) {
 		update_prover(node_list[i]);
 	}

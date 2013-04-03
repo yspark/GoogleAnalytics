@@ -54,6 +54,71 @@ void smysql_table_init() {
 }
 
 
+void smysql_add_node(ULONG nodeid, char *label_buffer, UINT label_buffer_len, BOOL isLeaf) {
+	char *command = NULL;
+	char *query = NULL;
+	UINT query_len = 0, est_query_len = 0;
+
+	char *label_chunk = malloc(label_buffer_len * 2 + 1);
+	UINT label_chunk_len = 0;
+
+	DEBUG_TRACE(("smysql_add__node(%llu)\n", nodeid));
+
+	// Handle termination characters
+	label_chunk_len = mysql_real_escape_string(smysql_conn, label_chunk, label_buffer, label_buffer_len);
+	//printf("label_chunk:%u, label_buffer:%u\n", (UINT)strlen(label_chunk), label_buffer_len);
+
+	if(isLeaf)
+		command = "INSERT INTO sads_tree(nodeid, visit_count, label) VALUES(%llu, 1, '%s')";
+	else
+		command = "INSERT INTO sads_tree(nodeid, label) VALUES(%llu, '%s')";
+
+	est_query_len = strlen(command) + sizeof(ULONG) + strlen(label_chunk);
+	//printf("command %d, label %u, est_query_len %u\n", (int)strlen(command), label_chunk_len, est_query_len);
+
+	query = malloc(est_query_len);
+	query_len = snprintf(query, est_query_len, command, nodeid, label_chunk, label_chunk_len);
+
+	smysql_real_query(query, query_len);
+
+}
+
+
+void smysql_update_node(ULONG nodeid, UINT new_visit_count, char *label_buffer, UINT label_buffer_len, BOOL isLeaf) {
+	char *command = NULL;
+	char *query = NULL;
+	UINT query_len = 0, est_query_len = 0;
+
+	char *label_chunk = malloc(label_buffer_len * 2 + 1);
+	UINT label_chunk_len = 0;
+
+	DEBUG_TRACE(("smysql_update_node(%llu)\n", nodeid));
+
+	// Handle termination characters
+	label_chunk_len = mysql_real_escape_string(smysql_conn, label_chunk, label_buffer, label_buffer_len);
+	//printf("label_chunk:%u, label_buffer:%u\n", (UINT)strlen(label_chunk), label_buffer_len);
+
+	if(isLeaf) {
+		command = "UPDATE sads_tree SET visit_count='%u', label='%s' WHERE nodeid=%llu";
+		est_query_len = strlen(command) + sizeof(UINT) + label_chunk_len + sizeof(ULONG);
+
+		query = malloc(est_query_len);
+		query_len = snprintf(query, est_query_len, command, new_visit_count, label_chunk, nodeid, label_chunk_len);
+	}
+	else {
+		command = "UPDATE sads_tree SET label='%s' WHERE nodeid=%llu";
+		est_query_len = strlen(command) + label_chunk_len + sizeof(ULONG);
+
+		query = malloc(est_query_len);
+		query_len = snprintf(query, est_query_len, command, label_chunk, nodeid, label_chunk_len);
+	}
+
+	//printf("command %d, label %u, est_query_len %u\n", (int)strlen(command), label_chunk_len, est_query_len);
+
+	smysql_real_query(query, query_len);
+
+}
+
 
 UINT smysql_get_leaf_val(ULONG nodeid) {
 	char query[128];
@@ -74,6 +139,7 @@ UINT smysql_get_leaf_val(ULONG nodeid) {
 	return retVal;
 }
 
+#if 0
 void smysql_add_leaf(ULONG nodeid) {
 	char query[128];
 
@@ -94,7 +160,7 @@ void smysql_update_leaf(ULONG nodeid, UINT new_visit_count) {
 	sprintf(query, "UPDATE sads_tree SET visit_count=%u WHERE nodeid=%llu", new_visit_count, nodeid);
 	smysql_query(query);		
 }
-
+#endif
 
 char *smysql_get_node_label(ULONG nodeid) {
 	char query[128];
@@ -135,60 +201,7 @@ char *smysql_get_node_label(ULONG nodeid) {
 }
 
 
-void smysql_add_inter_node(ULONG nodeid, char *label_buffer, UINT label_buffer_len) {
-	char *command = NULL;
-	char *query = NULL;
-	UINT query_len = 0, est_query_len = 0;
 
-	char *label_chunk = malloc(label_buffer_len * 2 + 1);
-	UINT label_chunk_len = 0;
-
-	DEBUG_TRACE(("smysql_add_inter_node(%llu)\n", nodeid));
-
-	// Handle termination characters
-	label_chunk_len = mysql_real_escape_string(smysql_conn, label_chunk, label_buffer, label_buffer_len);
-	//printf("label_chunk:%u, label_buffer:%u\n", (UINT)strlen(label_chunk), label_buffer_len);
-
-	command = "INSERT INTO sads_tree(nodeid, label) VALUES(%llu, '%s')";
-
-	est_query_len = strlen(command) + sizeof(ULONG) + strlen(label_chunk);
-	//printf("command %d, label %u, est_query_len %u\n", (int)strlen(command), label_chunk_len, est_query_len);
-
-	query = malloc(est_query_len);
-	query_len = snprintf(query, est_query_len, command, nodeid, label_chunk, label_chunk_len);
-
-	smysql_real_query(query, query_len);
-
-}
-
-
-void smysql_update_inter_node(ULONG nodeid, char *label_buffer, UINT label_buffer_len) {
-	char *command = NULL;
-	char *query = NULL;
-	UINT query_len = 0, est_query_len = 0;
-
-	char *label_chunk = malloc(label_buffer_len * 2 + 1);
-	UINT label_chunk_len = 0;
-
-	DEBUG_TRACE(("smysql_update_inter_node(%llu)\n", nodeid));
-
-	// Handle termination characters
-	label_chunk_len = mysql_real_escape_string(smysql_conn, label_chunk, label_buffer, label_buffer_len);
-	//printf("label_chunk:%u, label_buffer:%u\n", (UINT)strlen(label_chunk), label_buffer_len);
-
-	command = "UPDATE sads_tree SET label='%s' WHERE nodeid=%llu";
-
-	est_query_len = strlen(command) + label_chunk_len + sizeof(ULONG);
-	//printf("command %d, label %u, est_query_len %u\n", (int)strlen(command), label_chunk_len, est_query_len);
-
-	query = malloc(est_query_len);
-	query_len = snprintf(query, est_query_len, command, label_chunk, nodeid, label_chunk_len);
-
-	//printf("query ready\n");
-
-	smysql_real_query(query, query_len);
-
-}
 
 
 

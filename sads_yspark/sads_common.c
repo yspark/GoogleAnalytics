@@ -26,7 +26,7 @@ void read_params(char* filename) {
 }
 
 
-/** update **/
+/** misc **/
 gsl_vector *get_initial_digest(BOOL isLeaf) {
 
 	gsl_vector *digest = gsl_vector_alloc(DIGEST_LEN);
@@ -45,6 +45,17 @@ gsl_vector *get_initial_digest(BOOL isLeaf) {
 
 	return digest;
 }
+
+
+gsl_vector *get_initial_label(BOOL isLeaf) {
+#if 0
+	printf("***get_initial_label\n");
+	gsl_vector_fprintf(stdout, get_binary_representation(get_initial_digest(isLeaf)), "%f");
+#endif
+
+	return get_binary_representation(get_initial_digest(isLeaf));
+}
+
 
 gsl_vector *get_binary_representation(gsl_vector *digest) {
 
@@ -110,7 +121,7 @@ void mod_q(gsl_vector *vector, UINT q) {
 		return;
 	}
 
-	DEBUG_TRACE(("mod_q\n"));
+	//DEBUG_TRACE(("mod_q\n"));
 
 	int i = 0;
 	for(i=0; i< vector->size; i++) {

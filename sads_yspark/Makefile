@@ -1,4 +1,4 @@
-CFLAGS=-I/usr/include/mysql -DBIG_JOINS=1  -fno-strict-aliasing  -g
+CFLAGS=-I/usr/include/mysql -I/usr/include/glib-2.0 -DBIG_JOINS=1  -fno-strict-aliasing  -g `pkg-config --cflags --libs glib-2.0`
 LIBS=-lgsl -lgslcblas -lm 
 #LIBS=-lgsl -lblas -latlas -lm
 LIBS_MYSQL=-L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -lz -lm -lrt -ldl

@@ -45,6 +45,7 @@ void read_params(char* filename);
 
 /** update **/
 gsl_vector* get_initial_digest(BOOL isLeaf);
+gsl_vector* get_initial_label(BOOL isLeaf);
 gsl_vector *get_binary_representation(gsl_vector *digest);
 
 

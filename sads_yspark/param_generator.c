@@ -33,8 +33,8 @@ void init_LR()
 	for (i = 0; i < k; i++)
 		for (j = 0; j < m; j++)
 		{
-			gsl_matrix_set(L, i, j, gsl_rng_get(r));
-			gsl_matrix_set(R, i, j, gsl_rng_get(r));
+			gsl_matrix_set(L, i, j, gsl_rng_get(r) % q);
+			gsl_matrix_set(R, i, j, gsl_rng_get(r) % q);
 		}
 }
 
