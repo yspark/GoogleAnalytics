@@ -63,7 +63,7 @@ gsl_vector *get_binary_representation(gsl_vector *digest) {
 	int i = 0, j = 0, ele = 0;
 
 	DEBUG_TRACE(("get_binary_representation\n"));
-	DEBUG_TRACE(("digest(%d), binary(%d), log_q_ceil(%d)\n", (UINT)digest->size, (UINT)binary->size, log_q_ceil));
+	//DEBUG_TRACE(("digest(%d), binary(%d), log_q_ceil(%d)\n", (UINT)digest->size, (UINT)binary->size, log_q_ceil));
 
 	//printf("%lu, %lu, %lu\n", sizeof(size_t), sizeof(gsl_block), sizeof(int));
 	//printf("%f, %f, %f\n", *(digest->data), *(digest->data+32), *(digest->data+16));
