@@ -5,7 +5,7 @@
 #include <mysql.h>
 
 #include "typedef.h"
-//#include "sads_common.h"
+#include "sads_common.h"
 
 #define SADS_TABLE sads_tree
 
@@ -28,6 +28,10 @@ void smysql_update_node(ULONG nodeid, UINT new_visit_count, char *label_buffer, 
 
 UINT smysql_get_leaf_val(ULONG nodeid);
 char *smysql_get_node_label(ULONG nodeid);
+
+UINT smysql_get_range_result(ULONG start_nodeid, ULONG end_nodeid, ULONG **nodeid_list, UINT **value_list, char ***label_buffer_list);
+
+
 
 #if 0
 void smysql_add_leaf(ULONG nodeid);

@@ -26,14 +26,23 @@ typedef enum {
 	LEFT_SUBTREE
 } SUBTREE_TYPE;
 
-typedef struct Proof_Struct {
+typedef struct MembershipProof_Struct {
 	ULONG query_nodeid;
 	UINT answer;
 	//UINT nodeid_num;
 	//ULONG *nodeid_list;
 	char **label_list;
-} Proof;
+} MembershipProof;
 
+typedef struct RangeProof_Struct {
+	ULONG start_nodeid;
+	ULONG end_nodeid;
+
+	UINT num_nodeid;
+	ULONG *answer_nodeid_list;
+	UINT *answer_list;
+	char **label_list;
+} RangeProof;
 
 #endif
 

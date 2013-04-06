@@ -242,8 +242,8 @@ gsl_vector *get_digest_from_label(gsl_vector *label) {
 *	query()
 *
 *********************************************************/
-Proof *process_membership_query(ULONG nodeid) {
-	Proof *proof;
+MembershipProof *process_membership_query(ULONG nodeid) {
+	MembershipProof *proof;
 	ULONG nodeid_list[(get_tree_height()-1)*2];
 	UINT nodeid_num = (get_tree_height()-1)*2;
 	UINT i = 0;
@@ -254,10 +254,10 @@ Proof *process_membership_query(ULONG nodeid) {
 
 	DEBUG_TRACE(("process_membership_query(%llu)\n", nodeid));
 
-	build_proof_path(child_of_root_nodeid, nodeid, nodeid_num, nodeid_list);
-	DEBUG_TRACE(("build_proof_path done (%llu, %llu, %u)\n", child_of_root_nodeid, nodeid, nodeid_num));
+	build_membership_proof_path(child_of_root_nodeid, nodeid, nodeid_num, nodeid_list);
+	DEBUG_TRACE(("build_membership_proof_path done (%llu, %llu, %u)\n", child_of_root_nodeid, nodeid, nodeid_num));
 
-	proof = malloc(sizeof(Proof));
+	proof = malloc(sizeof(MembershipProof));
 	proof->query_nodeid = nodeid;
 	proof->answer = smysql_get_leaf_val(nodeid);
 
@@ -280,7 +280,7 @@ Proof *process_membership_query(ULONG nodeid) {
 	return proof;
 }
 
-void build_proof_path(ULONG child_of_root_nodeid, ULONG leaf_nodeid, UINT nodeid_num, ULONG *nodeid_list) {
+void build_membership_proof_path(ULONG child_of_root_nodeid, ULONG leaf_nodeid, UINT nodeid_num, ULONG *nodeid_list) {
 	UINT i = 0;
 	ULONG curr_nodeid = leaf_nodeid;
 
@@ -301,7 +301,7 @@ void build_proof_path(ULONG child_of_root_nodeid, ULONG leaf_nodeid, UINT nodeid
 }
 
 
-void write_proof(Proof *proof, UINT index) {
+void write_membership_proof(MembershipProof *proof, UINT index) {
 	char filename[20];
 	FILE *fp;
 	UINT i = 0;
@@ -324,6 +324,49 @@ void write_proof(Proof *proof, UINT index) {
 
 	fclose(fp);
 }
+
+
+
+
+
+RangeProof *process_range_query(ULONG start_nodeid, ULONG end_nodeid) {
+	UINT num_nodeid = 0;
+	ULONG *nodeid_list = 0;
+	UINT *value_list = 0;
+	char **label_buffer_list = NULL;
+	RangeProof *proof = malloc(sizeof(RangeProof));
+
+	DEBUG_TRACE(("process_range_query(%llu, %llu)\n", start_nodeid, end_nodeid));
+
+	/** 1. get nodeids on the path.  Build proof->nodeid_num, proof->nodeid_list **/
+	proof->start_nodeid = start_nodeid;
+	proof->end_nodeid = end_nodeid;
+
+	build_range_proof_path(proof);
+
+
+	/** 2. get labels of nodes included in proof->nodeid->list **/
+
+	/** 3. return proof **/
+	return proof;
+}
+
+//UINT build_range_proof_path(ULONG start_nodeid, ULONG end_nodeid, ULONG *nodeid_list) {
+void build_range_proof_path(RangeProof *proof) {
+
+
+	num_nodeid = smysql_get_range_result(start_nodeid, end_nodeid, &nodeid_list, &value_list, &label_buffer_list);
+
+
+
+
+}
+
+void write_range_proof(RangeProof *proof) {
+
+}
+
+
 
 /********************************************************
 *
@@ -373,7 +416,8 @@ void run_test(char* node_input_filename) {
 	UINT num_nodes = 0;
 	UINT i = 0;
 	ULONG *node_list = read_node_input(node_input_filename, &num_nodes);
-	Proof *proof;
+	MembershipProof *membership_proof;
+	RangeProof *range_proof;
 
 	DEBUG_TRACE(("Benchmark Test: num_nodes(%u)", num_nodes));
 
@@ -386,12 +430,18 @@ void run_test(char* node_input_filename) {
 #endif
 
 	/** query() **/
+#if 0
+	// Membership Proof
 	for(i=0; i<num_nodes; i++) {
-		proof = process_membership_query(node_list[i]);
+		membership_proof = process_membership_query(node_list[i]);
+		write_membership_proof(membership_proof, i);
+	}
+#endif
 
-
-
-		write_proof(proof, i);
+	if(num_nodes > 1) {
+		// Range Proof
+		range_proof = process_range_query(node_list[0], node_list[num_nodes-1]);
+		write_range_proof(range_proof);
 	}
 
 }

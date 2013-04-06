@@ -139,29 +139,6 @@ UINT smysql_get_leaf_val(ULONG nodeid) {
 	return retVal;
 }
 
-#if 0
-void smysql_add_leaf(ULONG nodeid) {
-	char query[128];
-
-	DEBUG_TRACE(("smysql_add_leaf(%llu)\n", nodeid));
-
-	sprintf(query, "INSERT INTO sads_tree(nodeid, visit_count) VALUES(%llu, 1)", nodeid);
-
-	//printf("%s\n", query);
-	smysql_query(query);
-}
-
-
-void smysql_update_leaf(ULONG nodeid, UINT new_visit_count) {
-	char query[128];
-
-	DEBUG_TRACE(("smysql_update_leaf: node(%llu) visit_count(%u)\n", nodeid, new_visit_count));
-
-	sprintf(query, "UPDATE sads_tree SET visit_count=%u WHERE nodeid=%llu", new_visit_count, nodeid);
-	smysql_query(query);		
-}
-#endif
-
 char *smysql_get_node_label(ULONG nodeid) {
 	char query[128];
 	MYSQL_RES *result;
@@ -186,7 +163,7 @@ char *smysql_get_node_label(ULONG nodeid) {
 		DEBUG_TRACE(("MYSQL_RES rows(%d), num_field(%u), length(%u)\n", (UINT)mysql_num_rows(result), (UINT)num_fields, (UINT)lengths[0]));
 
 		if(lengths[0]) {
-			if(lengths[0] != 3840) {
+			if(lengths[0] != LABEL_BUFFER_LEN) {
 				printf("wrong label_buffer_length(%llu)", nodeid);
 				exit(1);
 			}
@@ -201,39 +178,43 @@ char *smysql_get_node_label(ULONG nodeid) {
 }
 
 
-
-
-
-
-
-#if 0
-void smysql_add_element(UINT ip_addr) {
-	char query[128];
+UINT smysql_get_range_result(ULONG start_nodeid, ULONG end_nodeid, ULONG **nodeid_list, UINT **value_list, char ***label_buffer_list) {
+	char query[256];
 	MYSQL_RES *result;
 	MYSQL_ROW result_row;
+	UINT num_rows = 0;
+	//UINT num_fields = 0;
+	UINT node_count = 0;
 
-	sprintf(query, "SELECT visit_count FROM sads_tree WHERE nodeid=%d LIMIT 1", ip_addr);
+	DEBUG_TRACE(("smysql_get_range_result(%llu, %llu)\n", start_nodeid, end_nodeid));
+
+	sprintf(query, "SELECT nodeid, visit_count, label FROM sads_tree WHERE nodeid>=%llu AND nodeid <=%llu", start_nodeid, end_nodeid);
 	result = smysql_query(query);
-	
-	result_row = mysql_fetch_row(result);
-	
-	// Add new node
-	if( result_row == NULL ) {
-		DEBUG_TRACE(("add a new node(%d)\n", ip_addr));
-		sprintf(query, "INSERT INTO sads_tree(nodeid, visit_count) VALUES(%d, 1)", ip_addr);
-		smysql_query(query);
+
+	num_rows = (UINT)mysql_num_rows(result);
+	//num_fields = (UINT)mysql_num_fields(result);
+
+	*nodeid_list = malloc(sizeof(ULONG) * num_rows);
+	*value_list = malloc(sizeof(UINT) * num_rows);
+	*label_buffer_list = malloc(sizeof(char *) * num_rows);
+
+
+	while((result_row = mysql_fetch_row(result))) {
+
+		*nodeid_list[node_count] = strtoull(result_row[0], NULL, 10);
+		*value_list[node_count] = (UINT)strtoul(result_row[1], NULL, 10);
+
+		*label_buffer_list[node_count] = malloc(LABEL_BUFFER_LEN);
+		memcpy(*label_buffer_list[node_count], result_row[2], LABEL_BUFFER_LEN);
+
+		num_rows++;
 	}
-	// Update existing node
-	else {
-		int curr_visit_count = atoi(result_row[0]);
-		
-		sprintf(query, "UPDATE sads_tree SET visit_count=%d WHERE nodeid=%d", ++curr_visit_count, ip_addr);
-		smysql_query(query);		
-		
-		DEBUG_TRACE(("Update: node(%d) visit_count(%d)\n", ip_addr, curr_visit_count));
-	}
-	
+
 	mysql_free_result(result);
+
+	return num_rows;
 }
-#endif
+
+
+
 
