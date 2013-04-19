@@ -39,9 +39,9 @@ typedef struct RangeProof_Struct {
 	ULONG end_nodeid;
 
 	UINT num_nodeid;
-	ULONG *answer_nodeid_list;
+	ULONG *nodeid_list;
 	UINT *answer_list;
-	char **label_list;
+	char **label_buffer_list;
 } RangeProof;
 
 #endif

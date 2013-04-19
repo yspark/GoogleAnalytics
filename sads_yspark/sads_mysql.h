@@ -4,6 +4,8 @@
 #include <my_global.h>
 #include <mysql.h>
 
+#include <glib.h>
+
 #include "typedef.h"
 #include "sads_common.h"
 
@@ -29,7 +31,12 @@ void smysql_update_node(ULONG nodeid, UINT new_visit_count, char *label_buffer, 
 UINT smysql_get_leaf_val(ULONG nodeid);
 char *smysql_get_node_label(ULONG nodeid);
 
-UINT smysql_get_range_result(ULONG start_nodeid, ULONG end_nodeid, ULONG **nodeid_list, UINT **value_list, char ***label_buffer_list);
+
+
+//ULONG *smysql_get_leaf_nodeids_in_range(ULONG start_nodeid, ULONG end_nodeid);
+void smysql_get_leaf_nodeids_in_range(ULONG start_nodeid, ULONG end_nodeid, GHashTable *leaf_nodeids_table);
+void smysql_get_node_info(ULONG nodeid, UINT *value, char *label_buffer);
+//UINT smysql_get_range_result(ULONG start_nodeid, ULONG end_nodeid, ULONG **nodeid_list, UINT **value_list, char ***label_buffer_list);
 
 
 

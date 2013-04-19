@@ -1,6 +1,7 @@
 #ifndef __PROVER__
 #define __PROVER__
 
+#include <glib.h>
 
 #include "sads_common.h"
 #include "typedef.h"
@@ -38,13 +39,17 @@ void write_membership_proof(MembershipProof *proof, UINT index);
 
 
 RangeProof *process_range_query(ULONG start_nodeid, ULONG end_nodeid);
+void get_inter_nodeids_in_range(GHashTable *nodeids_table);
+void build_range_proof(RangeProof *proof, GHashTable *nodeid_table);
 //UINT build_range_proof_path(ULONG start_nodeid, ULONG end_nodeid, ULONG *nodeid_list);
-void build_range_proof_path(RangeProof *proof);
+//void build_range_proof_path(RangeProof *proof);
 void write_range_proof(RangeProof *proof);
 
 
 
 /** Misc **/
+void free_data (gpointer data);
+
 #if 0
 ULONG get_nodeid(UINT ip_addr);
 
