@@ -39,10 +39,9 @@ void write_membership_proof(MembershipProof *proof, UINT index);
 
 
 RangeProof *process_range_query(ULONG start_nodeid, ULONG end_nodeid);
-void get_inter_nodeids_in_range(GHashTable *nodeids_table);
+void get_inter_nodeids_in_range(GHashTable *nodeids_table, GList *answer_nodeid_list);
+void build_range_answer(RangeProof *proof, GList *answer_nodeid_list);
 void build_range_proof(RangeProof *proof, GHashTable *nodeid_table);
-//UINT build_range_proof_path(ULONG start_nodeid, ULONG end_nodeid, ULONG *nodeid_list);
-//void build_range_proof_path(RangeProof *proof);
 void write_range_proof(RangeProof *proof);
 
 

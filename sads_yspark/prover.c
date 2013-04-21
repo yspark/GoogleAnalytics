@@ -333,36 +333,45 @@ RangeProof *process_range_query(ULONG start_nodeid, ULONG end_nodeid) {
 	//UINT *value_list = 0;
 	//char **label_buffer_list = NULL;
 	RangeProof *proof = malloc(sizeof(RangeProof));
-	UINT num_node = 0;
+	UINT num_answer_node = 0, num_proof_node = 0;
 
-	GHashTable *nodeid_table  = g_hash_table_new_full (g_int64_hash,  /* Hash function  */
-            										g_int64_equal, /* Comparator     */
-            										free_data,   /* Key destructor */
-            										free_data);  /* Val destructor */
+	GList *answer_nodeid_list = NULL;
+	GHashTable *nodeid_table  = g_hash_table_new(g_int64_hash, g_int64_equal);
 
 
-	DEBUG_TRACE(("process_range_query(%llu, %llu)\n", start_nodeid, end_nodeid));
+	DEBUG_TRACE(("process_range_query(%llu, %llu) init\n", start_nodeid, end_nodeid));
 
 	/** 1. get nodeids of leaf nodes in the given range and put into hash table **/
 	smysql_get_leaf_nodeids_in_range(start_nodeid, end_nodeid, nodeid_table);
-	//printf("%d\n", g_hash_table_size (leaf_nodeids_table));
+	answer_nodeid_list = g_hash_table_get_keys(nodeid_table);
+
 
 	/** 2. get nodeids of all relevant intermediate nodes in the tree. **/
-	get_inter_nodeids_in_range(nodeid_table);
+	get_inter_nodeids_in_range(nodeid_table, answer_nodeid_list);
 
 
 	/** 3. build proof of the range query **/
+	// start, end nodeid
 	proof->start_nodeid = start_nodeid;
 	proof->end_nodeid = end_nodeid;
-	num_node = g_hash_table_size(nodeid_table);
-	proof->num_nodeid = num_node;
 
-	proof->nodeid_list = malloc(sizeof(ULONG) * num_node);
-	proof->answer_list = malloc(sizeof(UINT) * num_node);
-	proof->label_buffer_list = malloc(sizeof(char *) * num_node);
+	// answer
+	num_answer_node = g_list_length(answer_nodeid_list);
+	proof->num_answer_nodeid = num_answer_node;
+	proof->answer_nodeid_list = malloc(sizeof(UINT) * num_answer_node);
+	proof->answer_list = malloc(sizeof(UINT) * num_answer_node);
+
+	build_range_answer(proof, answer_nodeid_list);
+
+	// proof
+	num_proof_node = g_hash_table_size(nodeid_table);
+	proof->num_proof_nodeid = num_proof_node;
+	proof->proof_nodeid_list = malloc(sizeof(ULONG) * num_proof_node);
+	proof->proof_label_buffer_list = malloc(sizeof(char *) * num_proof_node);
 
 	build_range_proof(proof, nodeid_table);
 
+	DEBUG_TRACE(("process_range_query done (num_answer_node:%u, num_proof_node:%u)\n", num_answer_node, num_proof_node));
 
 	/** 4. return proof **/
 	g_hash_table_destroy(nodeid_table);
@@ -370,18 +379,19 @@ RangeProof *process_range_query(ULONG start_nodeid, ULONG end_nodeid) {
 	return proof;
 }
 
-void get_inter_nodeids_in_range(GHashTable *nodeid_table) {
-	GList *leaf_nodeid_list = g_hash_table_get_keys(nodeid_table);
+void get_inter_nodeids_in_range(GHashTable *nodeid_table, GList *answer_nodeid_list) {
 
-	if( leaf_nodeid_list == NULL ){
+	DEBUG_TRACE(("get_inter_nodeids_in_range()\n"));
+
+	if( answer_nodeid_list == NULL ){
 		printf("Error get_inter_nodeids_in_range()\n");
 		exit(1);
 	}
 
-	while(leaf_nodeid_list) {
-		ULONG curr_nodeid = *(ULONG *)(leaf_nodeid_list->data);
-		//printf("%llu\n", curr_nodeid);
-		//printf("%d\n", g_hash_table_size (nodeids_table));
+	while(answer_nodeid_list) {
+		ULONG curr_nodeid = *(ULONG *)(answer_nodeid_list->data);
+		printf("%llu\n", curr_nodeid);
+		printf("%d\n", g_list_length(answer_nodeid_list));
 
 		/** Add nodes on the path to the root **/
 		while(curr_nodeid > 1) {
@@ -396,11 +406,31 @@ void get_inter_nodeids_in_range(GHashTable *nodeid_table) {
 								g_memdup(&curr_nodeid, sizeof(curr_nodeid)),
 								g_memdup(&curr_nodeid, sizeof(curr_nodeid)));
 
+			printf("(%llu, %llu, %llu) %d\n", curr_nodeid, curr_nodeid ^ (ULONG)1, *(ULONG *)(answer_nodeid_list->data), g_hash_table_size(nodeid_table));
+
 			// go up to the parent node
 			curr_nodeid = curr_nodeid >> 1;
 		}
 
-		leaf_nodeid_list = leaf_nodeid_list->next;
+		answer_nodeid_list = answer_nodeid_list->next;
+	}
+}
+
+void build_range_answer(RangeProof *proof, GList *answer_nodeid_list) {
+	UINT node_count = 0;
+	ULONG curr_nodeid = 0;
+
+	DEBUG_TRACE(("build_range_answer()\n"));
+
+	while(answer_nodeid_list) {
+		curr_nodeid = *(ULONG *)(answer_nodeid_list->data);
+		proof->answer_nodeid_list[node_count] = curr_nodeid;
+		proof->answer_list[node_count] = smysql_get_leaf_val(curr_nodeid);
+
+		printf("%llu, %u\n", proof->answer_nodeid_list[node_count], proof->answer_list[node_count]);
+
+		node_count++;
+		answer_nodeid_list = answer_nodeid_list->next;
 	}
 }
 
@@ -409,16 +439,18 @@ void build_range_proof(RangeProof *proof, GHashTable *nodeid_table) {
 	GList *nodeid_list = g_hash_table_get_keys(nodeid_table);
 	UINT node_count = 0;
 	ULONG curr_nodeid = 0;
+	UINT temp_answer = 0;
 
+	DEBUG_TRACE(("build_range_proof()\n"));
 
 	while(nodeid_list) {
 		curr_nodeid = *(ULONG *)(nodeid_list->data);
 		//memcpy(&proof->nodeid_list[node_count], &curr_nodeid, sizeof(ULONG));
-		proof->nodeid_list[node_count] = curr_nodeid;
+		proof->proof_nodeid_list[node_count] = curr_nodeid;
 
-		proof->label_buffer_list[node_count] = malloc(LABEL_BUFFER_LEN);
+		proof->proof_label_buffer_list[node_count] = malloc(LABEL_BUFFER_LEN);
 
-		smysql_get_node_info(curr_nodeid, &proof->answer_list[node_count], proof->label_buffer_list[node_count]);
+		smysql_get_node_info(curr_nodeid, &temp_answer, proof->proof_label_buffer_list[node_count]);
 
 		//printf("%llu, %u\n", proof->nodeid_list[node_count], proof->answer_list[node_count]);
 
@@ -426,8 +458,6 @@ void build_range_proof(RangeProof *proof, GHashTable *nodeid_table) {
 		nodeid_list = nodeid_list->next;
 
 	}
-
-
 
 }
 
@@ -446,26 +476,30 @@ void write_range_proof(RangeProof *proof) {
 	char filename[20];
 	FILE *fp;
 	UINT i = 0;
-	UINT num_nodeid = proof->num_nodeid;
 
-	DEBUG_TRACE(("write_range_proof(%llu, %llu, %u)\n", proof->start_nodeid, proof->end_nodeid, proof->num_nodeid));
+	DEBUG_TRACE(("write_range_proof(%llu, %llu), num_answer(%u), num_proof(%u)\n", \
+			proof->start_nodeid, proof->end_nodeid, proof->num_answer_nodeid, proof->num_proof_nodeid));
 
 	sprintf(filename, "sads_range_proof.dat");
 	fp = fopen(filename, "wb");
 
-	/* Write start_nodeid, end_nodeid, num_nodeid*/
+	/* Write start_nodeid, end_nodeid */
 	fwrite(&(proof->start_nodeid), sizeof(ULONG), 1, fp);
 	fwrite(&(proof->end_nodeid), sizeof(ULONG), 1, fp);
-	fwrite(&(proof->num_nodeid), sizeof(UINT), 1, fp);
 
-	/* Write nodeid_list, answer_list */
-	fwrite(proof->nodeid_list, sizeof(ULONG), num_nodeid, fp);
-	fwrite(proof->answer_list, sizeof(UINT), num_nodeid, fp);
+	/* Write answer */
+	fwrite(&(proof->num_answer_nodeid), sizeof(UINT), 1, fp);
+	fwrite(proof->answer_nodeid_list, sizeof(ULONG), proof->num_answer_nodeid, fp);
+	fwrite(proof->answer_list, sizeof(UINT), proof->num_answer_nodeid, fp);
+
+	/* Write proof */
+	fwrite(&(proof->num_proof_nodeid), sizeof(UINT), 1, fp);
+	fwrite(proof->proof_nodeid_list, sizeof(ULONG), proof->num_proof_nodeid, fp);
 
 	/* Write label_buffer_list  */
 	//printf("write label_buffer_list\n");
-	for(i=0; i<num_nodeid; i++) {
-		fwrite(proof->label_buffer_list[i], ELEMENT_LEN, LABEL_LEN, fp);
+	for(i=0; i<proof->num_proof_nodeid; i++) {
+		fwrite(proof->proof_label_buffer_list[i], ELEMENT_LEN, LABEL_LEN, fp);
 	}
 
 	fclose(fp);
@@ -478,13 +512,6 @@ void write_range_proof(RangeProof *proof) {
 *	misc.
 *
 *********************************************************/
-
-void free_data (gpointer data)
-{
-  //printf ("freeing: %s %p\n", (char *) data, data);
-  free (data);
-}
-
 #if 0
 gsl_vector* get_initial_label(BOOL isLeaf) {
 	if(isLeaf) {

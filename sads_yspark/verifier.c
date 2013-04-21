@@ -208,6 +208,33 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 }
 
 
+
+BOOL verify_range_proof(RangeProof *proof) {
+	GList *leaf_nodeid_list = NULL;
+	GHashTable *nodeid_table = NULL;
+
+	UINT i = 0;
+
+	for(i=0; i<proof->num_nodeid; i++) {
+		if(proof->nodeid_list[i] & (ULONG)1 << 32) {
+			printf("leaf found: %llu\n", proof->nodeid_list[i]);
+			leaf_nodeid_list = g_list_append(leaf_nodeid_list, &(proof->nodeid_list[i]));
+		}
+	}
+
+	while(leaf_nodeid_list) {
+		printf("%llu\n", *(ULONG *)(leaf_nodeid_list->data));
+		leaf_nodeid_list = leaf_nodeid_list->next;
+	}
+
+
+	return TRUE;
+
+}
+
+
+
+
 BOOL verify_radix_leaf(UINT y_leaf, gsl_vector *label) {
 	DEBUG_TRACE(("Proof verify_radix_leaf: not implemented\n"));
 
@@ -273,7 +300,8 @@ void run_test(char* node_input_filename) {
 	UINT num_nodes = 0;
 	UINT i = 0;
 	ULONG *node_list = read_node_input(node_input_filename, &num_nodes);
-	MembershipProof *proof;
+	MembershipProof *membership_proof;
+	RangeProof *range_proof;
 
 	DEBUG_TRACE(("Benchmark Test: num_nodes(%u)", num_nodes));
 
@@ -284,13 +312,22 @@ void run_test(char* node_input_filename) {
 	}
 
 	/** verify() **/
+#if 0
 	for(i=0; i<num_nodes; i++) {
-		proof = read_membership_proof(i);
+		membership_proof = read_membership_proof(i);
 
 		if(!verify_membership_proof(proof)) {
-			DEBUG_TRACE(("Verification failed(%d)\n", i));
+			DEBUG_TRACE(("Membership proof: Verification failed(%d)\n", i));
 		}
 	}
+#endif
+
+	range_proof = read_range_proof(0);
+
+	if(!verify_range_proof(range_proof)) {
+		DEBUG_TRACE(("Range proof: Verification failed(%d)\n", 0));
+	}
+
 
 }
 
@@ -348,6 +385,58 @@ MembershipProof *read_membership_proof(UINT index) {
 	return proof;
 }
 
+
+RangeProof *read_range_proof(UINT index) {
+	char filename[20];
+	FILE *fp;
+	UINT i = 0;
+	//UINT label_num = 0;
+
+	RangeProof *proof = NULL;
+	UINT num_node = 0;
+
+
+	DEBUG_TRACE(("read_rangeproof(%d)\n", index));
+
+	sprintf(filename, "sads_range_proof.dat");
+	fp = fopen(filename, "rb");
+
+	if(fp == NULL) {
+		printf("Proof file does not exist: %s\n", filename);
+		exit(-1);
+	}
+
+	proof = malloc(sizeof(RangeProof));
+
+	/** start_nodeid, end_nodeid, num_nodeid **/
+	fread(&proof->start_nodeid, sizeof(ULONG), 1, fp);
+	fread(&proof->end_nodeid, sizeof(ULONG), 1, fp);
+	fread(&proof->num_nodeid, sizeof(UINT), 1, fp);
+
+	DEBUG_TRACE(("range: %llu , %llu, %u\n", proof->start_nodeid, proof->end_nodeid, proof->num_nodeid));
+
+	num_node = proof->num_nodeid;
+
+	/** nodeid_list **/
+	proof->nodeid_list = malloc(sizeof(ULONG) * num_node);
+	fread(proof->nodeid_list, sizeof(ULONG), num_node, fp);
+
+	/** answer_list **/
+	proof->answer_list = malloc(sizeof(UINT) * num_node);
+	fread(proof->answer_list, sizeof(UINT), num_node, fp);
+
+	/** label_buffer_list **/
+	proof->label_buffer_list = malloc(sizeof(char *) * num_node);
+
+	for(i=0; i<num_node; i++) {
+		proof->label_buffer_list[i] = malloc(LABEL_BUFFER_LEN);
+		fread(proof->label_buffer_list[i], LABEL_BUFFER_LEN, 1, fp);
+	}
+
+	fclose(fp);
+
+	return proof;
+}
 
 /********************************************************
 *

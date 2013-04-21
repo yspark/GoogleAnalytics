@@ -35,13 +35,19 @@ typedef struct MembershipProof_Struct {
 } MembershipProof;
 
 typedef struct RangeProof_Struct {
+	/** Range query: start nodeid, end nodeid **/
 	ULONG start_nodeid;
 	ULONG end_nodeid;
 
-	UINT num_nodeid;
-	ULONG *nodeid_list;
-	UINT *answer_list;
-	char **label_buffer_list;
+	/** Answer */
+	UINT num_answer_nodeid;
+	ULONG *answer_nodeid_list;		// nodeid_list[num_answer_nodeid]
+	UINT *answer_list;				// answer_list[num_answer_nodeid]
+
+	/** Proof */
+	UINT num_proof_nodeid;
+	ULONG *proof_nodeid_list;				// nodeid_list[num_all_nodeid]
+	char **proof_label_buffer_list;		// *label_buffer_list[num_all_nodeid]
 } RangeProof;
 
 #endif

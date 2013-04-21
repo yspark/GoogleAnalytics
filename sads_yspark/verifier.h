@@ -5,6 +5,15 @@
 #include "typedef.h"
 #include "sads_mysql.h"		// necessary for TRUE/FALSE
 
+/***********************************************************
+*	Typedefs
+************************************************************/
+typedef struct RangeNode_Struct {
+	ULONG nodeid;
+	UINT answer;
+	BOOL isVerified;
+	char *label_buffer;
+} RangeNode;
 
 /***********************************************************
 *	Parameters, Matrices, Vectors
@@ -23,14 +32,20 @@ gsl_vector *get_partial_digest(ULONG nodeid, ULONG wrt_nodeid);
 void update_root_digest(gsl_vector *partial_digest);
 
 /** verify **/
+MembershipProof *read_membership_proof(UINT index);
 BOOL verify_membership_proof(MembershipProof *proof);
 
 BOOL verify_radix_leaf(UINT y_leaf, gsl_vector *label);
 BOOL verify_radix(gsl_vector *y, gsl_vector *label);
 
 
+RangeProof *read_range_proof(UINT index);
+BOOL verify_range_proof(RangeProof *proof);
+
+
+
 /** benchmark **/
 void run_test(char* node_input_filename);
-MembershipProof *read_membership_proof(UINT index);
+
 
 #endif
