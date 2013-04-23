@@ -47,7 +47,7 @@ typedef struct RangeProof_Struct {
 	/** Proof */
 	UINT num_proof_nodeid;
 	ULONG *proof_nodeid_list;				// nodeid_list[num_all_nodeid]
-	char **proof_label_buffer_list;		// *label_buffer_list[num_all_nodeid]
+	char **proof_label_list;		// *label_buffer_list[num_all_nodeid]
 } RangeProof;
 
 #endif

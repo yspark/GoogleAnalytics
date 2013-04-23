@@ -210,22 +210,132 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 
 
 BOOL verify_range_proof(RangeProof *proof) {
-	GList *leaf_nodeid_list = NULL;
-	GHashTable *nodeid_table = NULL;
+	//GList *leaf_nodeid_list = NULL;
+	GHashTable *nodeid_table  = g_hash_table_new(g_int64_hash, g_int64_equal);
 
 	UINT i = 0;
+	ULONG nodeid = 0;
+	ULONG rchild_nodeid = 0, lchild_nodeid = 0;
+	UINT nodeid_index = 0;
+	UINT rchild_nodeid_index = 0, lchild_nodeid_index = 0;
 
-	for(i=0; i<proof->num_nodeid; i++) {
-		if(proof->nodeid_list[i] & (ULONG)1 << 32) {
-			printf("leaf found: %llu\n", proof->nodeid_list[i]);
-			leaf_nodeid_list = g_list_append(leaf_nodeid_list, &(proof->nodeid_list[i]));
+
+	gsl_vector *y = NULL;
+	gsl_vector *label_rchild = NULL, *label_lchild = NULL;
+	gsl_vector *partial_digest_lchild = gsl_vector_alloc(DIGEST_LEN);
+	gsl_vector *partial_digest_rchild = gsl_vector_alloc(DIGEST_LEN);
+
+
+#if 0
+	for(i=0; i<proof->num_proof_nodeid; i++) {
+		printf("%llu, %u\n", proof->proof_nodeid_list[i], i);
+
+		gsl_vector_fprintf(stdout, decode_vector_buffer(proof->proof_label_list[i], LABEL_BUFFER_LEN), "%f");
+	}
+	return TRUE;
+#endif
+
+
+
+	DEBUG_TRACE(("verify_range_proof(%u, %u)\n", proof->num_answer_nodeid, proof->num_proof_nodeid));
+
+
+	/** build proof_nodeid hash table */
+	for(i=0; i<proof->num_proof_nodeid; i++) {
+		g_hash_table_insert (nodeid_table,
+							g_memdup(&proof->proof_nodeid_list[i], sizeof(ULONG)),
+							g_memdup(&i, sizeof(UINT)));
+		//leaf_nodeid_list = g_list_append(leaf_nodeid_list, &(proof->answer_nodeid_list[i]));
+	}
+
+
+	/** verify each answer nodeid */
+	for(i=0; i<proof->num_answer_nodeid; i++) {
+		nodeid = proof->answer_nodeid_list[i];
+		nodeid_index = *(UINT *)(g_hash_table_lookup(nodeid_table, &nodeid));
+
+		printf("%llu:%u\n", nodeid, nodeid_index);
+
+
+		/** Verify leaf node label */
+		DEBUG_TRACE(("verify leaf label (%llu:%u)\n", nodeid, nodeid_index));
+
+		y = get_initial_digest(TRUE);
+		gsl_vector_scale(y, (double)proof->answer_list[i]);
+
+		if(!verify_radix(y, decode_vector_buffer(proof->proof_label_list[nodeid_index], LABEL_BUFFER_LEN))) {
+				DEBUG_TRACE(("Leaf node verification failed: nodeid(%llu, %u)\n", nodeid, nodeid_index));
+				return FALSE;
+		}
+
+		/** Verify intermediate node labels */
+		nodeid = nodeid >> 1;
+
+		while(nodeid > 1) {
+			nodeid_index = *(UINT *)(g_hash_table_lookup(nodeid_table, &nodeid));
+
+			DEBUG_TRACE(("verify intermediate label (%llu:%u)\n", nodeid, nodeid_index));
+
+			rchild_nodeid = (nodeid << 1) + 1;
+			lchild_nodeid = nodeid << 1;
+
+			rchild_nodeid_index = *(UINT *)(g_hash_table_lookup(nodeid_table, &rchild_nodeid));
+			lchild_nodeid_index = *(UINT *)(g_hash_table_lookup(nodeid_table, &lchild_nodeid));
+
+			label_rchild = decode_vector_buffer(proof->proof_label_list[rchild_nodeid_index], LABEL_BUFFER_LEN);
+			label_lchild = decode_vector_buffer(proof->proof_label_list[lchild_nodeid_index], LABEL_BUFFER_LEN);
+
+			gsl_blas_dgemv(CblasNoTrans,\
+					1.0, \
+					L, \
+					label_lchild, \
+					0.0, \
+					partial_digest_lchild);
+
+			gsl_blas_dgemv(CblasNoTrans,\
+					1.0, \
+					R, \
+					label_rchild, \
+					0.0, \
+					partial_digest_rchild);
+
+			gsl_vector_add(partial_digest_lchild, partial_digest_rchild);
+
+			y = partial_digest_lchild;
+			mod_q(y, q);
+
+			//gsl_vector_fprintf(stdout, y, "%f");
+
+
+
+
+			if(!verify_radix(y, decode_vector_buffer(proof->proof_label_list[nodeid_index], LABEL_BUFFER_LEN))) {
+				DEBUG_TRACE(("Verification failed(%llu, %u)\n", nodeid, nodeid_index));
+				return FALSE;
+			}
+
+			nodeid = nodeid >> 1;
 		}
 	}
 
+
+
+
+
+	/*
 	while(leaf_nodeid_list) {
 		printf("%llu\n", *(ULONG *)(leaf_nodeid_list->data));
 		leaf_nodeid_list = leaf_nodeid_list->next;
 	}
+	*/
+
+
+	/*
+	printf("------------------\n");
+	for(i=0; i<proof->num_answer_nodeid; i++) {
+		printf("%u\n", proof->answer_list[i]);
+	}
+	*/
 
 
 	return TRUE;
@@ -324,10 +434,11 @@ void run_test(char* node_input_filename) {
 
 	range_proof = read_range_proof(0);
 
+#if 1
 	if(!verify_range_proof(range_proof)) {
 		DEBUG_TRACE(("Range proof: Verification failed(%d)\n", 0));
 	}
-
+#endif
 
 }
 
@@ -393,8 +504,6 @@ RangeProof *read_range_proof(UINT index) {
 	//UINT label_num = 0;
 
 	RangeProof *proof = NULL;
-	UINT num_node = 0;
-
 
 	DEBUG_TRACE(("read_rangeproof(%d)\n", index));
 
@@ -408,32 +517,43 @@ RangeProof *read_range_proof(UINT index) {
 
 	proof = malloc(sizeof(RangeProof));
 
-	/** start_nodeid, end_nodeid, num_nodeid **/
+	/** start_nodeid, end_nodeid **/
 	fread(&proof->start_nodeid, sizeof(ULONG), 1, fp);
 	fread(&proof->end_nodeid, sizeof(ULONG), 1, fp);
-	fread(&proof->num_nodeid, sizeof(UINT), 1, fp);
 
-	DEBUG_TRACE(("range: %llu , %llu, %u\n", proof->start_nodeid, proof->end_nodeid, proof->num_nodeid));
+	/** answer */
+	fread(&proof->num_answer_nodeid, sizeof(UINT), 1, fp);
 
-	num_node = proof->num_nodeid;
+	proof->answer_nodeid_list = malloc(sizeof(ULONG) * proof->num_answer_nodeid);
+	fread(proof->answer_nodeid_list, sizeof(ULONG), proof->num_answer_nodeid, fp);
 
-	/** nodeid_list **/
-	proof->nodeid_list = malloc(sizeof(ULONG) * num_node);
-	fread(proof->nodeid_list, sizeof(ULONG), num_node, fp);
+	proof->answer_list = malloc(sizeof(UINT) * proof->num_answer_nodeid);
+	fread(proof->answer_list, sizeof(UINT), proof->num_answer_nodeid, fp);
 
-	/** answer_list **/
-	proof->answer_list = malloc(sizeof(UINT) * num_node);
-	fread(proof->answer_list, sizeof(UINT), num_node, fp);
 
-	/** label_buffer_list **/
-	proof->label_buffer_list = malloc(sizeof(char *) * num_node);
+	/** proof */
+	fread(&proof->num_proof_nodeid, sizeof(UINT), 1, fp);
 
-	for(i=0; i<num_node; i++) {
-		proof->label_buffer_list[i] = malloc(LABEL_BUFFER_LEN);
-		fread(proof->label_buffer_list[i], LABEL_BUFFER_LEN, 1, fp);
+	proof->proof_nodeid_list = malloc(sizeof(ULONG) * proof->num_proof_nodeid);
+	fread(proof->proof_nodeid_list, sizeof(ULONG), proof->num_proof_nodeid, fp);
+
+	proof->proof_label_list = malloc(sizeof(char *) * proof->num_proof_nodeid);
+	for(i=0; i<proof->num_proof_nodeid; i++) {
+		proof->proof_label_list[i] = malloc(LABEL_BUFFER_LEN);
+		fread(proof->proof_label_list[i], LABEL_BUFFER_LEN, 1, fp);
 	}
 
+	//DEBUG_TRACE(("rangg(%llu , %llu), num_nodes(%u, %d)\n", proof->start_nodeid, proof->end_nodeid, proof->answer_num_nodeid, proof->answer_num_nodeid));
+
 	fclose(fp);
+
+#if 0
+	for(i=0; i<proof->num_proof_nodeid; i++) {
+		printf("%llu, %u\n", proof->proof_nodeid_list[i], i);
+
+		gsl_vector_fprintf(stdout, decode_vector_buffer(proof->proof_label_list[i], LABEL_BUFFER_LEN), "%f");
+	}
+#endif
 
 	return proof;
 }

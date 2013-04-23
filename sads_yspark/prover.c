@@ -332,8 +332,12 @@ RangeProof *process_range_query(ULONG start_nodeid, ULONG end_nodeid) {
 	//ULONG *nodeid_list = 0;
 	//UINT *value_list = 0;
 	//char **label_buffer_list = NULL;
+	UINT i;
+
+
 	RangeProof *proof = malloc(sizeof(RangeProof));
 	UINT num_answer_node = 0, num_proof_node = 0;
+
 
 	GList *answer_nodeid_list = NULL;
 	GHashTable *nodeid_table  = g_hash_table_new(g_int64_hash, g_int64_equal);
@@ -358,20 +362,29 @@ RangeProof *process_range_query(ULONG start_nodeid, ULONG end_nodeid) {
 	// answer
 	num_answer_node = g_list_length(answer_nodeid_list);
 	proof->num_answer_nodeid = num_answer_node;
-	proof->answer_nodeid_list = malloc(sizeof(UINT) * num_answer_node);
+	proof->answer_nodeid_list = malloc(sizeof(ULONG) * num_answer_node);
 	proof->answer_list = malloc(sizeof(UINT) * num_answer_node);
 
 	build_range_answer(proof, answer_nodeid_list);
+
 
 	// proof
 	num_proof_node = g_hash_table_size(nodeid_table);
 	proof->num_proof_nodeid = num_proof_node;
 	proof->proof_nodeid_list = malloc(sizeof(ULONG) * num_proof_node);
-	proof->proof_label_buffer_list = malloc(sizeof(char *) * num_proof_node);
+	proof->proof_label_list = malloc(sizeof(char *) * num_proof_node);
 
 	build_range_proof(proof, nodeid_table);
 
 	DEBUG_TRACE(("process_range_query done (num_answer_node:%u, num_proof_node:%u)\n", num_answer_node, num_proof_node));
+
+
+	for(i=0; i<num_proof_node; i++) {
+		printf("%llu, %u\n", proof->proof_nodeid_list[i], i);
+
+		gsl_vector_fprintf(stdout, decode_vector_buffer(proof->proof_label_list[i], LABEL_BUFFER_LEN), "%f");
+	}
+
 
 	/** 4. return proof **/
 	g_hash_table_destroy(nodeid_table);
@@ -406,7 +419,7 @@ void get_inter_nodeids_in_range(GHashTable *nodeid_table, GList *answer_nodeid_l
 								g_memdup(&curr_nodeid, sizeof(curr_nodeid)),
 								g_memdup(&curr_nodeid, sizeof(curr_nodeid)));
 
-			printf("(%llu, %llu, %llu) %d\n", curr_nodeid, curr_nodeid ^ (ULONG)1, *(ULONG *)(answer_nodeid_list->data), g_hash_table_size(nodeid_table));
+			printf("(%llu, %llu, %llu) %d\n", curr_nodeid ^ (ULONG)1, curr_nodeid, *(ULONG *)(answer_nodeid_list->data), g_hash_table_size(nodeid_table));
 
 			// go up to the parent node
 			curr_nodeid = curr_nodeid >> 1;
@@ -420,6 +433,7 @@ void build_range_answer(RangeProof *proof, GList *answer_nodeid_list) {
 	UINT node_count = 0;
 	ULONG curr_nodeid = 0;
 
+
 	DEBUG_TRACE(("build_range_answer()\n"));
 
 	while(answer_nodeid_list) {
@@ -427,11 +441,13 @@ void build_range_answer(RangeProof *proof, GList *answer_nodeid_list) {
 		proof->answer_nodeid_list[node_count] = curr_nodeid;
 		proof->answer_list[node_count] = smysql_get_leaf_val(curr_nodeid);
 
-		printf("%llu, %u\n", proof->answer_nodeid_list[node_count], proof->answer_list[node_count]);
+		//printf("**%u (%llu, %u)\n", node_count, proof->answer_nodeid_list[node_count], proof->answer_list[node_count]);
 
 		node_count++;
 		answer_nodeid_list = answer_nodeid_list->next;
 	}
+
+
 }
 
 
@@ -439,20 +455,51 @@ void build_range_proof(RangeProof *proof, GHashTable *nodeid_table) {
 	GList *nodeid_list = g_hash_table_get_keys(nodeid_table);
 	UINT node_count = 0;
 	ULONG curr_nodeid = 0;
-	UINT temp_answer = 0;
+	//UINT temp_answer = 0;
+
+
+
 
 	DEBUG_TRACE(("build_range_proof()\n"));
 
 	while(nodeid_list) {
+		char *label_buffer = NULL;
+
 		curr_nodeid = *(ULONG *)(nodeid_list->data);
-		//memcpy(&proof->nodeid_list[node_count], &curr_nodeid, sizeof(ULONG));
+
+		printf("curr_nodeid:%llu\n", curr_nodeid);
+
+		/** nodeid */
 		proof->proof_nodeid_list[node_count] = curr_nodeid;
 
-		proof->proof_label_buffer_list[node_count] = malloc(LABEL_BUFFER_LEN);
+		/** label_buffer */
+		proof->proof_label_list[node_count] = malloc(LABEL_BUFFER_LEN);
 
-		smysql_get_node_info(curr_nodeid, &temp_answer, proof->proof_label_buffer_list[node_count]);
+		label_buffer = smysql_get_node_label(curr_nodeid);
+
+		if(label_buffer) {
+			printf("label exists!!\n");
+			memcpy(proof->proof_label_list[node_count], label_buffer, LABEL_BUFFER_LEN);
+		}
+		else {
+			memset(proof->proof_label_list[node_count], 0, LABEL_BUFFER_LEN);
+		}
+		free(label_buffer);
+
+
+		//proof->proof_label_buffer_list[node_count] =
+
+		//proof->proof_label_buffer_list[node_count] = malloc(LABEL_BUFFER_LEN);
+		//smysql_get_node_info(curr_nodeid, &temp_answer, proof->proof_label_buffer_list[node_count]);
 
 		//printf("%llu, %u\n", proof->nodeid_list[node_count], proof->answer_list[node_count]);
+
+#if 1
+		if(curr_nodeid == (ULONG)7527202919) {
+			printf("**************** (%llu, %u)\n", curr_nodeid, node_count);
+			gsl_vector_fprintf (stdout, decode_vector_buffer(label_buffer, LABEL_BUFFER_LEN), "%f");
+		}
+#endif
 
 		node_count++;
 		nodeid_list = nodeid_list->next;
@@ -496,10 +543,11 @@ void write_range_proof(RangeProof *proof) {
 	fwrite(&(proof->num_proof_nodeid), sizeof(UINT), 1, fp);
 	fwrite(proof->proof_nodeid_list, sizeof(ULONG), proof->num_proof_nodeid, fp);
 
+
 	/* Write label_buffer_list  */
 	//printf("write label_buffer_list\n");
 	for(i=0; i<proof->num_proof_nodeid; i++) {
-		fwrite(proof->proof_label_buffer_list[i], ELEMENT_LEN, LABEL_LEN, fp);
+		fwrite(proof->proof_label_list[i], ELEMENT_LEN, LABEL_LEN, fp);
 	}
 
 	fclose(fp);
@@ -552,14 +600,14 @@ void run_test(char* node_input_filename) {
 	UINT num_nodes = 0;
 	UINT i = 0;
 	ULONG *node_list = read_node_input(node_input_filename, &num_nodes);
-	MembershipProof *membership_proof;
+	//MembershipProof *membership_proof;
 	RangeProof *range_proof;
 
 	DEBUG_TRACE(("Benchmark Test: num_nodes(%u)", num_nodes));
 
 	/** Prover Benchmark **/
 	/** update() **/
-#if 1
+#if 0
 	for(i=0; i<num_nodes; i++) {
 		update_prover(node_list[i]);
 	}
