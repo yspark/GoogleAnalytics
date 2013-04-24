@@ -1,21 +1,22 @@
 #include "verifier.h"
 
-/********************************************************
+/*****************************************************************************
 *
 *	initialize()
-*
-*********************************************************/
+**
+*****************************************************************************/
 void init_verifier(char* param_filename) {
 	read_params(param_filename);
 
 	root_digest = get_initial_digest(FALSE);
 }
 
-/********************************************************
+
+/*****************************************************************************
 *
 *	update()
 *
-*********************************************************/
+*****************************************************************************/
 void update_verifier(ULONG nodeid) {
 	DEBUG_TRACE(("update_verifier: (%llu)", nodeid));
 
@@ -78,11 +79,11 @@ void update_root_digest(gsl_vector *partial_digest) {
 
 
 
-/********************************************************
+/*****************************************************************************
 *
-*	verify()
+*	membership verify()
 *
-*********************************************************/
+*****************************************************************************/
 BOOL verify_membership_proof(MembershipProof *proof) {
 	UINT i = 0;
 	ULONG nodeid = proof->query_nodeid;
@@ -124,7 +125,6 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 	y = partial_digest_lchild;
 	mod_q(y, q);
 
-	//gsl_vector_fprintf(stdout, y, "%f");
 
 	if(!gsl_vector_equal(y, root_digest)) {
 		DEBUG_TRACE(("Verification failed: root_digest\n"));
@@ -159,20 +159,6 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 				label_rchild = decode_vector_buffer(proof->label_list[i-1], LABEL_BUFFER_LEN);
 			}
 
-			/*
-			printf("L: %d, %d\n", L->size1, L->size2);
-			printf("R: %d, %d\n", R->size1, R->size2);
-			printf("label_lchild: %d\n", label_lchild->size);
-			printf("label_rchild: %d\n", label_rchild->size);
-			printf("left_partial_digest: %d\n", left_partial_digest->size);
-			printf("right_partial_digest: %d\n", right_partial_digest->size);
-
-			printf("label_lchild\n");
-			gsl_vector_fprintf(stdout, label_lchild, "%f");
-			printf("label_rchild\n");
-			gsl_vector_fprintf(stdout, label_lchild, "%f");
-			*/
-
 			gsl_blas_dgemv(CblasNoTrans,\
 					1.0, \
 					L, \
@@ -192,8 +178,6 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 			y = partial_digest_lchild;
 			mod_q(y, q);
 
-			//gsl_vector_fprintf(stdout, y, "%f");
-
 			if(!verify_radix(y, decode_vector_buffer(proof->label_list[i], LABEL_BUFFER_LEN))) {
 				DEBUG_TRACE(("Verification failed(%d)\n", i));
 				return FALSE;
@@ -208,9 +192,50 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 }
 
 
+MembershipProof *read_membership_proof(UINT index) {
+	char filename[40];
+	FILE *fp;
+	UINT i = 0;
+	UINT label_num = (get_tree_height()-1) * 2;
+	MembershipProof *proof = NULL;
 
+	DEBUG_TRACE(("read_proof(%d)\n", index));
+
+	sprintf(filename, "./proof/sads_membership_proof_%d.dat", index);
+	fp = fopen(filename, "rb");
+
+	if(fp == NULL) {
+		printf("Proof file does not exist: %s\n", filename);
+		exit(-1);
+	}
+
+	proof = malloc(sizeof(MembershipProof));
+	fread(&proof->query_nodeid, sizeof(ULONG), 1, fp);
+	fread(&proof->answer, sizeof(UINT), 1, fp);
+
+	DEBUG_TRACE(("proof->query_nodeid(%llu)\n", proof->query_nodeid));
+	DEBUG_TRACE(("proof->answer(%u)\n", proof->answer));
+
+
+	proof->label_list = malloc(((get_tree_height()-1) * 2) * sizeof(char *));
+
+	for(i=0; i<label_num; i++) {
+		proof->label_list[i] = malloc(LABEL_BUFFER_LEN);
+		fread(proof->label_list[i], ELEMENT_LEN, LABEL_LEN, fp);
+	}
+
+	fclose(fp);
+
+	return proof;
+}
+
+
+/*****************************************************************************
+*
+*	range verify()
+*
+*****************************************************************************/
 BOOL verify_range_proof(RangeProof *proof) {
-	//GList *leaf_nodeid_list = NULL;
 	GHashTable *nodeid_table  = g_hash_table_new(g_int64_hash, g_int64_equal);
 
 	UINT i = 0;
@@ -219,22 +244,10 @@ BOOL verify_range_proof(RangeProof *proof) {
 	UINT nodeid_index = 0;
 	UINT rchild_nodeid_index = 0, lchild_nodeid_index = 0;
 
-
 	gsl_vector *y = NULL;
 	gsl_vector *label_rchild = NULL, *label_lchild = NULL;
 	gsl_vector *partial_digest_lchild = gsl_vector_alloc(DIGEST_LEN);
 	gsl_vector *partial_digest_rchild = gsl_vector_alloc(DIGEST_LEN);
-
-
-#if 0
-	for(i=0; i<proof->num_proof_nodeid; i++) {
-		printf("%llu, %u\n", proof->proof_nodeid_list[i], i);
-
-		gsl_vector_fprintf(stdout, decode_vector_buffer(proof->proof_label_list[i], LABEL_BUFFER_LEN), "%f");
-	}
-	return TRUE;
-#endif
-
 
 
 	DEBUG_TRACE(("verify_range_proof(%u, %u)\n", proof->num_answer_nodeid, proof->num_proof_nodeid));
@@ -245,7 +258,6 @@ BOOL verify_range_proof(RangeProof *proof) {
 		g_hash_table_insert (nodeid_table,
 							g_memdup(&proof->proof_nodeid_list[i], sizeof(ULONG)),
 							g_memdup(&i, sizeof(UINT)));
-		//leaf_nodeid_list = g_list_append(leaf_nodeid_list, &(proof->answer_nodeid_list[i]));
 	}
 
 
@@ -253,9 +265,6 @@ BOOL verify_range_proof(RangeProof *proof) {
 	for(i=0; i<proof->num_answer_nodeid; i++) {
 		nodeid = proof->answer_nodeid_list[i];
 		nodeid_index = *(UINT *)(g_hash_table_lookup(nodeid_table, &nodeid));
-
-		printf("%llu:%u\n", nodeid, nodeid_index);
-
 
 		/** Verify leaf node label */
 		DEBUG_TRACE(("verify leaf label (%llu:%u)\n", nodeid, nodeid_index));
@@ -304,10 +313,6 @@ BOOL verify_range_proof(RangeProof *proof) {
 			y = partial_digest_lchild;
 			mod_q(y, q);
 
-			//gsl_vector_fprintf(stdout, y, "%f");
-
-
-
 
 			if(!verify_radix(y, decode_vector_buffer(proof->proof_label_list[nodeid_index], LABEL_BUFFER_LEN))) {
 				DEBUG_TRACE(("Verification failed(%llu, %u)\n", nodeid, nodeid_index));
@@ -318,33 +323,72 @@ BOOL verify_range_proof(RangeProof *proof) {
 		}
 	}
 
-
-
-
-
-	/*
-	while(leaf_nodeid_list) {
-		printf("%llu\n", *(ULONG *)(leaf_nodeid_list->data));
-		leaf_nodeid_list = leaf_nodeid_list->next;
-	}
-	*/
-
-
-	/*
-	printf("------------------\n");
-	for(i=0; i<proof->num_answer_nodeid; i++) {
-		printf("%u\n", proof->answer_list[i]);
-	}
-	*/
-
-
 	return TRUE;
 
 }
 
 
 
+RangeProof *read_range_proof(UINT index) {
+	char filename[40];
+	FILE *fp;
+	UINT i = 0;
 
+	RangeProof *proof = NULL;
+
+	DEBUG_TRACE(("read_rangeproof(%d)\n", index));
+
+	sprintf(filename, "./proof/sads_range_proof_%d.dat", index);
+	fp = fopen(filename, "rb");
+
+	if(fp == NULL) {
+		printf("Proof file does not exist: %s\n", filename);
+		return NULL;
+		//exit(-1);
+	}
+
+	proof = malloc(sizeof(RangeProof));
+
+	/** start_nodeid, end_nodeid **/
+	fread(&proof->start_nodeid, sizeof(ULONG), 1, fp);
+	fread(&proof->end_nodeid, sizeof(ULONG), 1, fp);
+
+	/** answer */
+	fread(&proof->num_answer_nodeid, sizeof(UINT), 1, fp);
+
+	proof->answer_nodeid_list = malloc(sizeof(ULONG) * proof->num_answer_nodeid);
+	fread(proof->answer_nodeid_list, sizeof(ULONG), proof->num_answer_nodeid, fp);
+
+	proof->answer_list = malloc(sizeof(UINT) * proof->num_answer_nodeid);
+	fread(proof->answer_list, sizeof(UINT), proof->num_answer_nodeid, fp);
+
+
+	/** proof */
+	fread(&proof->num_proof_nodeid, sizeof(UINT), 1, fp);
+
+	proof->proof_nodeid_list = malloc(sizeof(ULONG) * proof->num_proof_nodeid);
+	fread(proof->proof_nodeid_list, sizeof(ULONG), proof->num_proof_nodeid, fp);
+
+	proof->proof_label_list = malloc(sizeof(char *) * proof->num_proof_nodeid);
+	for(i=0; i<proof->num_proof_nodeid; i++) {
+		proof->proof_label_list[i] = malloc(LABEL_BUFFER_LEN);
+		fread(proof->proof_label_list[i], LABEL_BUFFER_LEN, 1, fp);
+	}
+
+	//DEBUG_TRACE(("rangg(%llu , %llu), num_nodes(%u, %d)\n", proof->start_nodeid, proof->end_nodeid, proof->answer_num_nodeid, proof->answer_num_nodeid));
+
+	fclose(fp);
+
+	return proof;
+}
+
+
+
+/********************************************************
+*
+*	misc()
+*
+*********************************************************/
 BOOL verify_radix_leaf(UINT y_leaf, gsl_vector *label) {
 	DEBUG_TRACE(("Proof verify_radix_leaf: not implemented\n"));
 
@@ -392,171 +436,99 @@ BOOL verify_radix(gsl_vector *y, gsl_vector *label) {
 	return TRUE;
 }
 
-
-
-/********************************************************
-*
-*	misc()
-*
-*********************************************************/
-
-
 /********************************************************
 *
 *	Benchmark
 *
 *********************************************************/
-void run_test(char* node_input_filename) {
+void run_membership_test(char* node_input_filename, int num_query) {
 	UINT num_nodes = 0;
 	UINT i = 0;
 	ULONG *node_list = read_node_input(node_input_filename, &num_nodes);
 	MembershipProof *membership_proof;
-	RangeProof *range_proof;
 
-	DEBUG_TRACE(("Benchmark Test: num_nodes(%u)", num_nodes));
+	struct timeval  tv1, tv2;
+
+	DEBUG_TRACE(("Benchmark Test(Membership): num_nodes(%u)", num_nodes));
 
 	/** Verifier Benchmark **/
 	/** update() **/
+	printf("update start\n");
+    gettimeofday(&tv1, NULL);
+
 	for(i=0; i<num_nodes; i++) {
 		update_verifier(node_list[i]);
 	}
 
+	gettimeofday(&tv2, NULL);
+    printf ("Total time = %f seconds\n",
+             (double) (tv2.tv_usec - tv1.tv_usec)/1000000 +
+             (double) (tv2.tv_sec - tv1.tv_sec));
+
 	/** verify() **/
-#if 0
-	for(i=0; i<num_nodes; i++) {
+	printf("membership verification start\n");
+    gettimeofday(&tv1, NULL);
+
+	for(i=0; i<num_query; i++) {
 		membership_proof = read_membership_proof(i);
 
-		if(!verify_membership_proof(proof)) {
+		if(!verify_membership_proof(membership_proof)) {
 			DEBUG_TRACE(("Membership proof: Verification failed(%d)\n", i));
 		}
 	}
-#endif
 
-	range_proof = read_range_proof(0);
-
-#if 1
-	if(!verify_range_proof(range_proof)) {
-		DEBUG_TRACE(("Range proof: Verification failed(%d)\n", 0));
-	}
-#endif
-
+    gettimeofday(&tv2, NULL);
+    printf ("Total time = %f seconds\n",
+             (double) (tv2.tv_usec - tv1.tv_usec)/1000000 +
+             (double) (tv2.tv_sec - tv1.tv_sec));
 }
 
-MembershipProof *read_membership_proof(UINT index) {
-	char filename[20];
-	FILE *fp;
+
+void run_range_test(char* node_input_filename, int num_query) {
+	UINT num_nodes = 0;
 	UINT i = 0;
-	UINT label_num = (get_tree_height()-1) * 2;
-	MembershipProof *proof = NULL;
+	ULONG *node_list = read_node_input(node_input_filename, &num_nodes);
+	RangeProof *range_proof;
 
-	DEBUG_TRACE(("read_proof(%d)\n", index));
+    struct timeval  tv1, tv2;
 
-	sprintf(filename, "sads_proof_%d.dat", index);
-	fp = fopen(filename, "rb");
+	DEBUG_TRACE(("Benchmark Test(Range): num_nodes(%u)", num_nodes));
 
-	if(fp == NULL) {
-		printf("Proof file does not exist: %s\n", filename);
-		exit(-1);
+	/** Verifier Benchmark **/
+	/** update() **/
+	printf("update start\n");
+    gettimeofday(&tv1, NULL);
+
+	for(i=0; i<num_nodes; i++) {
+		update_verifier(node_list[i]);
 	}
 
-	proof = malloc(sizeof(MembershipProof));
-	fread(&proof->query_nodeid, sizeof(ULONG), 1, fp);
-	fread(&proof->answer, sizeof(UINT), 1, fp);
-
-	DEBUG_TRACE(("proof->query_nodeid(%llu)\n", proof->query_nodeid));
-	DEBUG_TRACE(("proof->answer(%u)\n", proof->answer));
+	gettimeofday(&tv2, NULL);
+    printf ("Total time = %f seconds\n",
+             (double) (tv2.tv_usec - tv1.tv_usec)/1000000 +
+             (double) (tv2.tv_sec - tv1.tv_sec));
 
 
-	proof->label_list = malloc(((get_tree_height()-1) * 2) * sizeof(char *));
+	/** verify() **/
+	printf("range verification start\n");
+    gettimeofday(&tv1, NULL);
 
-	for(i=0; i<label_num; i++) {
-		//int j;
+	for(i=0; i<num_query; i++) {
+		range_proof = read_range_proof(i);
 
-		proof->label_list[i] = malloc(LABEL_BUFFER_LEN);
-		fread(proof->label_list[i], ELEMENT_LEN, LABEL_LEN, fp);
-
-
-#if 0
-		printf("read_proof(%d, %d)\n", index, i);
-
-
-		for(j=0; j<LABEL_BUFFER_LEN; j++) {
-			//if(proof->label_list[i][j] != 0)
-				printf("(%u, %u):%x\n", i, j, (char)proof->label_list[i][j]);
+		if(!verify_range_proof(range_proof)) {
+			DEBUG_TRACE(("Range proof: Verification failed(%d)\n", 0));
 		}
-
-
-		//gsl_vector_fprintf(stdout, decode_vector_buffer(proof->label_list[i], LABEL_BUFFER_LEN), "%f");
-		//printf("max:%f\n", gsl_vector_max(decode_vector_buffer(proof->label_list[i], LABEL_BUFFER_LEN)));
-#endif
 	}
 
-	fclose(fp);
-
-	return proof;
+    gettimeofday(&tv2, NULL);
+    printf ("Total time = %f seconds\n",
+             (double) (tv2.tv_usec - tv1.tv_usec)/1000000 +
+             (double) (tv2.tv_sec - tv1.tv_sec));
 }
 
 
-RangeProof *read_range_proof(UINT index) {
-	char filename[20];
-	FILE *fp;
-	UINT i = 0;
-	//UINT label_num = 0;
 
-	RangeProof *proof = NULL;
-
-	DEBUG_TRACE(("read_rangeproof(%d)\n", index));
-
-	sprintf(filename, "sads_range_proof.dat");
-	fp = fopen(filename, "rb");
-
-	if(fp == NULL) {
-		printf("Proof file does not exist: %s\n", filename);
-		exit(-1);
-	}
-
-	proof = malloc(sizeof(RangeProof));
-
-	/** start_nodeid, end_nodeid **/
-	fread(&proof->start_nodeid, sizeof(ULONG), 1, fp);
-	fread(&proof->end_nodeid, sizeof(ULONG), 1, fp);
-
-	/** answer */
-	fread(&proof->num_answer_nodeid, sizeof(UINT), 1, fp);
-
-	proof->answer_nodeid_list = malloc(sizeof(ULONG) * proof->num_answer_nodeid);
-	fread(proof->answer_nodeid_list, sizeof(ULONG), proof->num_answer_nodeid, fp);
-
-	proof->answer_list = malloc(sizeof(UINT) * proof->num_answer_nodeid);
-	fread(proof->answer_list, sizeof(UINT), proof->num_answer_nodeid, fp);
-
-
-	/** proof */
-	fread(&proof->num_proof_nodeid, sizeof(UINT), 1, fp);
-
-	proof->proof_nodeid_list = malloc(sizeof(ULONG) * proof->num_proof_nodeid);
-	fread(proof->proof_nodeid_list, sizeof(ULONG), proof->num_proof_nodeid, fp);
-
-	proof->proof_label_list = malloc(sizeof(char *) * proof->num_proof_nodeid);
-	for(i=0; i<proof->num_proof_nodeid; i++) {
-		proof->proof_label_list[i] = malloc(LABEL_BUFFER_LEN);
-		fread(proof->proof_label_list[i], LABEL_BUFFER_LEN, 1, fp);
-	}
-
-	//DEBUG_TRACE(("rangg(%llu , %llu), num_nodes(%u, %d)\n", proof->start_nodeid, proof->end_nodeid, proof->answer_num_nodeid, proof->answer_num_nodeid));
-
-	fclose(fp);
-
-#if 0
-	for(i=0; i<proof->num_proof_nodeid; i++) {
-		printf("%llu, %u\n", proof->proof_nodeid_list[i], i);
-
-		gsl_vector_fprintf(stdout, decode_vector_buffer(proof->proof_label_list[i], LABEL_BUFFER_LEN), "%f");
-	}
-#endif
-
-	return proof;
-}
 
 /********************************************************
 *
@@ -567,22 +539,26 @@ int main(int argc, char* argv[]) {
 	//ULONG nodeid = 0;
 
 	printf("SADS Verifier\n");
-	if(argc != 3)
+	if(argc != 5)
 	{
-		printf("Usage: ./verifier <params_filename> <nodes_input_filename>\n");
+		printf("Usage: ./verifier <params_filename> <nodes_input_filename> <test_mode> <num_query>\n");
 		exit(-1);
 	}
 
 	/** initialize() **/
 	init_verifier(argv[1]);
 
-	/** update **/
-	//update_verifier(nodeid);
-
-	/** query **/
 
 	/** benchmark **/
-	run_test(argv[2]);
+	if(strcmp(argv[3], "membership") == 0) {
+		run_membership_test(argv[2], atoi(argv[4]));
+	}
+	else if(strcmp(argv[3], "range") == 0) {
+		run_range_test(argv[2], atoi(argv[4]));
+	}
+	else {
+		printf("<test mode>: membership / range\n");
+	}
 
 
 	return 0;

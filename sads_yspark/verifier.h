@@ -45,7 +45,7 @@ BOOL verify_range_proof(RangeProof *proof);
 
 
 /** benchmark **/
-void run_test(char* node_input_filename);
-
+void run_membership_test(char* node_input_filename, int num_query);
+void run_range_test(char* node_input_filename, int num_query);
 
 #endif

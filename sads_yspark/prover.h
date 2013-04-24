@@ -27,42 +27,28 @@ void update_path_labels(ULONG nodeid);
 
 gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid);
 void update_node_label(ULONG nodeid, gsl_vector *partial_label);
-
-void verify_label(ULONG nodeid, gsl_vector *label);
+#if 0
 gsl_vector *get_digest_from_label(gsl_vector *label);
+#endif
 
-
-/** Query **/
+/** Membership Query **/
 MembershipProof *process_membership_query(ULONG nodeid);
 void build_membership_proof_path(ULONG child_of_root_nodeid, ULONG leaf_nodeid, UINT nodeid_num, ULONG *nodeid_list);
 void write_membership_proof(MembershipProof *proof, UINT index);
 
-
+/** Range Query **/
 RangeProof *process_range_query(ULONG start_nodeid, ULONG end_nodeid);
 void get_inter_nodeids_in_range(GHashTable *nodeids_table, GList *answer_nodeid_list);
 void build_range_answer(RangeProof *proof, GList *answer_nodeid_list);
 void build_range_proof(RangeProof *proof, GHashTable *nodeid_table);
-void write_range_proof(RangeProof *proof);
-
-
+void write_range_proof(RangeProof *proof, UINT index);
 
 /** Misc **/
-void free_data (gpointer data);
-
-#if 0
-ULONG get_nodeid(UINT ip_addr);
-
-UINT get_label_buffer_len();
-UINT get_digest_buffer_len();
-
-UINT get_vector_blob_size(char *buffer);
-#endif
-
-
-//SUBTREE_TYPE identifySubtree(ULONG ancester_nodeid, ULONG decendent_nodeid);
 
 
 /** Benchmark **/
-void run_test(char* node_input_filename);
+void run_membership_test(char* node_input_filename, int num_query);
+void run_range_test(char* node_input_filename, int num_query);
+
 
 #endif

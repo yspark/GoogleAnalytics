@@ -69,11 +69,10 @@ int main(int argc, char* argv[])
 		exit(-1);
 	}
 
+	/** Parameters */
 	initialize(atoi(argv[1]), atoi(argv[2]));	
 	init_LR();
-	
 	output_params();
-	
 	free_params();
 
 	return 0;

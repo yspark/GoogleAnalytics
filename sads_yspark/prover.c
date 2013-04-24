@@ -1,16 +1,20 @@
 #include <stdio.h>
 #include <math.h>
+#include <sys/time.h>
 
 #include <glib.h>
 
 #include "prover.h"
 #include "sads_mysql.h"
 
-/********************************************************
+/*****************************************************************************
 *
 *	initialize()
-*
-*********************************************************/
+**
+*****************************************************************************/
+/**
+ * This function reads in security parameters and build initial root digest.
+ */
 void init_prover(char* filename) {
 	read_params(filename);
 	
@@ -21,16 +25,23 @@ void init_prover(char* filename) {
 
 
 
-/********************************************************
+/*****************************************************************************
 *
 *	update()
 *
-*********************************************************/
+*****************************************************************************/
+/**
+ * Given leaf nodeid, update the leaf node and nodes on the path to the root node
+ */
 void update_prover(ULONG nodeid) {
 	update_leaf(nodeid);
 	update_path_labels(nodeid);
 }
 
+
+/**
+ * Add a new leaf node. Or update existing leaf node.
+ */
 UINT update_leaf(ULONG nodeid) {
 	UINT curr_count = 0;
 
@@ -63,7 +74,9 @@ UINT update_leaf(ULONG nodeid) {
 	return (curr_count+1);
 }
 
-
+/**
+ * Update all the nodes on the path to the root node
+ */
 void update_path_labels(ULONG nodeid) {
 	ULONG child_of_root_nodeid = nodeid >> (get_number_of_bits(nodeid)-2);
 
@@ -73,6 +86,9 @@ void update_path_labels(ULONG nodeid) {
 }
 
 
+/**
+ * Auxilary function for update_path_labels(). Recursive function call.
+ */
 gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 	gsl_vector *partial_digest = NULL, *partial_label = NULL;
 	gsl_vector *label = NULL;
@@ -127,7 +143,9 @@ gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 	return partial_label;
 }
 
-
+/**
+ * Given partial label, update the label
+ */
 void update_node_label(ULONG nodeid, gsl_vector *partial_label) {
 	gsl_vector *label = NULL;
 	char *label_buffer = NULL;
@@ -160,7 +178,10 @@ void update_node_label(ULONG nodeid, gsl_vector *partial_label) {
 }
 
 
-
+#if 0
+/**
+ * Verify label for self verification
+ */
 void verify_label(ULONG nodeid, gsl_vector *label) {
 
 	gsl_vector *rchild=NULL, *lchild=NULL;
@@ -233,15 +254,15 @@ gsl_vector *get_digest_from_label(gsl_vector *label) {
 
 	return digest;
 }
+#endif
 
 
 
-
-/********************************************************
+/*****************************************************************************
 *
-*	query()
+*	membership query()
 *
-*********************************************************/
+*****************************************************************************/
 MembershipProof *process_membership_query(ULONG nodeid) {
 	MembershipProof *proof;
 	ULONG nodeid_list[(get_tree_height()-1)*2];
@@ -261,7 +282,7 @@ MembershipProof *process_membership_query(ULONG nodeid) {
 	proof->query_nodeid = nodeid;
 	proof->answer = smysql_get_leaf_val(nodeid);
 
-	/** 2. get labels of nodes included in proof->nodeid->list **/
+	/** 2. get labels of nodes included in proof->nodeid_list **/
 	proof->label_list = malloc(nodeid_num * sizeof(char *));
 	for(i=0; i < nodeid_num; i++) {
 		proof->label_list[i] = malloc(LABEL_BUFFER_LEN);
@@ -279,6 +300,7 @@ MembershipProof *process_membership_query(ULONG nodeid) {
 	/** 3. return proof **/
 	return proof;
 }
+
 
 void build_membership_proof_path(ULONG child_of_root_nodeid, ULONG leaf_nodeid, UINT nodeid_num, ULONG *nodeid_list) {
 	UINT i = 0;
@@ -302,14 +324,15 @@ void build_membership_proof_path(ULONG child_of_root_nodeid, ULONG leaf_nodeid, 
 
 
 void write_membership_proof(MembershipProof *proof, UINT index) {
-	char filename[20];
+	char filename[40];
 	FILE *fp;
 	UINT i = 0;
 	UINT label_num = (get_tree_height()-1) * 2;
 
 	DEBUG_TRACE(("write_membership_proof(%d)\n", index));
 
-	sprintf(filename, "sads_membership_proof_%d.dat", index);
+
+	sprintf(filename, "./proof/sads_membership_proof_%d.dat", index);
 	fp = fopen(filename, "wb");
 
 	DEBUG_TRACE(("nodeid:%llu\n", proof->query_nodeid));
@@ -317,6 +340,7 @@ void write_membership_proof(MembershipProof *proof, UINT index) {
 
 	DEBUG_TRACE(("answer:%u\n", proof->answer));
 	fwrite(&(proof->answer), sizeof(UINT), 1, fp);
+
 
 	for(i=0; i<label_num; i++) {
 		fwrite(proof->label_list[i], ELEMENT_LEN, LABEL_LEN, fp);
@@ -327,17 +351,14 @@ void write_membership_proof(MembershipProof *proof, UINT index) {
 
 
 
+/*****************************************************************************
+*
+*	range query()
+*
+*****************************************************************************/
 RangeProof *process_range_query(ULONG start_nodeid, ULONG end_nodeid) {
-	//UINT num_nodeid = 0;
-	//ULONG *nodeid_list = 0;
-	//UINT *value_list = 0;
-	//char **label_buffer_list = NULL;
-	UINT i;
-
-
 	RangeProof *proof = malloc(sizeof(RangeProof));
 	UINT num_answer_node = 0, num_proof_node = 0;
-
 
 	GList *answer_nodeid_list = NULL;
 	GHashTable *nodeid_table  = g_hash_table_new(g_int64_hash, g_int64_equal);
@@ -347,6 +368,13 @@ RangeProof *process_range_query(ULONG start_nodeid, ULONG end_nodeid) {
 
 	/** 1. get nodeids of leaf nodes in the given range and put into hash table **/
 	smysql_get_leaf_nodeids_in_range(start_nodeid, end_nodeid, nodeid_table);
+	if(g_hash_table_size(nodeid_table) == 0) {
+		DEBUG_TRACE(("No nodes in the range\n"));
+		free(proof);
+		g_hash_table_destroy(nodeid_table);
+		return NULL;
+	}
+
 	answer_nodeid_list = g_hash_table_get_keys(nodeid_table);
 
 
@@ -379,18 +407,12 @@ RangeProof *process_range_query(ULONG start_nodeid, ULONG end_nodeid) {
 	DEBUG_TRACE(("process_range_query done (num_answer_node:%u, num_proof_node:%u)\n", num_answer_node, num_proof_node));
 
 
-	for(i=0; i<num_proof_node; i++) {
-		printf("%llu, %u\n", proof->proof_nodeid_list[i], i);
-
-		gsl_vector_fprintf(stdout, decode_vector_buffer(proof->proof_label_list[i], LABEL_BUFFER_LEN), "%f");
-	}
-
-
 	/** 4. return proof **/
 	g_hash_table_destroy(nodeid_table);
 
 	return proof;
 }
+
 
 void get_inter_nodeids_in_range(GHashTable *nodeid_table, GList *answer_nodeid_list) {
 
@@ -403,8 +425,8 @@ void get_inter_nodeids_in_range(GHashTable *nodeid_table, GList *answer_nodeid_l
 
 	while(answer_nodeid_list) {
 		ULONG curr_nodeid = *(ULONG *)(answer_nodeid_list->data);
-		printf("%llu\n", curr_nodeid);
-		printf("%d\n", g_list_length(answer_nodeid_list));
+		//printf("%llu\n", curr_nodeid);
+		//printf("%d\n", g_list_length(answer_nodeid_list));
 
 		/** Add nodes on the path to the root **/
 		while(curr_nodeid > 1) {
@@ -419,7 +441,7 @@ void get_inter_nodeids_in_range(GHashTable *nodeid_table, GList *answer_nodeid_l
 								g_memdup(&curr_nodeid, sizeof(curr_nodeid)),
 								g_memdup(&curr_nodeid, sizeof(curr_nodeid)));
 
-			printf("(%llu, %llu, %llu) %d\n", curr_nodeid ^ (ULONG)1, curr_nodeid, *(ULONG *)(answer_nodeid_list->data), g_hash_table_size(nodeid_table));
+			//printf("(%llu, %llu, %llu) %d\n", curr_nodeid ^ (ULONG)1, curr_nodeid, *(ULONG *)(answer_nodeid_list->data), g_hash_table_size(nodeid_table));
 
 			// go up to the parent node
 			curr_nodeid = curr_nodeid >> 1;
@@ -455,9 +477,6 @@ void build_range_proof(RangeProof *proof, GHashTable *nodeid_table) {
 	GList *nodeid_list = g_hash_table_get_keys(nodeid_table);
 	UINT node_count = 0;
 	ULONG curr_nodeid = 0;
-	//UINT temp_answer = 0;
-
-
 
 
 	DEBUG_TRACE(("build_range_proof()\n"));
@@ -467,7 +486,7 @@ void build_range_proof(RangeProof *proof, GHashTable *nodeid_table) {
 
 		curr_nodeid = *(ULONG *)(nodeid_list->data);
 
-		printf("curr_nodeid:%llu\n", curr_nodeid);
+		//printf("curr_nodeid:%llu\n", curr_nodeid);
 
 		/** nodeid */
 		proof->proof_nodeid_list[node_count] = curr_nodeid;
@@ -478,7 +497,7 @@ void build_range_proof(RangeProof *proof, GHashTable *nodeid_table) {
 		label_buffer = smysql_get_node_label(curr_nodeid);
 
 		if(label_buffer) {
-			printf("label exists!!\n");
+			//printf("label exists!!\n");
 			memcpy(proof->proof_label_list[node_count], label_buffer, LABEL_BUFFER_LEN);
 		}
 		else {
@@ -486,20 +505,6 @@ void build_range_proof(RangeProof *proof, GHashTable *nodeid_table) {
 		}
 		free(label_buffer);
 
-
-		//proof->proof_label_buffer_list[node_count] =
-
-		//proof->proof_label_buffer_list[node_count] = malloc(LABEL_BUFFER_LEN);
-		//smysql_get_node_info(curr_nodeid, &temp_answer, proof->proof_label_buffer_list[node_count]);
-
-		//printf("%llu, %u\n", proof->nodeid_list[node_count], proof->answer_list[node_count]);
-
-#if 1
-		if(curr_nodeid == (ULONG)7527202919) {
-			printf("**************** (%llu, %u)\n", curr_nodeid, node_count);
-			gsl_vector_fprintf (stdout, decode_vector_buffer(label_buffer, LABEL_BUFFER_LEN), "%f");
-		}
-#endif
 
 		node_count++;
 		nodeid_list = nodeid_list->next;
@@ -509,25 +514,15 @@ void build_range_proof(RangeProof *proof, GHashTable *nodeid_table) {
 }
 
 
-#if 0
-//UINT build_range_proof_path(ULONG start_nodeid, ULONG end_nodeid, ULONG *nodeid_list) {
-void build_range_proof_path(RangeProof *proof) {
-	UINT num_nodeid = 0;
-
-	num_nodeid = smysql_get_range_result(proof->start_nodeid, proof->end_nodeid, &(proof->nodeid_list), &(proof->answer_list), &(proof->label_buffer_list));
-}
-#endif
-
-
-void write_range_proof(RangeProof *proof) {
-	char filename[20];
+void write_range_proof(RangeProof *proof, UINT index) {
+	char filename[40];
 	FILE *fp;
 	UINT i = 0;
 
-	DEBUG_TRACE(("write_range_proof(%llu, %llu), num_answer(%u), num_proof(%u)\n", \
-			proof->start_nodeid, proof->end_nodeid, proof->num_answer_nodeid, proof->num_proof_nodeid));
+	DEBUG_TRACE(("write_range_proof(%u, %llu, %llu), num_answer(%u), num_proof(%u)\n", \
+			index, proof->start_nodeid, proof->end_nodeid, proof->num_answer_nodeid, proof->num_proof_nodeid));
 
-	sprintf(filename, "sads_range_proof.dat");
+	sprintf(filename, "./proof/sads_range_proof_%d.dat", index);
 	fp = fopen(filename, "wb");
 
 	/* Write start_nodeid, end_nodeid */
@@ -545,7 +540,6 @@ void write_range_proof(RangeProof *proof) {
 
 
 	/* Write label_buffer_list  */
-	//printf("write label_buffer_list\n");
 	for(i=0; i<proof->num_proof_nodeid; i++) {
 		fwrite(proof->proof_label_list[i], ELEMENT_LEN, LABEL_LEN, fp);
 	}
@@ -560,34 +554,6 @@ void write_range_proof(RangeProof *proof) {
 *	misc.
 *
 *********************************************************/
-#if 0
-gsl_vector* get_initial_label(BOOL isLeaf) {
-	if(isLeaf) {
-		return get_binary_representation(get_initial_digest(TRUE));
-	}
-	else {
-
-	}
-
-}
-
-
-ULONG get_nodeid(UINT ip_addr) {
-	return ((ULONG)1 << 32) + (ULONG)ip_addr;
-}
-
-
-
-UINT get_label_buffer_len() {
-	return LABEL_LEN * ELEMENT_LEN;
-}
-
-UINT get_digest_buffer_len() {
-	return DIGEST_LEN * ELEMENT_LEN;
-}
-#endif
-
-
 
 
 
@@ -596,91 +562,115 @@ UINT get_digest_buffer_len() {
 *	test functions
 *
 *********************************************************/
-void run_test(char* node_input_filename) {
+void run_membership_test(char* node_input_filename, int num_query) {
 	UINT num_nodes = 0;
 	UINT i = 0;
 	ULONG *node_list = read_node_input(node_input_filename, &num_nodes);
-	//MembershipProof *membership_proof;
-	RangeProof *range_proof;
+	MembershipProof *membership_proof;
 
-	DEBUG_TRACE(("Benchmark Test: num_nodes(%u)", num_nodes));
+    struct timeval  tv1, tv2;
+
+	DEBUG_TRACE(("Benchmark Test(Membership Query): num_nodes(%u)", num_nodes));
 
 	/** Prover Benchmark **/
 	/** update() **/
-#if 0
+	printf("update start\n");
+    gettimeofday(&tv1, NULL);
+
 	for(i=0; i<num_nodes; i++) {
 		update_prover(node_list[i]);
 	}
-#endif
+
+    gettimeofday(&tv2, NULL);
+    printf ("Total time = %f seconds\n",
+             (double) (tv2.tv_usec - tv1.tv_usec)/1000000 +
+             (double) (tv2.tv_sec - tv1.tv_sec));
+
 
 	/** query() **/
-#if 0
-	// Membership Proof
-	for(i=0; i<num_nodes; i++) {
+	printf("membership query start\n");
+    gettimeofday(&tv1, NULL);
+
+	for(i=0; i<num_query; i++) {
 		membership_proof = process_membership_query(node_list[i]);
 		write_membership_proof(membership_proof, i);
 	}
-#endif
 
-#if 1
-	if(num_nodes > 1) {
-		// Range Proof
-		range_proof = process_range_query(node_list[0], node_list[num_nodes-1]);
-		write_range_proof(range_proof);
+    gettimeofday(&tv2, NULL);
+    printf ("Total time = %f seconds\n",
+             (double) (tv2.tv_usec - tv1.tv_usec)/1000000 +
+             (double) (tv2.tv_sec - tv1.tv_sec));
+
+}
+
+
+void run_range_test(char* node_input_filename, int num_query) {
+	UINT num_nodes = 0;
+	UINT i = 0;
+	ULONG *node_list = read_node_input(node_input_filename, &num_nodes);
+	RangeProof *range_proof;
+
+    struct timeval  tv1, tv2;
+
+	DEBUG_TRACE(("Benchmark Test(Range Query): num_nodes(%u)", num_nodes));
+
+	/** Prover Benchmark **/
+	/** update() **/
+	printf("update start\n");
+    gettimeofday(&tv1, NULL);
+
+	for(i=0; i<num_nodes; i++) {
+		update_prover(node_list[i]);
 	}
-#endif
+
+    gettimeofday(&tv2, NULL);
+    printf ("Total time = %f seconds\n",
+             (double) (tv2.tv_usec - tv1.tv_usec)/1000000 +
+             (double) (tv2.tv_sec - tv1.tv_sec));
+
+
+	/** query() **/
+	printf("query start\n");
+    gettimeofday(&tv1, NULL);
+
+    if(num_nodes > 1) {
+    	ULONG start_nodeid, end_nodeid;
+
+    	for(i=0; i<num_query-1; i++) {
+    		if(node_list[i] < node_list[i+1]) {
+    			start_nodeid = node_list[i];
+    			end_nodeid = node_list[i+1];
+    		}
+    		else {
+    			start_nodeid = node_list[i+1];
+    			end_nodeid = node_list[i];
+    		}
+    		range_proof = process_range_query(start_nodeid, end_nodeid);
+
+    		if(range_proof)
+    			write_range_proof(range_proof, i);
+    	}
+	}
+
+    gettimeofday(&tv2, NULL);
+    printf ("Total time = %f seconds\n",
+             (double) (tv2.tv_usec - tv1.tv_usec)/1000000 +
+             (double) (tv2.tv_sec - tv1.tv_sec));
+
 }
 
 
-#if 0
-void testMatrix() {
-	gsl_matrix *A = gsl_matrix_alloc(k, m);
-
-	printf("testMatrix\n");
-	printf("%d %d\n", (int)L->size1, (int)L->size2);
-	printf("%d %d\n", (int)R->size1, (int)R->size2);
-	
-	gsl_blas_dgemm(CblasNoTrans, CblasTrans, 1.0, L, R, 0.0, A);
-	printf("%d %d\n", (int)A->size1, (int)A->size2);
-	
-	gsl_matrix_fprintf(stdout, A, "%f");
-}
-#endif
-
-
-#if 0
-void test_mysql() {
-		/*
-		////////////////////////////////
-		gsl_vector *digest2 = NULL, *label2 = NULL;
-		int digest_buffer_len = 0, label_buffer_len = 0;
-		
-		digest_buffer = encode_vector(digest);		
-		digest2 = decode_vector_blob(digest_buffer);
-		
-		printf("encode/decode verify: %d\n", gsl_vector_equal(digest, digest2));
-		printf("size verify:%d\n", get_vector_blob_size(digest_buffer));
-		
-
-		////////////////////////////////
-		label_buffer = encode_vector(label);		
-		label2 = decode_vector_blob(label_buffer);
-		
-		printf("encode/decode verify: %d\n", gsl_vector_equal(label, label2));
-		printf("size verify:%d\n", get_vector_blob_size(label_buffer));
-		*/		
-}
-#endif
-
-
+/*****************************************************************************
+*
+*	main()
+**
+*****************************************************************************/
 int main(int argc, char* argv[]) {
 
-	//Proof *proof = NULL;
-
 	printf("SADS Prover\n");
-	if(argc != 3)
+	if(argc != 5)
 	{
-		printf("Usage: ./sads_prover <params_filename> <nodes_input_filename>\n");
+		printf("Usage: ./sads_prover <params_filename> <nodes_input_filename> <test_mode> <num_query>\n");
 		exit(-1);
 	}
 	
@@ -688,32 +678,20 @@ int main(int argc, char* argv[]) {
 	init_prover(argv[1]);
 	smysql_init();
 
-	//nodeid = get_nodeid_from_string(argv[2]);
+	/** Benchmark **/
+	if(strcmp(argv[3], "membership") == 0) {
+		run_membership_test(argv[2], atoi(argv[4]));
+	}
+	else if(strcmp(argv[3], "range") == 0) {
+		run_range_test(argv[2], atoi(argv[4]));
+	}
+	else {
+		printf("<test mode>: membership / range\n");
+	}
 
-
-	/** update() **/
-	//update_prover(nodeid);
-
-
-	/** query() **/
-	//proof = process_membership_query(nodeid);
-	//write_proof(proof);
-
-
-	/** test **/
-	run_test(argv[2]);
 
 	return 0;
 }
-
-
-
-
-
-
-
-
-
 
 
 

@@ -3,7 +3,7 @@ LIBS=-lgsl -lgslcblas -lm
 #LIBS=-lgsl -lblas -latlas -lm
 LIBS_MYSQL=-L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -lz -lm -lrt -ldl
 
-DEBUG=-DSADS_DEBUG -g
+#DEBUG=-DSADS_DEBUG -g
 WARN=-Wall
 
 all: param_generator.o prover.o verifier.o
