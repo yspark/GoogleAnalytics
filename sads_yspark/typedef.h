@@ -29,9 +29,10 @@ typedef enum {
 typedef struct MembershipProof_Struct {
 	ULONG query_nodeid;
 	UINT answer;
-	//UINT nodeid_num;
-	//ULONG *nodeid_list;
-	char **label_list;
+
+	UINT num_proof_nodeid;
+	ULONG *proof_nodeid_list;
+	char **proof_label_list;
 } MembershipProof;
 
 typedef struct RangeProof_Struct {

@@ -264,37 +264,54 @@ gsl_vector *get_digest_from_label(gsl_vector *label) {
 *
 *****************************************************************************/
 MembershipProof *process_membership_query(ULONG nodeid) {
-	MembershipProof *proof;
-	ULONG nodeid_list[(get_tree_height()-1)*2];
-	UINT nodeid_num = (get_tree_height()-1)*2;
-	UINT i = 0;
+	MembershipProof *proof = malloc(sizeof(MembershipProof));;
+	GList *proof_nodeid_list = NULL;
+	UINT node_count = 0;
+	UINT num_proof_node = 0;
+	ULONG curr_nodeid = 0;
 	char *label_buffer = NULL;
 
-	/** 1. get nodeids on the path.  Build proof->nodeid_num, proof->nodeid_list **/
-	ULONG child_of_root_nodeid = nodeid >> (get_number_of_bits(nodeid)-2);
-
+	/** 1. get nodeids of all relevant leaf/intermediate nodes in the tree. **/
 	DEBUG_TRACE(("process_membership_query(%llu)\n", nodeid));
 
-	build_membership_proof_path(child_of_root_nodeid, nodeid, nodeid_num, nodeid_list);
-	DEBUG_TRACE(("build_membership_proof_path done (%llu, %llu, %u)\n", child_of_root_nodeid, nodeid, nodeid_num));
+	proof_nodeid_list = build_membership_proof_path(nodeid);
 
-	proof = malloc(sizeof(MembershipProof));
+	/** 3. build proof of the membership query **/
+	// query_nodeid, answer
 	proof->query_nodeid = nodeid;
 	proof->answer = smysql_get_leaf_val(nodeid);
 
-	/** 2. get labels of nodes included in proof->nodeid_list **/
-	proof->label_list = malloc(nodeid_num * sizeof(char *));
-	for(i=0; i < nodeid_num; i++) {
-		proof->label_list[i] = malloc(LABEL_BUFFER_LEN);
 
-		label_buffer = smysql_get_node_label(nodeid_list[i]);
 
-		if(label_buffer != NULL) {
-			memcpy(proof->label_list[i], label_buffer, LABEL_BUFFER_LEN);
+	// proof
+	num_proof_node = g_list_length(proof_nodeid_list);
+	proof->num_proof_nodeid = num_proof_node;
+	proof->proof_nodeid_list = malloc(sizeof(ULONG) * num_proof_node);
+	proof->proof_label_list = malloc(sizeof(char *) * num_proof_node);
+
+	while(proof_nodeid_list) {
+		curr_nodeid = *(ULONG *)(proof_nodeid_list->data);
+
+		//printf("curr_nodeid:%llu\n", curr_nodeid);
+
+		proof->proof_nodeid_list[node_count] = curr_nodeid;
+
+		proof->proof_label_list[node_count] = malloc(LABEL_BUFFER_LEN);
+
+		label_buffer = smysql_get_node_label(curr_nodeid);
+		if(label_buffer) {
+			//printf("label\n");
+			memcpy(proof->proof_label_list[node_count], label_buffer, LABEL_BUFFER_LEN);
 		}
 		else {
-			memset(proof->label_list[i], 0, LABEL_BUFFER_LEN);
+			//printf("empty\n");
+			memset(proof->proof_label_list[node_count], 0, LABEL_BUFFER_LEN);
 		}
+
+		free(label_buffer);
+
+		node_count++;
+		proof_nodeid_list = proof_nodeid_list->next;
 	}
 
 	/** 3. return proof **/
@@ -302,24 +319,24 @@ MembershipProof *process_membership_query(ULONG nodeid) {
 }
 
 
-void build_membership_proof_path(ULONG child_of_root_nodeid, ULONG leaf_nodeid, UINT nodeid_num, ULONG *nodeid_list) {
-	UINT i = 0;
+GList *build_membership_proof_path(ULONG leaf_nodeid) {
+	GList *proof_nodeid_list = NULL;
 	ULONG curr_nodeid = leaf_nodeid;
 
-	DEBUG_TRACE(("build_proof_path(%llu, %llu, %u).\n", child_of_root_nodeid, leaf_nodeid, nodeid_num));
+	DEBUG_TRACE(("build_proof_path(%llu).\n", leaf_nodeid));
 
-	for(i=0; i < nodeid_num; i+=2) {
-		if(child_of_root_nodeid > curr_nodeid) {
-			printf("Error build_proof_path(%llu, %llu): (%u, %llu)\n", child_of_root_nodeid, leaf_nodeid, i, curr_nodeid);
-			exit(1);
-		}
+	while(curr_nodeid > 1) {
+		proof_nodeid_list = g_list_append(proof_nodeid_list, \
+									g_memdup(&curr_nodeid, sizeof(curr_nodeid)));
 
-		nodeid_list[i] = curr_nodeid;
-		nodeid_list[i+1] = (curr_nodeid ^ (ULONG)1);
+		curr_nodeid = (curr_nodeid ^ (ULONG)1);
+		proof_nodeid_list = g_list_append(proof_nodeid_list, \
+									g_memdup(&curr_nodeid, sizeof(curr_nodeid)));
 
 		curr_nodeid = curr_nodeid >> 1;
-
 	}
+
+	return proof_nodeid_list;
 }
 
 
@@ -327,23 +344,30 @@ void write_membership_proof(MembershipProof *proof, UINT index) {
 	char filename[40];
 	FILE *fp;
 	UINT i = 0;
-	UINT label_num = (get_tree_height()-1) * 2;
 
 	DEBUG_TRACE(("write_membership_proof(%d)\n", index));
-
 
 	sprintf(filename, "./proof/sads_membership_proof_%d.dat", index);
 	fp = fopen(filename, "wb");
 
-	DEBUG_TRACE(("nodeid:%llu\n", proof->query_nodeid));
+	// query_nodeid
 	fwrite(&(proof->query_nodeid), sizeof(ULONG), 1, fp);
 
-	DEBUG_TRACE(("answer:%u\n", proof->answer));
+	// answer
 	fwrite(&(proof->answer), sizeof(UINT), 1, fp);
 
+	// num_proof_nodeid
+	fwrite(&(proof->num_proof_nodeid), sizeof(UINT), 1, fp);
 
-	for(i=0; i<label_num; i++) {
-		fwrite(proof->label_list[i], ELEMENT_LEN, LABEL_LEN, fp);
+	//ULONG *proof_nodeid_list;
+	fwrite(proof->proof_nodeid_list, sizeof(ULONG), proof->num_proof_nodeid, fp);
+
+	//char **proof_label_list;
+	for(i=0; i<proof->num_proof_nodeid; i++) {
+		fwrite(proof->proof_label_list[i], LABEL_BUFFER_LEN, 1, fp);
+
+		//printf("*****%d:%llu\n", i, proof->proof_nodeid_list[i]);
+		//gsl_vector_fprintf(stdout, decode_vector_buffer(proof->proof_label_list[i], LABEL_BUFFER_LEN), "%f");
 	}
 
 	fclose(fp);
@@ -579,6 +603,7 @@ void run_membership_test(char* node_input_filename, int num_query) {
 
 	for(i=0; i<num_nodes; i++) {
 		update_prover(node_list[i]);
+		printf("%d/%d done.\n", i+1, num_nodes);
 	}
 
     gettimeofday(&tv2, NULL);
@@ -594,6 +619,7 @@ void run_membership_test(char* node_input_filename, int num_query) {
 	for(i=0; i<num_query; i++) {
 		membership_proof = process_membership_query(node_list[i]);
 		write_membership_proof(membership_proof, i);
+		printf("%d/%d done.\n", i+1, num_query);
 	}
 
     gettimeofday(&tv2, NULL);
@@ -621,6 +647,7 @@ void run_range_test(char* node_input_filename, int num_query) {
 
 	for(i=0; i<num_nodes; i++) {
 		update_prover(node_list[i]);
+		printf("%d/%d done.\n", i, num_nodes);
 	}
 
     gettimeofday(&tv2, NULL);
@@ -649,6 +676,8 @@ void run_range_test(char* node_input_filename, int num_query) {
 
     		if(range_proof)
     			write_range_proof(range_proof, i);
+
+    		printf("%d/%d done.\n", i, num_nodes);
     	}
 	}
 
@@ -689,7 +718,7 @@ int main(int argc, char* argv[]) {
 		printf("<test mode>: membership / range\n");
 	}
 
-
+	printf("prover done\n");
 	return 0;
 }
 

@@ -33,7 +33,7 @@ gsl_vector *get_digest_from_label(gsl_vector *label);
 
 /** Membership Query **/
 MembershipProof *process_membership_query(ULONG nodeid);
-void build_membership_proof_path(ULONG child_of_root_nodeid, ULONG leaf_nodeid, UINT nodeid_num, ULONG *nodeid_list);
+GList *build_membership_proof_path(ULONG leaf_nodeid);
 void write_membership_proof(MembershipProof *proof, UINT index);
 
 /** Range Query **/

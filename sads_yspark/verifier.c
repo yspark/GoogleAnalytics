@@ -87,24 +87,55 @@ void update_root_digest(gsl_vector *partial_digest) {
 BOOL verify_membership_proof(MembershipProof *proof) {
 	UINT i = 0;
 	ULONG nodeid = proof->query_nodeid;
+	ULONG rchild_nodeid = 0, lchild_nodeid = 0;
+	UINT nodeid_index = 0;
+	UINT rchild_nodeid_index = 0, lchild_nodeid_index = 0;
+
 	gsl_vector *y = NULL;
-	gsl_vector *label_lchild = NULL, *label_rchild = NULL;
+	gsl_vector *label_rchild = NULL, *label_lchild = NULL;
 	gsl_vector *partial_digest_lchild = gsl_vector_alloc(DIGEST_LEN);
 	gsl_vector *partial_digest_rchild = gsl_vector_alloc(DIGEST_LEN);
 
+	GHashTable *nodeid_table  = g_hash_table_new(g_int64_hash, g_int64_equal);
+
 	DEBUG_TRACE(("verify proof: (%llu)\n", proof->query_nodeid));
+
+
+	/** build proof_nodeid hash table */
+	for(i=0; i<proof->num_proof_nodeid; i++) {
+		g_hash_table_insert (nodeid_table,
+							g_memdup(&proof->proof_nodeid_list[i], sizeof(ULONG)),
+							g_memdup(&i, sizeof(UINT)));
+	}
+
+	/** verify leaf node */
+	nodeid = proof->query_nodeid;
+	nodeid_index = *(UINT *)(g_hash_table_lookup(nodeid_table, &nodeid));
+
+	DEBUG_TRACE(("verify leaf label (%llu:%u)\n", nodeid, nodeid_index));
+
+	y = get_initial_digest(TRUE);
+	gsl_vector_scale(y, (double)proof->answer);
+
+	if(!verify_radix(y, decode_vector_buffer(proof->proof_label_list[nodeid_index], LABEL_BUFFER_LEN))) {
+			DEBUG_TRACE(("Leaf node verification failed: nodeid(%llu, %u)\n", nodeid, nodeid_index));
+			return FALSE;
+	}
+
 
 	/** verify root digest **/
 	DEBUG_TRACE(("verify root digest: (%llu)\n", proof->query_nodeid));
 
-	if(nodeid & (1 << (UNIVERSE_SIZE_IN_BIT-2))) {
-		label_rchild =  decode_vector_buffer(proof->label_list[(get_tree_height()-1) * 2 - 2], LABEL_BUFFER_LEN);
-		label_lchild =  decode_vector_buffer(proof->label_list[(get_tree_height()-1) * 2 - 1], LABEL_BUFFER_LEN);
-	}
-	else {
-		label_lchild =  decode_vector_buffer(proof->label_list[(get_tree_height()-1) * 2 - 2], LABEL_BUFFER_LEN);
-		label_rchild =  decode_vector_buffer(proof->label_list[(get_tree_height()-1) * 2 - 1], LABEL_BUFFER_LEN);
-	}
+	lchild_nodeid = 2;
+	rchild_nodeid = 3;
+
+	lchild_nodeid_index = *(UINT *)(g_hash_table_lookup(nodeid_table, &lchild_nodeid));
+	rchild_nodeid_index = *(UINT *)(g_hash_table_lookup(nodeid_table, &rchild_nodeid));
+
+	DEBUG_TRACE(("lchild(%llu, %u), rchild(%llu, %u)\n", lchild_nodeid, lchild_nodeid_index, rchild_nodeid, rchild_nodeid_index));
+
+	label_rchild = decode_vector_buffer(proof->proof_label_list[rchild_nodeid_index], LABEL_BUFFER_LEN);
+	label_lchild = decode_vector_buffer(proof->proof_label_list[lchild_nodeid_index], LABEL_BUFFER_LEN);
 
 	gsl_blas_dgemv(CblasNoTrans,\
 			1.0, \
@@ -128,64 +159,60 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 
 	if(!gsl_vector_equal(y, root_digest)) {
 		DEBUG_TRACE(("Verification failed: root_digest\n"));
+
+		printf("y\n");
+		gsl_vector_fprintf(stdout, y, "%f");
+		printf("root_digest\n");
+		gsl_vector_fprintf(stdout, root_digest, "%f");
+
+
 		return FALSE;
 	}
 
 
-	/** verify whole proof **/
-	for(i=0; i<(get_tree_height()-1) * 2; i+=2) {
-		if(i == 0) {
-			y = get_initial_digest(TRUE);
+	/** Verify intermediate node labels */
+	nodeid = nodeid >> 1;
 
-			DEBUG_TRACE(("verify leaf label\n"));
+	while(nodeid > 1) {
+		nodeid_index = *(UINT *)(g_hash_table_lookup(nodeid_table, &nodeid));
 
-			gsl_vector_scale(y, (double)proof->answer);
+		DEBUG_TRACE(("verify intermediate label (%llu:%u)\n", nodeid, nodeid_index));
 
-			if(!verify_radix(y, decode_vector_buffer(proof->label_list[i], LABEL_BUFFER_LEN))) {
-					DEBUG_TRACE(("Verification failed: leaf(%d)\n", i));
-					return FALSE;
-			}
-		}
-		else {
+		rchild_nodeid = (nodeid << 1) + 1;
+		lchild_nodeid = nodeid << 1;
 
-			DEBUG_TRACE(("verify intermediate label(%u)\n", i));
+		rchild_nodeid_index = *(UINT *)(g_hash_table_lookup(nodeid_table, &rchild_nodeid));
+		lchild_nodeid_index = *(UINT *)(g_hash_table_lookup(nodeid_table, &lchild_nodeid));
 
-			if(nodeid & (1 << (i/2-1))) {
-				label_rchild = decode_vector_buffer(proof->label_list[i-2], LABEL_BUFFER_LEN);
-				label_lchild = decode_vector_buffer(proof->label_list[i-1], LABEL_BUFFER_LEN);
-			}
-			else {
-				label_lchild = decode_vector_buffer(proof->label_list[i-2], LABEL_BUFFER_LEN);
-				label_rchild = decode_vector_buffer(proof->label_list[i-1], LABEL_BUFFER_LEN);
-			}
+		label_rchild = decode_vector_buffer(proof->proof_label_list[rchild_nodeid_index], LABEL_BUFFER_LEN);
+		label_lchild = decode_vector_buffer(proof->proof_label_list[lchild_nodeid_index], LABEL_BUFFER_LEN);
 
-			gsl_blas_dgemv(CblasNoTrans,\
-					1.0, \
-					L, \
-					label_lchild, \
-					0.0, \
-					partial_digest_lchild);
+		gsl_blas_dgemv(CblasNoTrans,\
+				1.0, \
+				L, \
+				label_lchild, \
+				0.0, \
+				partial_digest_lchild);
 
-			gsl_blas_dgemv(CblasNoTrans,\
-					1.0, \
-					R, \
-					label_rchild, \
-					0.0, \
-					partial_digest_rchild);
+		gsl_blas_dgemv(CblasNoTrans,\
+				1.0, \
+				R, \
+				label_rchild, \
+				0.0, \
+				partial_digest_rchild);
 
-			gsl_vector_add(partial_digest_lchild, partial_digest_rchild);
+		gsl_vector_add(partial_digest_lchild, partial_digest_rchild);
 
-			y = partial_digest_lchild;
-			mod_q(y, q);
-
-			if(!verify_radix(y, decode_vector_buffer(proof->label_list[i], LABEL_BUFFER_LEN))) {
-				DEBUG_TRACE(("Verification failed(%d)\n", i));
-				return FALSE;
-			}
+		y = partial_digest_lchild;
+		mod_q(y, q);
 
 
+		if(!verify_radix(y, decode_vector_buffer(proof->proof_label_list[nodeid_index], LABEL_BUFFER_LEN))) {
+			DEBUG_TRACE(("Verification failed(%llu, %u)\n", nodeid, nodeid_index));
+			return FALSE;
 		}
 
+		nodeid = nodeid >> 1;
 	}
 
 	return TRUE;
@@ -196,7 +223,6 @@ MembershipProof *read_membership_proof(UINT index) {
 	char filename[40];
 	FILE *fp;
 	UINT i = 0;
-	UINT label_num = (get_tree_height()-1) * 2;
 	MembershipProof *proof = NULL;
 
 	DEBUG_TRACE(("read_proof(%d)\n", index));
@@ -210,18 +236,26 @@ MembershipProof *read_membership_proof(UINT index) {
 	}
 
 	proof = malloc(sizeof(MembershipProof));
+
+	/* query_nodeid, answer, num_proof_nodeid */
 	fread(&proof->query_nodeid, sizeof(ULONG), 1, fp);
 	fread(&proof->answer, sizeof(UINT), 1, fp);
+	fread(&proof->num_proof_nodeid, sizeof(UINT), 1, fp);
 
 	DEBUG_TRACE(("proof->query_nodeid(%llu)\n", proof->query_nodeid));
 	DEBUG_TRACE(("proof->answer(%u)\n", proof->answer));
+	DEBUG_TRACE(("proof->num_proof_nodeid(%u)\n", proof->num_proof_nodeid));
 
+	/* nodeid_list */
+	proof->proof_nodeid_list = malloc(sizeof(ULONG) * proof->num_proof_nodeid);
+	fread(proof->proof_nodeid_list, sizeof(ULONG), proof->num_proof_nodeid, fp);
 
-	proof->label_list = malloc(((get_tree_height()-1) * 2) * sizeof(char *));
+	/* label_list */
+	proof->proof_label_list = malloc(sizeof(char *) * proof->num_proof_nodeid);
 
-	for(i=0; i<label_num; i++) {
-		proof->label_list[i] = malloc(LABEL_BUFFER_LEN);
-		fread(proof->label_list[i], ELEMENT_LEN, LABEL_LEN, fp);
+	for(i=0; i<proof->num_proof_nodeid; i++) {
+		proof->proof_label_list[i] = malloc(LABEL_BUFFER_LEN);
+		fread(proof->proof_label_list[i], ELEMENT_LEN, LABEL_LEN, fp);
 	}
 
 	fclose(fp);
@@ -426,7 +460,6 @@ BOOL verify_radix(gsl_vector *y, gsl_vector *label) {
 			printf("label\n");
 			gsl_vector_fprintf(stdout, label, "%f");
 
-
 			return FALSE;
 		}
 	}
@@ -458,6 +491,7 @@ void run_membership_test(char* node_input_filename, int num_query) {
 
 	for(i=0; i<num_nodes; i++) {
 		update_verifier(node_list[i]);
+		printf("%d/%d done.\n", i+1, num_nodes);
 	}
 
 	gettimeofday(&tv2, NULL);
@@ -473,8 +507,13 @@ void run_membership_test(char* node_input_filename, int num_query) {
 		membership_proof = read_membership_proof(i);
 
 		if(!verify_membership_proof(membership_proof)) {
-			DEBUG_TRACE(("Membership proof: Verification failed(%d)\n", i));
+			//DEBUG_TRACE(("Membership proof: Verification failed(%d)\n", i));
+			printf("%d/%d verification failed(%d)\n", i+1, num_query, i);
 		}
+		else {
+			printf("%d/%d done.\n", i+1, num_query);
+		}
+
 	}
 
     gettimeofday(&tv2, NULL);

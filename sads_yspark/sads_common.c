@@ -112,7 +112,15 @@ ULONG get_nodeid_from_string(char *ip_addr) {
 
 
 int get_number_of_bits(ULONG nodeid) {
-	return floor(log2(nodeid)) + 1;
+	UINT i = 0;
+
+	for(i=UNIVERSE_SIZE_IN_BIT; i>=0; i--) {
+		if(nodeid & ((ULONG)1 << i))
+			break;
+	}
+	return(i+1);
+
+	//return floor(log2(nodeid)) + 1;
 }
 
 void mod_q(gsl_vector *vector, UINT q) {

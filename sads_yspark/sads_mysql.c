@@ -179,7 +179,7 @@ char *smysql_get_node_label(ULONG nodeid) {
 	if(result_row != NULL) {
 		lengths = mysql_fetch_lengths(result);
 
-		DEBUG_TRACE(("MYSQL_RES rows(%d), num_field(%u), length(%u)\n", (UINT)mysql_num_rows(result), (UINT)num_fields, (UINT)lengths[0]));
+		DEBUG_TRACE(("MYSQL_RES rows(%d), length(%u)\n", (UINT)mysql_num_rows(result), (UINT)lengths[0]));
 
 		if(lengths[0]) {
 			if(lengths[0] != LABEL_BUFFER_LEN) {
@@ -209,7 +209,7 @@ void smysql_get_leaf_nodeids_in_range(ULONG start_nodeid, ULONG end_nodeid, GHas
 	sprintf(query, "SELECT nodeid FROM sads_tree WHERE nodeid>=%llu AND nodeid <=%llu", start_nodeid, end_nodeid);
 	result = smysql_query(query);
 
-	DEBUG_TRACE(("smysql_get_leaf_nodeids_in_range(%llu, %llu): %u\n", start_nodeid, end_nodeid, num_rows));
+	DEBUG_TRACE(("smysql_get_leaf_nodeids_in_range(%llu, %llu)\n", start_nodeid, end_nodeid));
 
 	while((result_row = mysql_fetch_row(result))) {
 		nodeid = strtoull(result_row[0], NULL, 10);
@@ -239,7 +239,7 @@ void smysql_get_node_info(ULONG nodeid, UINT *value, char *label_buffer) {
 	if(result_row != NULL) {
 		lengths = mysql_fetch_lengths(result);
 
-		DEBUG_TRACE(("MYSQL_RES rows(%d), num_field(%u), length(%u, %u)\n", (UINT)mysql_num_rows(result), (UINT)num_fields, (UINT)lengths[0], (UINT)lengths[1]));
+		DEBUG_TRACE(("MYSQL_RES rows(%d), length(%u, %u)\n", (UINT)mysql_num_rows(result), (UINT)lengths[0], (UINT)lengths[1]));
 
 		/** Node label **/
 		if(lengths[0]) {
