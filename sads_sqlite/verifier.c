@@ -206,13 +206,6 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 		y = partial_digest_lchild;
 		mod_q(y, q);
 
-		/*
-		printf("=============================================\n");
-		gsl_vector_fprintf(stdout, y, "%f");
-		printf("======================\n");
-		gsl_vector_fprintf(stdout, decode_vector_buffer(proof->proof_label_list[nodeid_index], LABEL_BUFFER_LEN), "%f");
-		printf("=============================================\n");
-		*/
 
 		if(!verify_radix(y, decode_vector_buffer(proof->proof_label_list[nodeid_index], LABEL_BUFFER_LEN))) {
 			DEBUG_TRACE(("Verification failed(%llu, %u)\n", nodeid, nodeid_index));
@@ -270,7 +263,7 @@ MembershipProof *read_membership_proof(UINT index) {
 	return proof;
 }
 
-#if 0
+
 /*****************************************************************************
 *
 *	range verify()
@@ -422,7 +415,7 @@ RangeProof *read_range_proof(UINT index) {
 
 	return proof;
 }
-#endif
+
 
 
 /********************************************************
@@ -529,7 +522,7 @@ void run_membership_test(char* node_input_filename, int num_query) {
              (double) (tv2.tv_sec - tv1.tv_sec));
 }
 
-#if 0
+
 void run_range_test(char* node_input_filename, int num_query) {
 	UINT num_nodes = 0;
 	UINT i = 0;
@@ -572,7 +565,7 @@ void run_range_test(char* node_input_filename, int num_query) {
              (double) (tv2.tv_usec - tv1.tv_usec)/1000000 +
              (double) (tv2.tv_sec - tv1.tv_sec));
 }
-#endif
+
 
 
 
@@ -599,11 +592,9 @@ int main(int argc, char* argv[]) {
 	if(strcmp(argv[3], "membership") == 0) {
 		run_membership_test(argv[2], atoi(argv[4]));
 	}
-#if 0
 	else if(strcmp(argv[3], "range") == 0) {
 		run_range_test(argv[2], atoi(argv[4]));
 	}
-#endif
 	else {
 		printf("<test mode>: membership / range\n");
 	}
