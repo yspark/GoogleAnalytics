@@ -13,6 +13,13 @@
 #define LONG long long
 #define BOOL int
 
+#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef FALSE
+#define FALSE 0
+#endif
+
 #ifdef SADS_DEBUG
 #define DEBUG_TRACE(X) printf X
 #else

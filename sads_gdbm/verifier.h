@@ -3,7 +3,7 @@
 
 #include "sads_common.h"
 #include "typedef.h"
-#include "sads_mysql.h"		// necessary for TRUE/FALSE
+#include <glib.h>
 
 /***********************************************************
 *	Typedefs
