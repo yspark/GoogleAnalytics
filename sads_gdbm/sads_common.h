@@ -19,6 +19,8 @@
 #define DIGEST_BUFFER_LEN (DIGEST_LEN*ELEMENT_LEN)
 
 
+#define check_retVal(retVal) { if(!retVal) {printf("invalid retVal\n"); exit(-1);}}
+
 /***********************************************************
 *	Parameters, Matrices, Vectors
 ************************************************************/
@@ -57,6 +59,8 @@ UINT get_tree_height();
 
 char *encode_vector(gsl_vector  *vector);
 gsl_vector *decode_vector_buffer(char *buffer, UINT size);
+
+void free_membership_proof(MembershipProof *proof);
 
 
 /** Benchmark **/

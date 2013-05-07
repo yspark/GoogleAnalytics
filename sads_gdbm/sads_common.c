@@ -4,24 +4,21 @@
 #include "sads_common.h"
 
 
-#define check_fscanf_ret(retVal) { if(!retVal) {printf("invalid fscanf\n"); exit(-1);}}
-
-
 /** initialize **/
 void read_params(char* filename) {
 	FILE *fp = fopen(filename, "r");
 	int retVal;
 
 	retVal = fscanf(fp, "%d", &k);
-	check_fscanf_ret(retVal);
+	check_retVal(retVal);
 	retVal = fscanf(fp, "%d", &n);
-	check_fscanf_ret(retVal)
+	check_retVal(retVal)
 	retVal = fscanf(fp, "%d", &q);
-	check_fscanf_ret(retVal)
+	check_retVal(retVal)
 	retVal = fscanf(fp, "%d", &mu);
-	check_fscanf_ret(retVal)
+	check_retVal(retVal)
 	retVal = fscanf(fp, "%d", &beta);
-	check_fscanf_ret(retVal)
+	check_retVal(retVal)
 
 	m = mu / 2;
 	log_q_ceil = ceil(log2(q));
@@ -221,6 +218,21 @@ gsl_vector *decode_vector_buffer(char *buffer, UINT size) {
 	//printf("size:%u, vec_len:%u, ele_len:%f, max:%f\n", size, ceil(size / ELEMENT_LEN), ELEMENT_LEN, gsl_vector_max(vector));
 
 	return vector;
+}
+
+
+
+void free_membership_proof(MembershipProof *proof) {
+	int i;
+
+	free(proof->proof_nodeid_list);
+
+	for(i=0; i<proof->num_proof_nodeid; i++) {
+		free(proof->proof_label_list[i]);
+	}
+
+	free(proof->proof_label_list);
+	free(proof);
 }
 
 

@@ -628,17 +628,7 @@ void write_range_proof(RangeProof *proof, UINT index) {
 *	misc.
 *
 *********************************************************/
-void free_membership_proof(MembershipProof *proof) {
-	int i;
 
-	free(proof->proof_nodeid_list);
-
-	for(i=0; i<proof->num_proof_nodeid; i++) {
-		free(proof->proof_label_list[i]);
-	}
-
-	free(proof);
-}
 
 
 /********************************************************
