@@ -44,6 +44,8 @@ void build_range_proof(RangeProof *proof, GHashTable *nodeid_table);
 void write_range_proof(RangeProof *proof, UINT index);
 
 /** Misc **/
+void free_membership_proof(MembershipProof *proof);
+
 void verify_label(ULONG nodeid, gsl_vector *label);
 gsl_vector *get_digest_from_label(gsl_vector *label);
 

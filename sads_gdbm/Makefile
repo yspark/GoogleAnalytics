@@ -4,7 +4,7 @@ LIBS=-lgsl -lgslcblas -lm
 #LIBS_MYSQL=-L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -lz -lm -lrt -ldl
 LIBS_GDBM=-lgdbm
 
-DEBUG=-DSADS_DEBUG -g
+#DEBUG=-DSADS_DEBUG -g
 #PROFILE=-g -pg
 WARN=-Wall
 

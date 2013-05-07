@@ -3,15 +3,25 @@
 
 #include "sads_common.h"
 
+
+#define check_fscanf_ret(retVal) { if(!retVal) {printf("invalid fscanf\n"); exit(-1);}}
+
+
 /** initialize **/
 void read_params(char* filename) {
 	FILE *fp = fopen(filename, "r");
+	int retVal;
 
-	fscanf(fp, "%d", &k);
-	fscanf(fp, "%d", &n);
-	fscanf(fp, "%d", &q);
-	fscanf(fp, "%d", &mu);
-	fscanf(fp, "%d", &beta);
+	retVal = fscanf(fp, "%d", &k);
+	check_fscanf_ret(retVal);
+	retVal = fscanf(fp, "%d", &n);
+	check_fscanf_ret(retVal)
+	retVal = fscanf(fp, "%d", &q);
+	check_fscanf_ret(retVal)
+	retVal = fscanf(fp, "%d", &mu);
+	check_fscanf_ret(retVal)
+	retVal = fscanf(fp, "%d", &beta);
+	check_fscanf_ret(retVal)
 
 	m = mu / 2;
 	log_q_ceil = ceil(log2(q));
@@ -30,15 +40,17 @@ void read_params(char* filename) {
 gsl_vector *get_initial_digest(BOOL isLeaf) {
 
 	gsl_vector *digest = gsl_vector_alloc(DIGEST_LEN);
-	int i = 0;
+	//int i = 0;
 
 	if(isLeaf) {
-	  for (i = 0; i < DIGEST_LEN; i++)
-			gsl_vector_set(digest, i, 1);
+		gsl_vector_set_all(digest, 1);
+		//for (i = 0; i < DIGEST_LEN; i++)
+		//	gsl_vector_set(digest, i, 1);
 	}
 	else {
-	  for (i = 0; i < DIGEST_LEN; i++)
-			gsl_vector_set(digest, i, 0);
+		gsl_vector_set_all(digest, 0);
+		//for (i = 0; i < DIGEST_LEN; i++)
+		//	gsl_vector_set(digest, i, 0);
 	}
 
 	DEBUG_TRACE(("get_initial_digest(%d)\n", isLeaf));
@@ -48,12 +60,20 @@ gsl_vector *get_initial_digest(BOOL isLeaf) {
 
 
 gsl_vector *get_initial_label(BOOL isLeaf) {
-#if 0
-	printf("***get_initial_label\n");
-	gsl_vector_fprintf(stdout, get_binary_representation(get_initial_digest(isLeaf)), "%f");
-#endif
+	gsl_vector *label = NULL;
 
-	return get_binary_representation(get_initial_digest(isLeaf));
+	if(isLeaf) {
+		gsl_vector *digest = get_initial_digest(isLeaf);
+		label = get_binary_representation(digest);
+
+		gsl_vector_free(digest);
+	}
+	else {
+		label = gsl_vector_alloc(LABEL_LEN);
+		gsl_vector_set_all(label, 0);
+	}
+
+	return label;
 }
 
 
@@ -212,12 +232,16 @@ ULONG *read_node_input(char *node_input_filename, UINT *num_nodes) {
 	ULONG *node_list = NULL;
 	char ip_addr[16];
 
-	fscanf(fp, "%d", num_nodes);
+	if(!fscanf(fp, "%d", num_nodes)) {
+		printf("read_node_input(): scanf error1\n");
+	}
 
-	node_list = malloc(*num_nodes * sizeof(ULONG));
+	node_list = malloc((*num_nodes) * sizeof(ULONG));
 
-	for(i=0; i<*num_nodes; i++) {
-		fscanf(fp, "%s", ip_addr);
+	for(i=0; i<(*num_nodes); i++) {
+		if(!fscanf(fp, "%s", ip_addr)) {
+			printf("read_node_input(): scanf error2\n");
+		}
 		node_list[i] = get_nodeid_from_string(ip_addr);
 	}
 

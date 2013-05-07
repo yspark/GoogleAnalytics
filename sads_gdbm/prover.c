@@ -45,33 +45,48 @@ void update_prover(ULONG nodeid) {
 UINT update_leaf(ULONG nodeid) {
 	UINT curr_count = 0;
 
+	gsl_vector *init_label = get_initial_label(TRUE);
+	gsl_vector *label = NULL;
+	char *label_buffer = NULL;
+
 	curr_count = sgdbm_get_leaf_val(nodeid);
 
 	/** Add a new leaf node */
 	if(curr_count == 0) {
+		label_buffer = encode_vector(init_label);
+
 		DEBUG_TRACE(("update_leaf: add a new leaf(%llu)\n", nodeid));
 		sgdbm_insert_value(nodeid, 1);
-		sgdbm_insert_label(nodeid, encode_vector(get_initial_label(TRUE)), (UINT)LABEL_BUFFER_LEN);
+		sgdbm_insert_label(nodeid, label_buffer, (UINT)LABEL_BUFFER_LEN);
 	}
 	/** Update an existing leaf node */
 	else {
 		DEBUG_TRACE(("update_leaf: update a leaf(%llu)\n", nodeid));
 
-		gsl_vector *label = decode_vector_buffer(sgdbm_get_node_label(nodeid), LABEL_BUFFER_LEN);
-		gsl_vector *init_label = get_initial_label(TRUE);
+		label_buffer = sgdbm_get_node_label(nodeid);
+		label = decode_vector_buffer(label_buffer, LABEL_BUFFER_LEN);
+		free(label_buffer);
 
 		if(label) {
-			gsl_vector_add(label, get_initial_label(TRUE));
+			gsl_vector_add(label, init_label);
 		}
 		else {
 			DEBUG_TRACE(("IT SHOULD BE UNREACHABLE\n"));
 			label = init_label;
 		}
 
-		//sgdbm_update_node(nodeid, curr_count+1, encode_vector(label), (UINT)LABEL_BUFFER_LEN, TRUE);
+		label_buffer = encode_vector(label);
 		sgdbm_insert_value(nodeid, curr_count+1);
-		sgdbm_insert_label(nodeid, encode_vector(label), (UINT)LABEL_BUFFER_LEN);
+		sgdbm_insert_label(nodeid, label_buffer, (UINT)LABEL_BUFFER_LEN);
+
+
+
 	}
+
+	/** memory free */
+	if(label) gsl_vector_free(label);
+	if(init_label) gsl_vector_free(init_label);
+	if(label_buffer) free(label_buffer);
 
 	return (curr_count+1);
 }
@@ -81,10 +96,12 @@ UINT update_leaf(ULONG nodeid) {
  */
 void update_path_labels(ULONG nodeid) {
 	ULONG child_of_root_nodeid = nodeid >> (get_number_of_bits(nodeid)-2);
+	gsl_vector *result = NULL;
 
 	DEBUG_TRACE(("update_path_labels(%llu, %llu)\n", child_of_root_nodeid, nodeid));
 
-	update_partial_label(child_of_root_nodeid, nodeid);
+	result = update_partial_label(child_of_root_nodeid, nodeid);
+	gsl_vector_free(result);
 }
 
 
@@ -94,6 +111,8 @@ void update_path_labels(ULONG nodeid) {
 gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 	gsl_vector *partial_digest = NULL, *partial_label = NULL;
 	gsl_vector *label = NULL;
+	gsl_vector *child_partial_label = NULL;
+
 	int bit_shift_count =  get_number_of_bits(wrt_nodeid) - get_number_of_bits(nodeid);
 
 	DEBUG_TRACE(("update_partial_label(): nodeid(%llu), wrt_nodeid(%llu), bit_shift(%d)\n", nodeid, wrt_nodeid, bit_shift_count));
@@ -109,8 +128,14 @@ gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 			printf("Error nodeid(%llu) == wrt_nodeid(%llu)", nodeid, wrt_nodeid);
 			exit(1);
 		}
+
 		DEBUG_TRACE(("Reached a leaf node\n"));
-		label = get_binary_representation(get_initial_digest(TRUE));
+
+		gsl_vector *initial_digest = get_initial_digest(TRUE);
+		label = get_binary_representation(initial_digest);
+
+		/** memory free */
+		gsl_vector_free(initial_digest);
 
 		return label;
 	}
@@ -121,19 +146,24 @@ gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 
 	/* Right child */
 	if(wrt_nodeid & ((ULONG)1 << (bit_shift_count-1))) {
+		child_partial_label = update_partial_label((nodeid<<1)+(ULONG)1, wrt_nodeid);
+
 		gsl_blas_dgemv(CblasNoTrans,\
 				1.0, \
 				R, \
-				update_partial_label((nodeid<<1)+(ULONG)1, wrt_nodeid), \
+				child_partial_label, \
 				0.0, \
 				partial_digest);
+
 	}
 	/* Left child */
 	else {
+		child_partial_label = update_partial_label(nodeid<<1, wrt_nodeid);
+
 		gsl_blas_dgemv(CblasNoTrans,\
 				1.0, \
 				L, \
-				update_partial_label(nodeid<<1, wrt_nodeid), \
+				child_partial_label, \
 				0.0, \
 				partial_digest);
 	}
@@ -145,7 +175,8 @@ gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 	update_node_label(nodeid, partial_label);
 
 	/** free memory */
-	//gsl_vector_free(partial_digest);
+	gsl_vector_free(partial_digest);
+	gsl_vector_free(child_partial_label);
 
 	return partial_label;
 }
@@ -159,7 +190,9 @@ void update_node_label(ULONG nodeid, gsl_vector *partial_label) {
 
 	DEBUG_TRACE(("update_node_label(): nodeid(%llu)\n", nodeid));
 
-	label = decode_vector_buffer(sgdbm_get_node_label(nodeid), LABEL_BUFFER_LEN);
+	label_buffer = sgdbm_get_node_label(nodeid);
+	label = decode_vector_buffer(label_buffer, LABEL_BUFFER_LEN);
+	free(label_buffer);
 
 	if(label == NULL) {
 		DEBUG_TRACE(("new label\n"));
@@ -185,8 +218,8 @@ void update_node_label(ULONG nodeid, gsl_vector *partial_label) {
 	verify_label(nodeid, label);
 #endif
 
-	//gsl_vector_free(label);
-	//free(label_buffer);
+	gsl_vector_free(label);
+	free(label_buffer);
 }
 
 
@@ -330,6 +363,8 @@ MembershipProof *process_membership_query(ULONG nodeid) {
 	}
 
 	/** 3. return proof **/
+	g_list_free(proof_nodeid_list);
+
 	return proof;
 }
 
@@ -341,11 +376,11 @@ GList *build_membership_proof_path(ULONG leaf_nodeid) {
 	DEBUG_TRACE(("build_proof_path(%llu).\n", leaf_nodeid));
 
 	while(curr_nodeid > 1) {
-		proof_nodeid_list = g_list_append(proof_nodeid_list, \
+		proof_nodeid_list = g_list_prepend(proof_nodeid_list, \
 									g_memdup(&curr_nodeid, sizeof(curr_nodeid)));
 
 		curr_nodeid = (curr_nodeid ^ (ULONG)1);
-		proof_nodeid_list = g_list_append(proof_nodeid_list, \
+		proof_nodeid_list = g_list_prepend(proof_nodeid_list, \
 									g_memdup(&curr_nodeid, sizeof(curr_nodeid)));
 
 		curr_nodeid = curr_nodeid >> 1;
@@ -593,7 +628,17 @@ void write_range_proof(RangeProof *proof, UINT index) {
 *	misc.
 *
 *********************************************************/
+void free_membership_proof(MembershipProof *proof) {
+	int i;
 
+	free(proof->proof_nodeid_list);
+
+	for(i=0; i<proof->num_proof_nodeid; i++) {
+		free(proof->proof_label_list[i]);
+	}
+
+	free(proof);
+}
 
 
 /********************************************************
@@ -635,6 +680,9 @@ void run_membership_test(char* node_input_filename, int num_query) {
 		membership_proof = process_membership_query(node_list[i]);
 		write_membership_proof(membership_proof, i);
 		printf("%d/%d done.\n", i+1, num_query);
+
+		/** memory free */
+	    free_membership_proof(membership_proof);
 	}
 
     gettimeofday(&tv2, NULL);
@@ -642,6 +690,9 @@ void run_membership_test(char* node_input_filename, int num_query) {
              (double) (tv2.tv_usec - tv1.tv_usec)/1000000 +
              (double) (tv2.tv_sec - tv1.tv_sec));
 
+
+    /** memory free */
+    free(node_list);
 }
 
 

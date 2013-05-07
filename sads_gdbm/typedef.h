@@ -19,15 +19,6 @@
 #define DEBUG_TRACE(X) do {} while(0)
 #endif
 
-/*
-typedef enum {
-	NOT_SUBTREE,
-	IDENTICAL_NODES,
-	RIGHT_SUBTREE,
-	LEFT_SUBTREE
-} SUBTREE_TYPE;
-*/
-
 
 typedef struct MembershipProof_Struct {
 	ULONG query_nodeid;

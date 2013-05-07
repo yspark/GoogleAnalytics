@@ -46,15 +46,15 @@ void sgdbm_close() {
 *****************************************************************************/
 UINT sgdbm_get_leaf_val(ULONG nodeid) {
 	datum key, data;
-	ULONG *p_nodeid;
+	//ULONG *p_nodeid;
 	UINT retVal;
 
 	//DEBUG_TRACE(("sgdbm_get_leaf_val(%llu)\n", nodeid));
 
 	/** build datum key */
-	p_nodeid = malloc(sizeof(ULONG));
-	*p_nodeid = nodeid;
-	datum_set(key, (char*)p_nodeid, sizeof(ULONG));
+	//p_nodeid = malloc(sizeof(ULONG));
+	//*p_nodeid = nodeid;
+	datum_set(key, (char*)&nodeid, sizeof(ULONG));
 
 	/** retrieve datum data */
 	data = gdbm_fetch(gdbm_leaf_answer_file, key);
@@ -65,7 +65,7 @@ UINT sgdbm_get_leaf_val(ULONG nodeid) {
 		retVal = *(data.dptr);
 
 	/** free memory */
-	free(p_nodeid);
+	//free(p_nodeid);
 	free(data.dptr);
 
 	DEBUG_TRACE(("sgdbm_get_leaf_val(%llu, %u)\n", nodeid, retVal));
@@ -76,21 +76,21 @@ UINT sgdbm_get_leaf_val(ULONG nodeid) {
 
 char *sgdbm_get_node_label(ULONG nodeid) {
 	datum key, data;
-	ULONG *p_nodeid;
+	//ULONG *p_nodeid;
 
 	/** build datum key */
-	p_nodeid = malloc(sizeof(ULONG));
-	*p_nodeid = nodeid;
-	datum_set(key, (char*)p_nodeid, sizeof(ULONG));
+	//p_nodeid = malloc(sizeof(ULONG));
+	//*p_nodeid = nodeid;
+	datum_set(key, (char*)&nodeid, sizeof(ULONG));
 
 	/** retrieve datum data */
 	data = gdbm_fetch(gdbm_label_file, key);
 
 
 	/** return */
-	free(p_nodeid);
+	//free(p_nodeid);
 
-	DEBUG_TRACE(("sgdbm_get_node_label(%llu, %d)\n", nodeid, data.dptr));
+	DEBUG_TRACE(("sgdbm_get_node_label(%llu)\n", nodeid));
 
 	return data.dptr;
 }
@@ -112,20 +112,22 @@ void sgdbm_get_leaf_nodeids_in_range(ULONG start_nodeid, ULONG end_nodeid, GHash
 
 void sgdbm_insert_value(ULONG nodeid, UINT visit_count) {
 	datum key, data;
-	ULONG *p_nodeid, *p_new_visit_count;
+	//ULONG *p_nodeid, *p_new_visit_count;
 
 	DEBUG_TRACE(("sgdbm_insert_value: (%llu, %u)\n", nodeid, visit_count));
 
 	/** build datum key */
-	p_nodeid = malloc(sizeof(ULONG));
-	*p_nodeid = nodeid;
-	datum_set(key, (char*)p_nodeid, sizeof(ULONG));
+	//p_nodeid = malloc(sizeof(ULONG));
+	//*p_nodeid = nodeid;
+	//p_nodeid = &nodeid;
+	datum_set(key, (char *)&nodeid, sizeof(ULONG));
 
 
 	/** build datum data */
-	p_new_visit_count = malloc(sizeof(UINT));
-	*p_new_visit_count = visit_count;
-	datum_set(data, (char *)p_new_visit_count, sizeof(UINT));
+	//p_new_visit_count = malloc(sizeof(UINT));
+	//*p_new_visit_count = visit_count;
+	//p_new_visit_count = &visit_count;
+	datum_set(data, (char *)&visit_count, sizeof(UINT));
 
 
 	/** insert */
@@ -135,8 +137,8 @@ void sgdbm_insert_value(ULONG nodeid, UINT visit_count) {
 	}
 
 	/** return */
-	free(p_nodeid);
-	free(p_new_visit_count);
+	//free(p_nodeid);
+	//free(p_new_visit_count);
 
 	return;
 }
