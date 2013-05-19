@@ -55,6 +55,8 @@ UINT update_leaf(ULONG nodeid) {
 	*p_nodeid = nodeid;
 	p_value = (UINT *)g_hash_table_lookup(leaf_value_table, p_nodeid);
 
+	gsl_vector *init_label = get_initial_label(TRUE);
+
 
 	if(p_value == NULL) {
 		DEBUG_TRACE(("update_leaf: add a new leaf(%llu)\n", nodeid));
@@ -68,26 +70,28 @@ UINT update_leaf(ULONG nodeid) {
 
 		g_hash_table_insert (label_table,
 							p_nodeid,
-							get_initial_label(TRUE));
+							init_label);
 
 	}
 	else {
 		DEBUG_TRACE(("update_leaf: update a leaf(%llu)\n", nodeid));
 
 		gsl_vector *label = g_hash_table_lookup(label_table, p_nodeid);
-		gsl_vector_add(label, get_initial_label(TRUE));
+		gsl_vector_add(label, init_label);
 
 		*p_value = *p_value + 1;
 		g_hash_table_insert (leaf_value_table,
 							p_nodeid,
 							p_value);
-
+		/*
 		g_hash_table_insert (label_table,
 							p_nodeid,
 							label);
-
-
+		*/
+		if(init_label) gsl_vector_free(init_label);
 	}
+
+
 
 	return (*p_value);
 }
@@ -131,7 +135,7 @@ gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 	}
 
 	partial_digest = gsl_vector_alloc(DIGEST_LEN);
-	partial_label = gsl_vector_alloc(LABEL_LEN);
+	//partial_label = gsl_vector_alloc(LABEL_LEN);
 
 	/* Right child */
 	if(wrt_nodeid & ((ULONG)1 << (bit_shift_count-1))) {
@@ -158,6 +162,9 @@ gsl_vector *update_partial_label(ULONG nodeid, ULONG wrt_nodeid) {
 
 	update_node_label(nodeid, partial_label);
 
+	/** free memory */
+	gsl_vector_free(partial_digest);
+
 	return partial_label;
 }
 
@@ -183,7 +190,8 @@ void update_node_label(ULONG nodeid, gsl_vector *partial_label) {
 		gsl_vector_add(label, partial_label);
 		mod_q(label, q);
 
-		g_hash_table_insert(label_table, p_nodeid, label);
+		//g_hash_table_insert(label_table, p_nodeid, label);
+
 	}
 
 
@@ -254,6 +262,8 @@ MembershipProof *process_membership_query(ULONG nodeid) {
 	}
 
 	/** 3. return proof **/
+	g_list_free(proof_nodeid_list);
+
 	return proof;
 }
 
@@ -550,7 +560,7 @@ void run_membership_test(char* node_input_filename, int num_query) {
 
     struct timeval  tv1, tv2;
 
-	DEBUG_TRACE(("Benchmark Test(Membership Query): num_nodes(%u)", num_nodes));
+	DEBUG_TRACE(("Benchmark Test(Membership Query): num_nodes(%u)\n", num_nodes));
 
 	/** Prover Benchmark **/
 	/** update() **/
@@ -559,7 +569,9 @@ void run_membership_test(char* node_input_filename, int num_query) {
 
 	for(i=0; i<num_nodes; i++) {
 		update_prover(node_list[i]);
-		printf("%d/%d done.\n", i+1, num_nodes);
+
+		if( (i+1) % (num_nodes/10) == 0)
+			printf("%d/%d done.\n", i+1, num_nodes);
 	}
 
     gettimeofday(&tv2, NULL);
@@ -574,7 +586,11 @@ void run_membership_test(char* node_input_filename, int num_query) {
 	for(i=0; i<num_query; i++) {
 		membership_proof = process_membership_query(node_list[i]);
 		write_membership_proof(membership_proof, i);
-		printf("%d/%d done.\n", i+1, num_query);
+		if( (i+1) % (num_query/10) == 0)
+			printf("%d/%d done.\n", i+1, num_query);
+
+		/** memory free */
+	    free_membership_proof(membership_proof);
 	}
 
     gettimeofday(&tv2, NULL);
@@ -665,6 +681,10 @@ int main(int argc, char* argv[]) {
 	/** Benchmark **/
 	if(strcmp(argv[3], "membership") == 0) {
 		run_membership_test(argv[2], atoi(argv[4]));
+
+		g_hash_table_destroy(label_table);
+		g_hash_table_destroy(leaf_value_table);
+
 	}
 #if 0
 	else if(strcmp(argv[3], "range") == 0) {

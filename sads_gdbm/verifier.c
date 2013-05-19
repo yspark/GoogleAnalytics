@@ -140,7 +140,8 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 
 	label = decode_vector_buffer(proof->proof_label_list[nodeid_index], LABEL_BUFFER_LEN);
 	if(!verify_radix(y, label)) {
-			DEBUG_TRACE(("Leaf node verification failed: nodeid(%llu, %u)\n", nodeid, nodeid_index));
+			//DEBUG_TRACE(("Leaf node verification failed: nodeid(%llu, %u)\n", nodeid, nodeid_index));
+			printf("Leaf node verification failed: nodeid(%llu, %u)\n", nodeid, nodeid_index);
 			return FALSE;
 	}
 
@@ -183,7 +184,8 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 	mod_q(y, q);
 
 	if(!gsl_vector_equal(y, root_digest)) {
-		DEBUG_TRACE(("Verification failed: root_digest\n"));
+		//DEBUG_TRACE(("Verification failed: root_digest\n"));
+		printf("Verification failed: root_digest\n");
 
 		printf("y\n");
 		gsl_vector_fprintf(stdout, y, "%f");
@@ -240,8 +242,8 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 		/** verify label */
 		label = decode_vector_buffer(proof->proof_label_list[nodeid_index], LABEL_BUFFER_LEN);
 		if(!verify_radix(y, label)) {
-			DEBUG_TRACE(("Verification failed(%llu, %u)\n", nodeid, nodeid_index));
-			return FALSE;
+			printf("Verification failed(%llu, %u)\n", nodeid, nodeid_index);
+			//return FALSE;
 		}
 
 		nodeid = nodeid >> 1;
@@ -509,14 +511,15 @@ BOOL verify_radix(gsl_vector *y, gsl_vector *label) {
 		//printf("reverse_radix:%u, digest:%u\n", reverse_radix, (UINT)y->data[i]);
 
 		if(reverse_radix != (UINT)y->data[i]) {
-			DEBUG_TRACE(("Proof verify_radix failed: Wrong label or digest (%u), (%u, %u)\n", i, reverse_radix, (UINT)y->data[i]));
-
+			//DEBUG_TRACE(("Proof verify_radix failed: Wrong label or digest (%u), (%u, %u)\n", i, reverse_radix, (UINT)y->data[i]));
+			printf("Proof verify_radix failed: Wrong label or digest (%u), (%u, %u)\n", i, reverse_radix, (UINT)y->data[i]);
+#if 1
 			printf("y\n");
 			gsl_vector_fprintf(stdout, y, "%f");
 
 			printf("label\n");
 			gsl_vector_fprintf(stdout, label, "%f");
-
+#endif
 			return FALSE;
 		}
 	}
@@ -548,7 +551,8 @@ void run_membership_test(char* node_input_filename, int num_query) {
 
 	for(i=0; i<num_nodes; i++) {
 		update_verifier(node_list[i]);
-		printf("%d/%d done.\n", i+1, num_nodes);
+		if( (i+1) % (num_nodes/10) == 0)
+			printf("%d/%d done.\n", i+1, num_nodes);
 	}
 
 	gettimeofday(&tv2, NULL);
@@ -568,7 +572,10 @@ void run_membership_test(char* node_input_filename, int num_query) {
 			printf("%d/%d verification failed(%d)\n", i+1, num_query, i);
 		}
 		else {
-			printf("%d/%d done.\n", i+1, num_query);
+			if(num_query > 10) {
+				if( (i+1) % (num_query/10) == 0)
+					printf("%d/%d done.\n", i+1, num_query);
+			}
 		}
 
 		/** memory free */

@@ -18,14 +18,20 @@ void init_verifier(char* param_filename) {
 *
 *****************************************************************************/
 void update_verifier(ULONG nodeid) {
+	gsl_vector *partial_digest = get_partial_digest((UINT)1, nodeid);
+
 	DEBUG_TRACE(("update_verifier: (%llu)", nodeid));
 
-	update_root_digest(get_partial_digest((UINT)1, nodeid));
+	update_root_digest(partial_digest);
+
+	gsl_vector_free(partial_digest);
 }
 
 
 gsl_vector *get_partial_digest(ULONG nodeid, ULONG wrt_nodeid) {
 	gsl_vector *partial_digest = NULL;
+	gsl_vector *child_partial_digest = NULL;
+	gsl_vector *child_partial_label = NULL;
 	int bit_shift_count =  get_number_of_bits(wrt_nodeid) - get_number_of_bits(nodeid);
 
 	DEBUG_TRACE(("update_partial_digest(): nodeid(%llu), wrt_nodeid(%llu), bit_shift(%d)\n", nodeid, wrt_nodeid, bit_shift_count));
@@ -49,24 +55,35 @@ gsl_vector *get_partial_digest(ULONG nodeid, ULONG wrt_nodeid) {
 
 	/* Right child */
 	if(wrt_nodeid & ((ULONG)1 << (bit_shift_count-1))) {
+		child_partial_digest = get_partial_digest((nodeid<<1)+(ULONG)1, wrt_nodeid);
+		child_partial_label = get_binary_representation(child_partial_digest);
+
 		gsl_blas_dgemv(CblasNoTrans,\
 				1.0, \
 				R, \
-				get_binary_representation(get_partial_digest((nodeid<<1)+(ULONG)1, wrt_nodeid)), \
+				child_partial_label, \
 				0.0, \
 				partial_digest);
 	}
 	/* Left child */
 	else {
+		child_partial_digest = get_partial_digest(nodeid<<1, wrt_nodeid);
+		child_partial_label = get_binary_representation(child_partial_digest);
+
 		gsl_blas_dgemv(CblasNoTrans,\
 				1.0, \
 				L, \
-				get_binary_representation(get_partial_digest(nodeid<<1, wrt_nodeid)), \
+				child_partial_label, \
 				0.0, \
 				partial_digest);
 	}
 
 	mod_q(partial_digest, q);
+
+
+	/** free memory */
+	gsl_vector_free(child_partial_digest);
+	gsl_vector_free(child_partial_label);
 
 	return partial_digest;
 }
@@ -90,6 +107,8 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 	ULONG rchild_nodeid = 0, lchild_nodeid = 0;
 	UINT nodeid_index = 0;
 	UINT rchild_nodeid_index = 0, lchild_nodeid_index = 0;
+
+	gsl_vector *label = NULL;
 
 	gsl_vector *y = NULL;
 	gsl_vector *label_rchild = NULL, *label_lchild = NULL;
@@ -117,10 +136,16 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 	y = get_initial_digest(TRUE);
 	gsl_vector_scale(y, (double)proof->answer);
 
-	if(!verify_radix(y, decode_vector_buffer(proof->proof_label_list[nodeid_index], LABEL_BUFFER_LEN))) {
-			DEBUG_TRACE(("Leaf node verification failed: nodeid(%llu, %u)\n", nodeid, nodeid_index));
+	label = decode_vector_buffer(proof->proof_label_list[nodeid_index], LABEL_BUFFER_LEN);
+	if(!verify_radix(y, label)) {
+			//DEBUG_TRACE(("Leaf node verification failed: nodeid(%llu, %u)\n", nodeid, nodeid_index));
+			printf("Leaf node verification failed: nodeid(%llu, %u)\n", nodeid, nodeid_index);
 			return FALSE;
 	}
+
+	/* memory free */
+	gsl_vector_free(label);
+	gsl_vector_free(y);
 
 
 	/** verify root digest **/
@@ -158,7 +183,8 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 
 
 	if(!gsl_vector_equal(y, root_digest)) {
-		DEBUG_TRACE(("Verification failed: root_digest\n"));
+		//DEBUG_TRACE(("Verification failed: root_digest\n"));
+		printf("Verification failed: root_digest\n");
 
 		printf("y\n");
 		gsl_vector_fprintf(stdout, y, "%f");
@@ -168,6 +194,13 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 
 		return FALSE;
 	}
+
+	/** free memory */
+	gsl_vector_free(label_rchild);
+	gsl_vector_free(label_lchild);
+	//gsl_vector_free(partial_digest_rchild);
+	//gsl_vector_free(partial_digest_lchild);
+	//gsl_vector_free(y);
 
 
 	/** Verify intermediate node labels */
@@ -206,21 +239,25 @@ BOOL verify_membership_proof(MembershipProof *proof) {
 		y = partial_digest_lchild;
 		mod_q(y, q);
 
-		/*
-		printf("=============================================\n");
-		gsl_vector_fprintf(stdout, y, "%f");
-		printf("======================\n");
-		gsl_vector_fprintf(stdout, decode_vector_buffer(proof->proof_label_list[nodeid_index], LABEL_BUFFER_LEN), "%f");
-		printf("=============================================\n");
-		*/
-
-		if(!verify_radix(y, decode_vector_buffer(proof->proof_label_list[nodeid_index], LABEL_BUFFER_LEN))) {
-			DEBUG_TRACE(("Verification failed(%llu, %u)\n", nodeid, nodeid_index));
-			return FALSE;
+		/** verify label */
+		label = decode_vector_buffer(proof->proof_label_list[nodeid_index], LABEL_BUFFER_LEN);
+		if(!verify_radix(y, label)) {
+			printf("Verification failed(%llu, %u)\n", nodeid, nodeid_index);
+			//return FALSE;
 		}
 
 		nodeid = nodeid >> 1;
+
+		/** memory free */
+		gsl_vector_free(label_rchild);
+		gsl_vector_free(label_lchild);
+		gsl_vector_free(label);
 	}
+
+	/** memory free */
+	gsl_vector_free(partial_digest_lchild);
+	gsl_vector_free(partial_digest_rchild);
+	g_hash_table_destroy(nodeid_table);
 
 	return TRUE;
 }
@@ -230,6 +267,7 @@ MembershipProof *read_membership_proof(UINT index) {
 	char filename[40];
 	FILE *fp;
 	UINT i = 0;
+	int retVal;
 	MembershipProof *proof = NULL;
 
 	DEBUG_TRACE(("read_proof(%d)\n", index));
@@ -245,9 +283,12 @@ MembershipProof *read_membership_proof(UINT index) {
 	proof = malloc(sizeof(MembershipProof));
 
 	/* query_nodeid, answer, num_proof_nodeid */
-	fread(&proof->query_nodeid, sizeof(ULONG), 1, fp);
-	fread(&proof->answer, sizeof(UINT), 1, fp);
-	fread(&proof->num_proof_nodeid, sizeof(UINT), 1, fp);
+	retVal = fread(&proof->query_nodeid, sizeof(ULONG), 1, fp);
+	check_retVal(retVal);
+	retVal = fread(&proof->answer, sizeof(UINT), 1, fp);
+	check_retVal(retVal);
+	retVal = fread(&proof->num_proof_nodeid, sizeof(UINT), 1, fp);
+	check_retVal(retVal);
 
 	DEBUG_TRACE(("proof->query_nodeid(%llu)\n", proof->query_nodeid));
 	DEBUG_TRACE(("proof->answer(%u)\n", proof->answer));
@@ -255,14 +296,16 @@ MembershipProof *read_membership_proof(UINT index) {
 
 	/* nodeid_list */
 	proof->proof_nodeid_list = malloc(sizeof(ULONG) * proof->num_proof_nodeid);
-	fread(proof->proof_nodeid_list, sizeof(ULONG), proof->num_proof_nodeid, fp);
+	retVal = fread(proof->proof_nodeid_list, sizeof(ULONG), proof->num_proof_nodeid, fp);
+	check_retVal(retVal);
 
 	/* label_list */
 	proof->proof_label_list = malloc(sizeof(char *) * proof->num_proof_nodeid);
 
 	for(i=0; i<proof->num_proof_nodeid; i++) {
 		proof->proof_label_list[i] = malloc(LABEL_BUFFER_LEN);
-		fread(proof->proof_label_list[i], ELEMENT_LEN, LABEL_LEN, fp);
+		retVal = fread(proof->proof_label_list[i], ELEMENT_LEN, LABEL_LEN, fp);
+		check_retVal(retVal);
 	}
 
 	fclose(fp);
@@ -391,29 +434,37 @@ RangeProof *read_range_proof(UINT index) {
 	proof = malloc(sizeof(RangeProof));
 
 	/** start_nodeid, end_nodeid **/
-	fread(&proof->start_nodeid, sizeof(ULONG), 1, fp);
-	fread(&proof->end_nodeid, sizeof(ULONG), 1, fp);
+	retVal = fread(&proof->start_nodeid, sizeof(ULONG), 1, fp);
+	check_retVal(retVal);
+	retVal = fread(&proof->end_nodeid, sizeof(ULONG), 1, fp);
+	check_retVal(retVal);
 
 	/** answer */
-	fread(&proof->num_answer_nodeid, sizeof(UINT), 1, fp);
+	retVal = fread(&proof->num_answer_nodeid, sizeof(UINT), 1, fp);
+	check_retVal(retVal);
 
 	proof->answer_nodeid_list = malloc(sizeof(ULONG) * proof->num_answer_nodeid);
-	fread(proof->answer_nodeid_list, sizeof(ULONG), proof->num_answer_nodeid, fp);
+	retVal = fread(proof->answer_nodeid_list, sizeof(ULONG), proof->num_answer_nodeid, fp);
+	check_retVal(retVal);
 
 	proof->answer_list = malloc(sizeof(UINT) * proof->num_answer_nodeid);
-	fread(proof->answer_list, sizeof(UINT), proof->num_answer_nodeid, fp);
+	retVal = fread(proof->answer_list, sizeof(UINT), proof->num_answer_nodeid, fp);
+	check_retVal(retVal);
 
 
 	/** proof */
-	fread(&proof->num_proof_nodeid, sizeof(UINT), 1, fp);
+	retVal = fread(&proof->num_proof_nodeid, sizeof(UINT), 1, fp);
+	check_retVal(retVal);
 
 	proof->proof_nodeid_list = malloc(sizeof(ULONG) * proof->num_proof_nodeid);
-	fread(proof->proof_nodeid_list, sizeof(ULONG), proof->num_proof_nodeid, fp);
+	retVal = fread(proof->proof_nodeid_list, sizeof(ULONG), proof->num_proof_nodeid, fp);
+	check_retVal(retVal);
 
 	proof->proof_label_list = malloc(sizeof(char *) * proof->num_proof_nodeid);
 	for(i=0; i<proof->num_proof_nodeid; i++) {
 		proof->proof_label_list[i] = malloc(LABEL_BUFFER_LEN);
-		fread(proof->proof_label_list[i], LABEL_BUFFER_LEN, 1, fp);
+		retVal = fread(proof->proof_label_list[i], LABEL_BUFFER_LEN, 1, fp);
+		check_retVal(retVal);
 	}
 
 	//DEBUG_TRACE(("rangg(%llu , %llu), num_nodes(%u, %d)\n", proof->start_nodeid, proof->end_nodeid, proof->answer_num_nodeid, proof->answer_num_nodeid));
@@ -459,14 +510,15 @@ BOOL verify_radix(gsl_vector *y, gsl_vector *label) {
 		//printf("reverse_radix:%u, digest:%u\n", reverse_radix, (UINT)y->data[i]);
 
 		if(reverse_radix != (UINT)y->data[i]) {
-			DEBUG_TRACE(("Proof verify_radix failed: Wrong label or digest (%u), (%u, %u)\n", i, reverse_radix, (UINT)y->data[i]));
-
+			//DEBUG_TRACE(("Proof verify_radix failed: Wrong label or digest (%u), (%u, %u)\n", i, reverse_radix, (UINT)y->data[i]));
+			printf("Proof verify_radix failed: Wrong label or digest (%u), (%u, %u)\n", i, reverse_radix, (UINT)y->data[i]);
+#if 1
 			printf("y\n");
 			gsl_vector_fprintf(stdout, y, "%f");
 
 			printf("label\n");
 			gsl_vector_fprintf(stdout, label, "%f");
-
+#endif
 			return FALSE;
 		}
 	}
@@ -498,7 +550,8 @@ void run_membership_test(char* node_input_filename, int num_query) {
 
 	for(i=0; i<num_nodes; i++) {
 		update_verifier(node_list[i]);
-		printf("%d/%d done.\n", i+1, num_nodes);
+		if( (i+1) % (num_nodes/10) == 0)
+			printf("%d/%d done.\n", i+1, num_nodes);
 	}
 
 	gettimeofday(&tv2, NULL);
@@ -518,8 +571,14 @@ void run_membership_test(char* node_input_filename, int num_query) {
 			printf("%d/%d verification failed(%d)\n", i+1, num_query, i);
 		}
 		else {
-			printf("%d/%d done.\n", i+1, num_query);
+			if(num_query > 10) {
+				if( (i+1) % (num_query/10) == 0)
+					printf("%d/%d done.\n", i+1, num_query);
+			}
 		}
+
+		/** memory free */
+		free_membership_proof(membership_proof);
 
 	}
 
@@ -527,6 +586,10 @@ void run_membership_test(char* node_input_filename, int num_query) {
     printf ("Total time = %f seconds\n",
              (double) (tv2.tv_usec - tv1.tv_usec)/1000000 +
              (double) (tv2.tv_sec - tv1.tv_sec));
+
+
+    /** memory free */
+    free(node_list);
 }
 
 #if 0

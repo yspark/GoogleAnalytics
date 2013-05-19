@@ -48,6 +48,9 @@ void write_range_proof(RangeProof *proof, UINT index);
 
 /** Misc **/
 
+void verify_label(ULONG nodeid, gsl_vector *label);
+gsl_vector *get_digest_from_label(gsl_vector *label);
+
 
 /** Benchmark **/
 void run_membership_test(char* node_input_filename, int num_query);

@@ -40,17 +40,26 @@ void init_LR()
 
 void output_params()
 {	
-	printf("%d\n", k);
-	printf("%d\n", n);
-	printf("%d\n", q);
-	printf("%d\n", mu);
-	printf("%d\n", beta);
+	FILE *fp;
+	char filename[100];
+
+	sprintf(filename, "./param/sads_param_k%d_n%d.dat", k, n);
+	fp = fopen(filename, "w");
+
 	
-	gsl_matrix_fprintf(stdout, L, "%f");
-	printf("\n");
+	fprintf(fp, "%d\n", k);
+	fprintf(fp,"%d\n", n);
+	fprintf(fp,"%d\n", q);
+	fprintf(fp,"%d\n", mu);
+	fprintf(fp,"%d\n", beta);
+
+	gsl_matrix_fprintf(fp, L, "%f");
+	fprintf(fp,"\n");
 	
-	gsl_matrix_fprintf(stdout, R, "%f");
-	printf("\n");	
+	gsl_matrix_fprintf(fp, R, "%f");
+	fprintf(fp,"\n");
+
+	fclose(fp);
 }
 
 void free_params()
@@ -74,6 +83,10 @@ int main(int argc, char* argv[])
 	init_LR();
 	output_params();
 	free_params();
+
+	printf("k:%d\n", k);
+	printf("n:%d\n", n);
+	printf("Matrix dim (%d, %d)\n", k, m);
 
 	return 0;
 }

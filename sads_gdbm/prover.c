@@ -19,6 +19,9 @@ void init_prover(char* filename) {
 	read_params(filename);
 	
 	root_digest = get_initial_digest(FALSE);
+
+
+	printf("Matrix dim: (%d, %d)\n", k, m);
 }
 
 
@@ -202,7 +205,7 @@ void update_node_label(ULONG nodeid, gsl_vector *partial_label) {
 	else {
 		DEBUG_TRACE(("update label\n"));
 		gsl_vector_add(label, partial_label);
-		mod_q(label, q);
+		//mod_q(label, q);
 
 		label_buffer = encode_vector(label);
 		//sgdbm_update_node(nodeid, 0, label_buffer, LABEL_BUFFER_LEN, FALSE);
@@ -212,10 +215,14 @@ void update_node_label(ULONG nodeid, gsl_vector *partial_label) {
 
 
 #if 0
+	if(nodeid == 3) {
 	/** self verification **/
-	if(label == NULL)
-		label = partial_label;
+	if(label == NULL) {
+		label = gsl_vector_alloc(LABEL_LEN);
+		gsl_vector_memcpy(label, partial_label);
+	}
 	verify_label(nodeid, label);
+	}
 #endif
 
 	gsl_vector_free(label);
@@ -276,11 +283,13 @@ void verify_label(ULONG nodeid, gsl_vector *label) {
 	// compare
 	if(!gsl_vector_equal(v1_digest, v2_digest)) {
 		printf("Self verification failed (%llu)\n", nodeid);
+		gsl_vector_fprintf(stdout, label, "%f");
 		exit(-1);
 	}
 	else {
 		printf("Self verification pass (%llu)\n", nodeid);
 	}
+
 
 }
 
@@ -653,7 +662,9 @@ void run_membership_test(char* node_input_filename, int num_query) {
 
 	for(i=0; i<num_nodes; i++) {
 		update_prover(node_list[i]);
-		printf("%d/%d done.\n", i+1, num_nodes);
+
+		if( (i+1) % (num_nodes/10) == 0)
+			printf("%d/%d done.\n", i+1, num_nodes);
 	}
 
     gettimeofday(&tv2, NULL);
@@ -669,7 +680,8 @@ void run_membership_test(char* node_input_filename, int num_query) {
 	for(i=0; i<num_query; i++) {
 		membership_proof = process_membership_query(node_list[i]);
 		write_membership_proof(membership_proof, i);
-		printf("%d/%d done.\n", i+1, num_query);
+		if( (i+1) % (num_query/10) == 0)
+			printf("%d/%d done.\n", i+1, num_query);
 
 		/** memory free */
 	    free_membership_proof(membership_proof);
