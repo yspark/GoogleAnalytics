@@ -7,12 +7,14 @@
 #ifndef __TYPEDEF__
 #define __TYPEDEF__
 
+//#include "bigint2/BigIntegerLibrary.hh"
 #include <Eigen/Dense>
 //using namespace Eigen;
 
 #define UINT unsigned int
 #define INT	int
 #define ULONG unsigned long long
+//#define ULONG unsigned __int128
 #define LONG long long
 #define BOOL int
 

@@ -22,6 +22,21 @@ extern SVector root_digest;
 
 using namespace std;
 
+
+struct timeval  tv_write1, tv_write2;
+double write_time = 0.0;
+
+struct timeval  tv_read1, tv_read2;
+double read_time = 0.0;
+
+#if 0
+gettimeofday(&tv2, NULL);
+ printf ("Total time = %f seconds\n",
+          (double) (tv2.tv_usec - tv1.tv_usec)/1000000 +
+          (double) (tv2.tv_sec - tv1.tv_sec));
+#endif
+
+
 /*****************************************************************************
 *
 *	initialize()
@@ -66,21 +81,41 @@ UINT update_leaf(ULONG nodeid) {
 	SVector label;
 	char *label_buffer = NULL;
 
+	gettimeofday(&tv_read1, NULL);
+
 	curr_count = sgdbm_get_leaf_val(nodeid);
+
+	gettimeofday(&tv_read2, NULL);
+	read_time += ((double) (tv_read2.tv_usec - tv_read1.tv_usec)/1000000 + (double) (tv_read2.tv_sec - tv_read1.tv_sec));
+
 
 	/** Add a new leaf node */
 	if(curr_count == 0) {
 		label_buffer = encode_vector(init_label);
 
 		DEBUG_TRACE(("update_leaf: add a new leaf(%llu)\n", nodeid));
+
+		gettimeofday(&tv_write1, NULL);
+
 		sgdbm_insert_value(nodeid, 1);
 		sgdbm_insert_label(nodeid, label_buffer, (UINT)LABEL_BUFFER_LEN);
+
+		gettimeofday(&tv_write2, NULL);
+		write_time += ((double) (tv_write2.tv_usec - tv_write1.tv_usec)/1000000 + (double) (tv_write2.tv_sec - tv_write1.tv_sec));
+
 	}
 	/** Update an existing leaf node */
 	else {
 		DEBUG_TRACE(("update_leaf: update a leaf(%llu)\n", nodeid));
 
+		gettimeofday(&tv_read1, NULL);
+
 		label_buffer = sgdbm_get_node_label(nodeid);
+
+		gettimeofday(&tv_read2, NULL);
+		read_time += ((double) (tv_read2.tv_usec - tv_read1.tv_usec)/1000000 + (double) (tv_read2.tv_sec - tv_read1.tv_sec));
+
+
 		label = decode_vector_buffer(label_buffer, (UINT)LABEL_BUFFER_LEN);
 		free(label_buffer);
 
@@ -95,9 +130,15 @@ UINT update_leaf(ULONG nodeid) {
 		}
 
 		label_buffer = encode_vector(label);
+
+		gettimeofday(&tv_write1, NULL);
+
+
 		sgdbm_insert_value(nodeid, curr_count+1);
 		sgdbm_insert_label(nodeid, label_buffer, (UINT)LABEL_BUFFER_LEN);
 
+		gettimeofday(&tv_write2, NULL);
+		write_time += ((double) (tv_write2.tv_usec - tv_write1.tv_usec)/1000000 + (double) (tv_write2.tv_sec - tv_write1.tv_sec));
 
 		//SVector tempLabel = decode_vector_buffer(label_buffer, LABEL_BUFFER_LEN);
 		//printf("==============================%d\n", label == tempLabel);
@@ -205,7 +246,14 @@ void update_node_label(ULONG nodeid, SVector partial_label) {
 
 	DEBUG_TRACE(("update_node_label(): nodeid(%llu)\n", nodeid));
 
+	gettimeofday(&tv_read1, NULL);
+
 	label_buffer = sgdbm_get_node_label(nodeid);
+
+	gettimeofday(&tv_read2, NULL);
+	read_time += ((double) (tv_read2.tv_usec - tv_read1.tv_usec)/1000000 + (double) (tv_read2.tv_sec - tv_read1.tv_sec));
+
+
 	label = decode_vector_buffer(label_buffer, LABEL_BUFFER_LEN);
 	free(label_buffer);
 
@@ -220,8 +268,12 @@ void update_node_label(ULONG nodeid, SVector partial_label) {
 
 		label_buffer = encode_vector(label);
 	}
+	gettimeofday(&tv_write1, NULL);
 
 	sgdbm_insert_label(nodeid, label_buffer, LABEL_BUFFER_LEN);
+
+	gettimeofday(&tv_write2, NULL);
+	write_time += ((double) (tv_write2.tv_usec - tv_write1.tv_usec)/1000000 + (double) (tv_write2.tv_sec - tv_write1.tv_sec));
 
 
 #if 0
@@ -252,8 +304,14 @@ void verify_label(ULONG nodeid, SVector label) {
 	SVector v1_digest, v2_digest;
 	SVector rchild_partial_digest, lchild_partial_digest;
 
+	gettimeofday(&tv_read1, NULL);
+
 	lchild = decode_vector_buffer(sgdbm_get_node_label(nodeid << 1), LABEL_BUFFER_LEN);
 	rchild = decode_vector_buffer(sgdbm_get_node_label((nodeid << 1) + (ULONG)1), LABEL_BUFFER_LEN);
+
+	gettimeofday(&tv_read2, NULL);
+	read_time += ((double) (tv_read2.tv_usec - tv_read1.tv_usec)/1000000 + (double) (tv_read2.tv_sec - tv_read1.tv_sec));
+
 
 	//V2
 	lchild_partial_digest.resize(DIGEST_LEN, 1);
@@ -363,7 +421,14 @@ MembershipProof *process_membership_query(ULONG nodeid) {
 	/** 3. build proof of the membership query **/
 	// query_nodeid, answer
 	proof->query_nodeid = nodeid;
+
+	gettimeofday(&tv_read1, NULL);
+
 	proof->answer = sgdbm_get_leaf_val(nodeid);
+
+	gettimeofday(&tv_read2, NULL);
+	read_time += ((double) (tv_read2.tv_usec - tv_read1.tv_usec)/1000000 + (double) (tv_read2.tv_sec - tv_read1.tv_sec));
+
 
 
 	// proof
@@ -381,7 +446,14 @@ MembershipProof *process_membership_query(ULONG nodeid) {
 
 		proof->proof_label_list[node_count] = (char *)malloc(LABEL_BUFFER_LEN);
 
+		gettimeofday(&tv_read1, NULL);
+
 		label_buffer = sgdbm_get_node_label(curr_nodeid);
+
+		gettimeofday(&tv_read2, NULL);
+		read_time += ((double) (tv_read2.tv_usec - tv_read1.tv_usec)/1000000 + (double) (tv_read2.tv_sec - tv_read1.tv_sec));
+
+
 		if(label_buffer) {
 			//printf("label\n");
 			memcpy(proof->proof_label_list[node_count], label_buffer, LABEL_BUFFER_LEN);
@@ -699,6 +771,10 @@ void run_membership_test(char* node_input_filename, UINT num_query) {
              (double) (tv2.tv_usec - tv1.tv_usec)/1000000 +
              (double) (tv2.tv_sec - tv1.tv_sec));
 
+    printf("Read = %f seconds\n", read_time);
+    printf("Write= %f seconds\n", write_time);
+    read_time = 0.0;
+    write_time = 0.0;
 
 	/** query() **/
 	printf("membership query start\n");
@@ -719,6 +795,10 @@ void run_membership_test(char* node_input_filename, UINT num_query) {
     printf ("Total time = %f seconds\n",
              (double) (tv2.tv_usec - tv1.tv_usec)/1000000 +
              (double) (tv2.tv_sec - tv1.tv_sec));
+
+
+    printf("Read = %f seconds\n", read_time);
+    printf("Write= %f seconds\n", write_time);
 
 
     /** memory free */

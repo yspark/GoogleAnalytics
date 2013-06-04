@@ -83,6 +83,7 @@ void free_params()
 }
 #endif
 
+#if 0
 int is_Prime(ULONG number)
 {
   if ((number & 1) == 0)
@@ -102,7 +103,7 @@ int is_Prime(ULONG number)
   }
   return 1;
 }
-
+#endif
 
 int main(int argc, char* argv[])
 {
