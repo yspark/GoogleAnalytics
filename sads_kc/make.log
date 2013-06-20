@@ -1,0 +1,1000 @@
+g++ -o verifier.o verifier.cpp sads_common.cpp sads_kc.cpp -O3 -g `pkg-config --cflags --libs glib-2.0` -I/usr/local/include/eigen3 -I/usr/include/glib-2.0  -Wall  
+/tmp/ccdQkhAW.o: In function `ScopedMutex':
+/usr/local/include/kcthread.h:154: undefined reference to `kyotocabinet::Mutex::lock()'
+/tmp/ccdQkhAW.o: In function `~ScopedMutex':
+/usr/local/include/kcthread.h:161: undefined reference to `kyotocabinet::Mutex::unlock()'
+/tmp/ccdQkhAW.o: In function `hton16':
+/usr/local/include/kcutil.h:1160: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::write_record(kyotocabinet::HashDB::Record*, bool)':
+/usr/local/include/kchashdb.h:3173: undefined reference to `kyotocabinet::File::write_fast(long, void const*, unsigned long)'
+/usr/local/include/kchashdb.h:3178: undefined reference to `kyotocabinet::File::write(long, void const*, unsigned long)'
+/usr/local/include/kchashdb.h:3179: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:3174: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::get_bucket(long)':
+/usr/local/include/kchashdb.h:2933: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:2935: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::set_flag(unsigned char, bool)':
+/usr/local/include/kchashdb.h:2681: undefined reference to `kyotocabinet::File::read(long, void*, unsigned long)'
+/usr/local/include/kchashdb.h:2692: undefined reference to `kyotocabinet::File::write(long, void const*, unsigned long)'
+/usr/local/include/kchashdb.h:2682: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:2684: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::set_flag(unsigned char, bool)':
+/usr/local/include/kchashdb.h:2693: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2982: undefined reference to `kyotocabinet::File::read_fast(long, void*, unsigned long)'
+/tmp/ccdQkhAW.o: In function `hton16':
+/usr/local/include/kcutil.h:1160: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:3093: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2983: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:2985: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2977: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:3030: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2997: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:3055: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:3067: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:3104: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2998: undefined reference to `kyotocabinet::BIGEND'
+/usr/local/include/kchashdb.h:3006: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:3013: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2967: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::Cursor::step_impl(kyotocabinet::HashDB::Record*, char*, long)':
+/usr/local/include/kchashdb.h:465: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::TSD<kyotocabinet::BasicDB::Error>::operator kyotocabinet::BasicDB::Error() const':
+/usr/local/include/kcthread.h:907: undefined reference to `kyotocabinet::TSDKey::get() const'
+/usr/local/include/kcthread.h:907: undefined reference to `kyotocabinet::TSDKey::get() const'
+/usr/local/include/kcthread.h:907: undefined reference to `kyotocabinet::TSDKey::get() const'
+/usr/local/include/kcthread.h:907: undefined reference to `kyotocabinet::TSDKey::get() const'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::write_free_block(long, unsigned long, char*)':
+/usr/local/include/kchashdb.h:3336: undefined reference to `kyotocabinet::File::write_fast(long, void const*, unsigned long)'
+/usr/local/include/kchashdb.h:3337: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::load_free_blocks()':
+/usr/local/include/kchashdb.h:3464: undefined reference to `kyotocabinet::File::read(long, void*, unsigned long)'
+/usr/local/include/kchashdb.h:3465: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:3467: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::load_free_blocks()':
+/usr/local/include/kchashdb.h:3492: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::load_free_blocks()':
+/usr/local/include/kchashdb.h:3480: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::dump_free_blocks()':
+/usr/local/include/kchashdb.h:3430: undefined reference to `kyotocabinet::File::write(long, void const*, unsigned long)'
+/usr/local/include/kchashdb.h:3431: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::TSD<kyotocabinet::BasicDB::Error>::operator kyotocabinet::BasicDB::Error() const':
+/usr/local/include/kcthread.h:907: undefined reference to `kyotocabinet::TSDKey::get() const'
+/usr/local/include/kcthread.h:907: undefined reference to `kyotocabinet::TSDKey::get() const'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::close()':
+/usr/local/include/kchashdb.h:948: undefined reference to `kyotocabinet::File::close()'
+/usr/local/include/kchashdb.h:949: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::TSD<kyotocabinet::BasicDB::Error>::operator kyotocabinet::BasicDB::Error() const':
+/usr/local/include/kcthread.h:907: undefined reference to `kyotocabinet::TSDKey::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::close()':
+/usr/local/include/kchashdb.h:948: undefined reference to `kyotocabinet::File::close()'
+/usr/local/include/kchashdb.h:949: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::TSD<kyotocabinet::BasicDB::Error>::operator kyotocabinet::BasicDB::Error() const':
+/usr/local/include/kcthread.h:907: undefined reference to `kyotocabinet::TSDKey::get() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::DB::Visitor::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:68: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::DB::Visitor::visit_empty(char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:81: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::Cursor::remove()::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:580: undefined reference to `kyotocabinet::DB::Visitor::REMOVE'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::remove(char const*, unsigned long)::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:1875: undefined reference to `kyotocabinet::DB::Visitor::REMOVE'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::check(char const*, unsigned long)::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:2032: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::TSD<kyotocabinet::BasicDB::Error>::operator kyotocabinet::BasicDB::Error() const':
+/usr/local/include/kcthread.h:907: undefined reference to `kyotocabinet::TSDKey::get() const'
+/tmp/ccdQkhAW.o: In function `~ThreadImpl':
+/usr/local/include/kchashdb.h:2272: undefined reference to `kyotocabinet::Thread::~Thread()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::get(char const*, unsigned long, char*, unsigned long)::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:2000: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::get(char const*, unsigned long, unsigned long*)::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:1924: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::Cursor::get(unsigned long*, char const**, unsigned long*, bool)::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:762: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::Cursor::get_value(unsigned long*, bool)::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:686: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::Cursor::get_key(unsigned long*, bool)::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:620: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o:/usr/local/include/kcdb.h:1827: more undefined references to `kyotocabinet::DB::Visitor::NOP' follow
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::cas(char const*, unsigned long, char const*, unsigned long, char const*, unsigned long)::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:1820: undefined reference to `kyotocabinet::DB::Visitor::REMOVE'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `~ThreadImpl':
+/usr/local/include/kchashdb.h:2272: undefined reference to `kyotocabinet::Thread::~Thread()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::get(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >*)::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:1964: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::Cursor::get(std::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::basic_string<char, std::char_traits<char>, std::allocator<char> >*, bool)::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:801: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:375: undefined reference to `kyotocabinet::RWLock::lock_reader()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:375: undefined reference to `kyotocabinet::RWLock::lock_reader()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:375: undefined reference to `kyotocabinet::RWLock::lock_reader()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:375: undefined reference to `kyotocabinet::RWLock::lock_reader()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:375: undefined reference to `kyotocabinet::RWLock::lock_reader()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::increment(char const*, unsigned long, long, long)::VisitorImpl::visit_empty(char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:1640: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::increment_double(char const*, unsigned long, double, double)::VisitorImpl::visit_empty(char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:1749: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::increment_double(char const*, unsigned long, double, double)::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:1708: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/usr/local/include/kcdb.h:1718: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::increment_double(char const*, unsigned long, double, double)::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:1711: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/usr/local/include/kcdb.h:1714: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::increment(char const*, unsigned long, long, long)::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:1619: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::BasicDB::increment(char const*, unsigned long, long, long)::VisitorImpl::visit_full(char const*, unsigned long, char const*, unsigned long, unsigned long*)':
+/usr/local/include/kcdb.h:1622: undefined reference to `kyotocabinet::BIGEND'
+/usr/local/include/kcdb.h:1629: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::secure_least(long)':
+/usr/local/include/kcthread.h:1041: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1043: undefined reference to `kyotocabinet::AtomicInt64::cas(long, long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::TSD<kyotocabinet::BasicDB::Error>::operator->()':
+/usr/local/include/kcthread.h:894: undefined reference to `kyotocabinet::TSDKey::get() const'
+/usr/local/include/kcthread.h:897: undefined reference to `kyotocabinet::TSDKey::set(void*)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator=(long const&)':
+/usr/local/include/kcthread.h:1002: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::dump_meta()':
+/usr/local/include/kchashdb.h:2587: undefined reference to `kyotocabinet::File::write(long, void const*, unsigned long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::dump_meta()':
+/usr/local/include/kchashdb.h:2588: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `ScopedMutex':
+/usr/local/include/kcthread.h:154: undefined reference to `kyotocabinet::Mutex::lock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::synchronize_meta()':
+/usr/local/include/kchashdb.h:2429: undefined reference to `kyotocabinet::File::synchronize(bool)'
+/usr/local/include/kchashdb.h:2430: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `~ScopedMutex':
+/usr/local/include/kcthread.h:161: undefined reference to `kyotocabinet::Mutex::unlock()'
+/usr/local/include/kcthread.h:161: undefined reference to `kyotocabinet::Mutex::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::dump_auto_meta()':
+/usr/local/include/kchashdb.h:2608: undefined reference to `kyotocabinet::File::write_fast(long, void const*, unsigned long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::dump_auto_meta()':
+/usr/local/include/kchashdb.h:2609: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::load_meta()':
+/usr/local/include/kchashdb.h:2635: undefined reference to `kyotocabinet::File::size() const'
+/usr/local/include/kchashdb.h:2639: undefined reference to `kyotocabinet::File::read(long, void*, unsigned long)'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator=(long const&)':
+/usr/local/include/kcthread.h:1002: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/usr/local/include/kcthread.h:1002: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator=(kyotocabinet::AtomicInt64 const&)':
+/usr/local/include/kcthread.h:992: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:992: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::load_meta()':
+/usr/local/include/kchashdb.h:2640: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:2642: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator=(long const&)':
+/usr/local/include/kcthread.h:1002: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::trim_file(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)':
+/usr/local/include/kchashdb.h:2852: undefined reference to `kyotocabinet::File::truncate(long)'
+/usr/local/include/kchashdb.h:2857: undefined reference to `kyotocabinet::File::close()'
+/usr/local/include/kchashdb.h:2861: undefined reference to `kyotocabinet::File::refresh()'
+/usr/local/include/kchashdb.h:2871: undefined reference to `kyotocabinet::File::~File()'
+/usr/local/include/kchashdb.h:2850: undefined reference to `kyotocabinet::File::File()'
+/usr/local/include/kchashdb.h:2851: undefined reference to `kyotocabinet::File::open(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int, long)'
+/usr/local/include/kchashdb.h:2868: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:2853: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:2862: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:2858: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::set_bucket(long, long)':
+/usr/local/include/kchashdb.h:2918: undefined reference to `kyotocabinet::File::write_fast(long, void const*, unsigned long)'
+/usr/local/include/kchashdb.h:2919: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::set_chain(long, long)':
+/usr/local/include/kchashdb.h:2950: undefined reference to `kyotocabinet::File::write_fast(long, void const*, unsigned long)'
+/usr/local/include/kchashdb.h:2951: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record_body(kyotocabinet::HashDB::Record*)':
+/usr/local/include/kchashdb.h:3121: undefined reference to `kyotocabinet::File::read_fast(long, void*, unsigned long)'
+/usr/local/include/kchashdb.h:3122: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:3124: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::get_bucket(long)':
+/usr/local/include/kchashdb.h:2932: undefined reference to `kyotocabinet::File::read_fast(long, void*, unsigned long)'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2967: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::Cursor::jump(char const*, unsigned long)':
+/usr/local/include/kchashdb.h:324: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2967: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record_body(kyotocabinet::HashDB::Record*)':
+/usr/local/include/kchashdb.h:3121: undefined reference to `kyotocabinet::File::read_fast(long, void*, unsigned long)'
+/usr/local/include/kchashdb.h:3122: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:3124: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::write_free_block(long, unsigned long, char*)':
+/usr/local/include/kchashdb.h:3336: undefined reference to `kyotocabinet::File::write_fast(long, void const*, unsigned long)'
+/usr/local/include/kchashdb.h:3337: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2967: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::set_chain(long, long)':
+/usr/local/include/kchashdb.h:2950: undefined reference to `kyotocabinet::File::write_fast(long, void const*, unsigned long)'
+/usr/local/include/kchashdb.h:2951: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::set_bucket(long, long)':
+/usr/local/include/kchashdb.h:2918: undefined reference to `kyotocabinet::File::write_fast(long, void const*, unsigned long)'
+/usr/local/include/kchashdb.h:2919: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::cut_chain(kyotocabinet::HashDB::Record*, char*, long, long)':
+/usr/local/include/kchashdb.h:3608: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::cut_chain(kyotocabinet::HashDB::Record*, char*, long, long)':
+/usr/local/include/kchashdb.h:3594: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::begin_auto_transaction()':
+/usr/local/include/kchashdb.h:3666: undefined reference to `kyotocabinet::Mutex::lock()'
+/usr/local/include/kchashdb.h:3667: undefined reference to `kyotocabinet::File::begin_transaction(bool, long)'
+/usr/local/include/kchashdb.h:3672: undefined reference to `kyotocabinet::File::write_transaction(long, unsigned long)'
+/usr/local/include/kchashdb.h:3673: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:3674: undefined reference to `kyotocabinet::File::end_transaction(bool)'
+/usr/local/include/kchashdb.h:3675: undefined reference to `kyotocabinet::Mutex::unlock()'
+/usr/local/include/kchashdb.h:3668: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:3669: undefined reference to `kyotocabinet::Mutex::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::dump_auto_meta()':
+/usr/local/include/kchashdb.h:2608: undefined reference to `kyotocabinet::File::write_fast(long, void const*, unsigned long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::commit_auto_transaction()':
+/usr/local/include/kchashdb.h:3703: undefined reference to `kyotocabinet::File::end_transaction(bool)'
+/usr/local/include/kchashdb.h:3704: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:3707: undefined reference to `kyotocabinet::Mutex::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::dump_auto_meta()':
+/usr/local/include/kchashdb.h:2609: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `~TSD':
+/usr/local/include/kcthread.h:869: undefined reference to `kyotocabinet::TSDKey::get() const'
+/usr/local/include/kcthread.h:872: undefined reference to `kyotocabinet::TSDKey::set(void*)'
+/usr/local/include/kcthread.h:874: undefined reference to `kyotocabinet::TSDKey::~TSDKey()'
+/usr/local/include/kcthread.h:874: undefined reference to `kyotocabinet::TSDKey::~TSDKey()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::abort_auto_transaction()':
+/usr/local/include/kchashdb.h:3737: undefined reference to `kyotocabinet::File::end_transaction(bool)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator=(long const&)':
+/usr/local/include/kcthread.h:1002: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::abort_auto_transaction()':
+/usr/local/include/kchashdb.h:3745: undefined reference to `kyotocabinet::Mutex::unlock()'
+/usr/local/include/kchashdb.h:3738: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::clear()':
+/usr/local/include/kchashdb.h:1120: undefined reference to `kyotocabinet::File::truncate(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator=(long const&)':
+/usr/local/include/kcthread.h:1002: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/usr/local/include/kcthread.h:1002: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator=(kyotocabinet::AtomicInt64 const&)':
+/usr/local/include/kcthread.h:992: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:992: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::clear()':
+/usr/local/include/kchashdb.h:1135: undefined reference to `kyotocabinet::File::truncate(long)'
+/usr/local/include/kchashdb.h:1136: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:1121: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `HashDB':
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::RWLock::RWLock()'
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::SlottedRWLock::SlottedRWLock(unsigned long)'
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::Mutex::Mutex()'
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::Mutex::Mutex()'
+/tmp/ccdQkhAW.o: In function `TSD':
+/usr/local/include/kcthread.h:861: undefined reference to `kyotocabinet::TSDKey::TSDKey(void (*)(void*))'
+/tmp/ccdQkhAW.o: In function `HashDB':
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::File::File()'
+/tmp/ccdQkhAW.o: In function `AtomicInt64':
+/usr/local/include/kcthread.h:951: undefined reference to `kyotocabinet::SpinLock::SpinLock()'
+/usr/local/include/kcthread.h:951: undefined reference to `kyotocabinet::SpinLock::SpinLock()'
+/usr/local/include/kcthread.h:951: undefined reference to `kyotocabinet::SpinLock::SpinLock()'
+/tmp/ccdQkhAW.o: In function `HashDB':
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::ZLIBRAWCOMP'
+/tmp/ccdQkhAW.o: In function `AtomicInt64':
+/usr/local/include/kcthread.h:951: undefined reference to `kyotocabinet::SpinLock::SpinLock()'
+/tmp/ccdQkhAW.o: In function `~AtomicInt64':
+/usr/local/include/kcthread.h:957: undefined reference to `kyotocabinet::SpinLock::~SpinLock()'
+/usr/local/include/kcthread.h:957: undefined reference to `kyotocabinet::SpinLock::~SpinLock()'
+/usr/local/include/kcthread.h:957: undefined reference to `kyotocabinet::SpinLock::~SpinLock()'
+/tmp/ccdQkhAW.o: In function `HashDB':
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::File::~File()'
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::Mutex::~Mutex()'
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::Mutex::~Mutex()'
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::SlottedRWLock::~SlottedRWLock()'
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::RWLock::~RWLock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::abort_transaction()':
+/usr/local/include/kchashdb.h:3717: undefined reference to `kyotocabinet::File::end_transaction(bool)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator=(long const&)':
+/usr/local/include/kcthread.h:1002: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::abort_transaction()':
+/usr/local/include/kchashdb.h:3718: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::commit_transaction()':
+/usr/local/include/kchashdb.h:3688: undefined reference to `kyotocabinet::File::end_transaction(bool)'
+/usr/local/include/kchashdb.h:3689: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedMutex':
+/usr/local/include/kcthread.h:154: undefined reference to `kyotocabinet::Mutex::lock()'
+/tmp/ccdQkhAW.o: In function `~ScopedMutex':
+/usr/local/include/kcthread.h:161: undefined reference to `kyotocabinet::Mutex::unlock()'
+/usr/local/include/kcthread.h:161: undefined reference to `kyotocabinet::Mutex::unlock()'
+/usr/local/include/kcthread.h:161: undefined reference to `kyotocabinet::Mutex::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2967: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::get_bucket(long)':
+/usr/local/include/kchashdb.h:2932: undefined reference to `kyotocabinet::File::read_fast(long, void*, unsigned long)'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2967: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::shift_record(kyotocabinet::HashDB::Record*, long)':
+/usr/local/include/kchashdb.h:3317: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2967: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::shift_record(kyotocabinet::HashDB::Record*, long)':
+/usr/local/include/kchashdb.h:3279: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator=(long const&)':
+/usr/local/include/kcthread.h:1002: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator=(kyotocabinet::AtomicInt64 const&)':
+/usr/local/include/kcthread.h:992: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:992: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::defrag_impl(long)':
+/usr/local/include/kchashdb.h:2498: undefined reference to `kyotocabinet::File::truncate(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::get_bucket(long)':
+/usr/local/include/kchashdb.h:2932: undefined reference to `kyotocabinet::File::read_fast(long, void*, unsigned long)'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::accept_impl(char const*, unsigned long, kyotocabinet::DB::Visitor*, long, unsigned int, bool)':
+/usr/local/include/kchashdb.h:1916: undefined reference to `kyotocabinet::DB::Visitor::REMOVE'
+/usr/local/include/kchashdb.h:1943: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2967: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::accept_impl(char const*, unsigned long, kyotocabinet::DB::Visitor*, long, unsigned int, bool)':
+/usr/local/include/kchashdb.h:2043: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/usr/local/include/kchashdb.h:2043: undefined reference to `kyotocabinet::DB::Visitor::REMOVE'
+/usr/local/include/kchashdb.h:1852: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::accept_impl(char const*, unsigned long, kyotocabinet::DB::Visitor*, long, unsigned int, bool)':
+/usr/local/include/kchashdb.h:2106: undefined reference to `kyotocabinet::AtomicInt64::add(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator+=(long)':
+/usr/local/include/kcthread.h:1020: undefined reference to `kyotocabinet::AtomicInt64::add(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator-=(long)':
+/usr/local/include/kcthread.h:1030: undefined reference to `kyotocabinet::AtomicInt64::add(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator+=(long)':
+/usr/local/include/kcthread.h:1020: undefined reference to `kyotocabinet::AtomicInt64::add(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::accept_impl(char const*, unsigned long, kyotocabinet::DB::Visitor*, long, unsigned int, bool)':
+/usr/local/include/kchashdb.h:2008: undefined reference to `kyotocabinet::AtomicInt64::add(long)'
+/tmp/ccdQkhAW.o:/usr/local/include/kcthread.h:1020: more undefined references to `kyotocabinet::AtomicInt64::add(long)' follow
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::iterate_impl(kyotocabinet::DB::Visitor*, kyotocabinet::BasicDB::ProgressChecker*)':
+/usr/local/include/kchashdb.h:2179: undefined reference to `kyotocabinet::DB::Visitor::REMOVE'
+/usr/local/include/kchashdb.h:2189: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2967: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::iterate_impl(kyotocabinet::DB::Visitor*, kyotocabinet::BasicDB::ProgressChecker*)':
+/usr/local/include/kchashdb.h:2179: undefined reference to `kyotocabinet::DB::Visitor::REMOVE'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::write_free_block(long, unsigned long, char*)':
+/usr/local/include/kchashdb.h:3336: undefined reference to `kyotocabinet::File::write_fast(long, void const*, unsigned long)'
+/usr/local/include/kchashdb.h:3337: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::iterate(kyotocabinet::DB::Visitor*, bool, kyotocabinet::BasicDB::ProgressChecker*)':
+/usr/local/include/kchashdb.h:714: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::accept_bulk(std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, kyotocabinet::DB::Visitor*, bool)':
+/usr/local/include/kchashdb.h:612: undefined reference to `kyotocabinet::RWLock::lock_reader()'
+/usr/local/include/kchashdb.h:633: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kchashdb.h:661: undefined reference to `kyotocabinet::SlottedRWLock::lock_reader(unsigned long)'
+/usr/local/include/kchashdb.h:675: undefined reference to `kyotocabinet::SlottedRWLock::unlock(unsigned long)'
+/usr/local/include/kchashdb.h:680: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::accept_bulk(std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, kyotocabinet::DB::Visitor*, bool)':
+/usr/local/include/kchashdb.h:659: undefined reference to `kyotocabinet::SlottedRWLock::lock_writer(unsigned long)'
+/usr/local/include/kchashdb.h:621: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kchashdb.h:681: undefined reference to `kyotocabinet::RWLock::lock_writer_try()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator-=(long)':
+/usr/local/include/kcthread.h:1030: undefined reference to `kyotocabinet::AtomicInt64::add(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::accept_bulk(std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, kyotocabinet::DB::Visitor*, bool)':
+/usr/local/include/kchashdb.h:688: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::accept(char const*, unsigned long, kyotocabinet::DB::Visitor*, bool)':
+/usr/local/include/kchashdb.h:558: undefined reference to `kyotocabinet::RWLock::lock_reader()'
+/usr/local/include/kchashdb.h:583: undefined reference to `kyotocabinet::SlottedRWLock::lock_reader(unsigned long)'
+/usr/local/include/kchashdb.h:586: undefined reference to `kyotocabinet::SlottedRWLock::unlock(unsigned long)'
+/usr/local/include/kchashdb.h:587: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::accept(char const*, unsigned long, kyotocabinet::DB::Visitor*, bool)':
+/usr/local/include/kchashdb.h:581: undefined reference to `kyotocabinet::SlottedRWLock::lock_writer(unsigned long)'
+/usr/local/include/kchashdb.h:586: undefined reference to `kyotocabinet::SlottedRWLock::unlock(unsigned long)'
+/usr/local/include/kchashdb.h:587: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kchashdb.h:567: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kchashdb.h:588: undefined reference to `kyotocabinet::RWLock::lock_writer_try()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator-=(long)':
+/usr/local/include/kcthread.h:1030: undefined reference to `kyotocabinet::AtomicInt64::add(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::accept(char const*, unsigned long, kyotocabinet::DB::Visitor*, bool)':
+/usr/local/include/kchashdb.h:595: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::Cursor::accept(kyotocabinet::DB::Visitor*, bool, bool)':
+/usr/local/include/kchashdb.h:206: undefined reference to `kyotocabinet::DB::Visitor::REMOVE'
+/usr/local/include/kchashdb.h:216: undefined reference to `kyotocabinet::DB::Visitor::NOP'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator-=(long)':
+/usr/local/include/kcthread.h:1030: undefined reference to `kyotocabinet::AtomicInt64::add(long)'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::begin_transaction_impl()':
+/usr/local/include/kchashdb.h:3640: undefined reference to `kyotocabinet::File::begin_transaction(bool, long)'
+/usr/local/include/kchashdb.h:3644: undefined reference to `kyotocabinet::File::write_transaction(long, unsigned long)'
+/usr/local/include/kchashdb.h:3641: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:3645: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:3646: undefined reference to `kyotocabinet::File::end_transaction(bool)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::begin_transaction(bool)':
+/usr/local/include/kchashdb.h:1014: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/usr/local/include/kchashdb.h:1026: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kchashdb.h:1028: undefined reference to `kyotocabinet::Thread::chill()'
+/usr/local/include/kchashdb.h:1014: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/usr/local/include/kchashdb.h:1022: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kchashdb.h:1030: undefined reference to `kyotocabinet::Thread::yield()'
+/usr/local/include/kchashdb.h:1041: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::status(std::map<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >*)':
+/usr/local/include/kchashdb.h:1210: undefined reference to `kyotocabinet::File::size() const'
+/usr/local/include/kchashdb.h:1211: undefined reference to `kyotocabinet::File::recovered() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::get_bucket(long)':
+/usr/local/include/kchashdb.h:2932: undefined reference to `kyotocabinet::File::read_fast(long, void*, unsigned long)'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::get_bucket(long)':
+/usr/local/include/kchashdb.h:2933: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:2935: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::begin_transaction_try(bool)':
+/usr/local/include/kchashdb.h:1052: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::begin_transaction_impl()':
+/usr/local/include/kchashdb.h:3640: undefined reference to `kyotocabinet::File::begin_transaction(bool, long)'
+/usr/local/include/kchashdb.h:3644: undefined reference to `kyotocabinet::File::write_transaction(long, unsigned long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::begin_transaction_try(bool)':
+/usr/local/include/kchashdb.h:1075: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kchashdb.h:1065: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kchashdb.h:1060: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::begin_transaction_impl()':
+/usr/local/include/kchashdb.h:3641: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:3645: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:3646: undefined reference to `kyotocabinet::File::end_transaction(bool)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::get_bucket(long)':
+/usr/local/include/kchashdb.h:2932: undefined reference to `kyotocabinet::File::read_fast(long, void*, unsigned long)'
+/tmp/ccdQkhAW.o: In function `hton64':
+/usr/local/include/kcutil.h:1181: undefined reference to `kyotocabinet::BIGEND'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::get_bucket(long)':
+/usr/local/include/kchashdb.h:2933: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:2935: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `ThreadImpl':
+/usr/local/include/kchashdb.h:2276: undefined reference to `kyotocabinet::Thread::Thread()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::scan_parallel_impl(kyotocabinet::DB::Visitor*, unsigned long, kyotocabinet::BasicDB::ProgressChecker*)':
+/usr/local/include/kchashdb.h:2358: undefined reference to `kyotocabinet::Thread::start()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::scan_parallel_impl(kyotocabinet::DB::Visitor*, unsigned long, kyotocabinet::BasicDB::ProgressChecker*)':
+/usr/local/include/kchashdb.h:2362: undefined reference to `kyotocabinet::Thread::join()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::TSD<kyotocabinet::BasicDB::Error>::operator*()':
+/usr/local/include/kcthread.h:881: undefined reference to `kyotocabinet::TSDKey::get() const'
+/usr/local/include/kcthread.h:884: undefined reference to `kyotocabinet::TSDKey::set(void*)'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:375: undefined reference to `kyotocabinet::RWLock::lock_reader()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::scan_parallel(kyotocabinet::DB::Visitor*, unsigned long, kyotocabinet::BasicDB::ProgressChecker*)':
+/usr/local/include/kchashdb.h:745: undefined reference to `kyotocabinet::SlottedRWLock::lock_reader_all()'
+/usr/local/include/kchashdb.h:748: undefined reference to `kyotocabinet::SlottedRWLock::unlock_all()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:375: undefined reference to `kyotocabinet::RWLock::lock_reader()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::synchronize(bool, kyotocabinet::BasicDB::FileProcessor*, kyotocabinet::BasicDB::ProgressChecker*)':
+/usr/local/include/kchashdb.h:977: undefined reference to `kyotocabinet::SlottedRWLock::lock_reader_all()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::synchronize(bool, kyotocabinet::BasicDB::FileProcessor*, kyotocabinet::BasicDB::ProgressChecker*)':
+/usr/local/include/kchashdb.h:981: undefined reference to `kyotocabinet::SlottedRWLock::unlock_all()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::synchronize_impl(bool, kyotocabinet::BasicDB::FileProcessor*, kyotocabinet::BasicDB::ProgressChecker*)':
+/usr/local/include/kchashdb.h:2402: undefined reference to `kyotocabinet::File::synchronize(bool)'
+/usr/local/include/kchashdb.h:2403: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::close()':
+/usr/local/include/kchashdb.h:948: undefined reference to `kyotocabinet::File::close()'
+/usr/local/include/kchashdb.h:949: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `~AtomicInt64':
+/usr/local/include/kcthread.h:957: undefined reference to `kyotocabinet::SpinLock::~SpinLock()'
+/usr/local/include/kcthread.h:957: undefined reference to `kyotocabinet::SpinLock::~SpinLock()'
+/usr/local/include/kcthread.h:957: undefined reference to `kyotocabinet::SpinLock::~SpinLock()'
+/usr/local/include/kcthread.h:957: undefined reference to `kyotocabinet::SpinLock::~SpinLock()'
+/tmp/ccdQkhAW.o: In function `~HashDB':
+/usr/local/include/kchashdb.h:532: undefined reference to `kyotocabinet::File::~File()'
+/tmp/ccdQkhAW.o: In function `~TSD':
+/usr/local/include/kcthread.h:869: undefined reference to `kyotocabinet::TSDKey::get() const'
+/usr/local/include/kcthread.h:872: undefined reference to `kyotocabinet::TSDKey::set(void*)'
+/usr/local/include/kcthread.h:874: undefined reference to `kyotocabinet::TSDKey::~TSDKey()'
+/tmp/ccdQkhAW.o: In function `~HashDB':
+/usr/local/include/kchashdb.h:532: undefined reference to `kyotocabinet::Mutex::~Mutex()'
+/usr/local/include/kchashdb.h:532: undefined reference to `kyotocabinet::Mutex::~Mutex()'
+/usr/local/include/kchashdb.h:532: undefined reference to `kyotocabinet::SlottedRWLock::~SlottedRWLock()'
+/usr/local/include/kchashdb.h:532: undefined reference to `kyotocabinet::RWLock::~RWLock()'
+/tmp/ccdQkhAW.o: In function `~AtomicInt64':
+/usr/local/include/kcthread.h:957: undefined reference to `kyotocabinet::SpinLock::~SpinLock()'
+/usr/local/include/kcthread.h:957: undefined reference to `kyotocabinet::SpinLock::~SpinLock()'
+/usr/local/include/kcthread.h:957: undefined reference to `kyotocabinet::SpinLock::~SpinLock()'
+/usr/local/include/kcthread.h:957: undefined reference to `kyotocabinet::SpinLock::~SpinLock()'
+/tmp/ccdQkhAW.o: In function `~HashDB':
+/usr/local/include/kchashdb.h:532: undefined reference to `kyotocabinet::File::~File()'
+/usr/local/include/kchashdb.h:532: undefined reference to `kyotocabinet::Mutex::~Mutex()'
+/usr/local/include/kchashdb.h:532: undefined reference to `kyotocabinet::Mutex::~Mutex()'
+/usr/local/include/kchashdb.h:532: undefined reference to `kyotocabinet::SlottedRWLock::~SlottedRWLock()'
+/usr/local/include/kchashdb.h:532: undefined reference to `kyotocabinet::RWLock::~RWLock()'
+/tmp/ccdQkhAW.o: In function `~TSD':
+/usr/local/include/kcthread.h:874: undefined reference to `kyotocabinet::TSDKey::~TSDKey()'
+/tmp/ccdQkhAW.o: In function `HashDB':
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::RWLock::RWLock()'
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::SlottedRWLock::SlottedRWLock(unsigned long)'
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::Mutex::Mutex()'
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::Mutex::Mutex()'
+/tmp/ccdQkhAW.o: In function `TSD':
+/usr/local/include/kcthread.h:861: undefined reference to `kyotocabinet::TSDKey::TSDKey(void (*)(void*))'
+/tmp/ccdQkhAW.o: In function `HashDB':
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::File::File()'
+/tmp/ccdQkhAW.o: In function `AtomicInt64':
+/usr/local/include/kcthread.h:951: undefined reference to `kyotocabinet::SpinLock::SpinLock()'
+/usr/local/include/kcthread.h:951: undefined reference to `kyotocabinet::SpinLock::SpinLock()'
+/usr/local/include/kcthread.h:951: undefined reference to `kyotocabinet::SpinLock::SpinLock()'
+/tmp/ccdQkhAW.o: In function `HashDB':
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::ZLIBRAWCOMP'
+/tmp/ccdQkhAW.o: In function `AtomicInt64':
+/usr/local/include/kcthread.h:951: undefined reference to `kyotocabinet::SpinLock::SpinLock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::reorganize_file(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)':
+/usr/local/include/kchashdb.h:2715: undefined reference to `kyotocabinet::File::EXTCHR'
+/usr/local/include/kchashdb.h:2718: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator=(long const&)':
+/usr/local/include/kcthread.h:1002: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator=(kyotocabinet::AtomicInt64 const&)':
+/usr/local/include/kcthread.h:992: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:992: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::TSD<kyotocabinet::BasicDB::Error>::operator kyotocabinet::BasicDB::Error() const':
+/usr/local/include/kcthread.h:907: undefined reference to `kyotocabinet::TSDKey::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2967: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2967: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record_body(kyotocabinet::HashDB::Record*)':
+/usr/local/include/kchashdb.h:3122: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:3124: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2967: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::TSD<kyotocabinet::BasicDB::Error>::operator kyotocabinet::BasicDB::Error() const':
+/usr/local/include/kcthread.h:907: undefined reference to `kyotocabinet::TSDKey::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::reorganize_file(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)':
+/usr/local/include/kchashdb.h:2722: undefined reference to `kyotocabinet::File::rename(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+/usr/local/include/kchashdb.h:2734: undefined reference to `kyotocabinet::File::remove(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2967: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record_body(kyotocabinet::HashDB::Record*)':
+/usr/local/include/kchashdb.h:3121: undefined reference to `kyotocabinet::File::read_fast(long, void*, unsigned long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::read_record(kyotocabinet::HashDB::Record*, char*)':
+/usr/local/include/kchashdb.h:2967: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o:/usr/local/include/kcthread.h:383: more undefined references to `kyotocabinet::RWLock::unlock()' follow
+/tmp/ccdQkhAW.o: In function `HashDB':
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::SlottedRWLock::~SlottedRWLock()'
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::RWLock::~RWLock()'
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::File::~File()'
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::Mutex::~Mutex()'
+/usr/local/include/kchashdb.h:525: undefined reference to `kyotocabinet::Mutex::~Mutex()'
+/tmp/ccdQkhAW.o: In function `~AtomicInt64':
+/usr/local/include/kcthread.h:957: undefined reference to `kyotocabinet::SpinLock::~SpinLock()'
+/usr/local/include/kcthread.h:957: undefined reference to `kyotocabinet::SpinLock::~SpinLock()'
+/usr/local/include/kcthread.h:957: undefined reference to `kyotocabinet::SpinLock::~SpinLock()'
+/tmp/ccdQkhAW.o: In function `ScopedRWLock':
+/usr/local/include/kcthread.h:373: undefined reference to `kyotocabinet::RWLock::lock_writer()'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::open(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int)':
+/usr/local/include/kchashdb.h:823: undefined reference to `kyotocabinet::File::open(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int, long)'
+/usr/local/include/kchashdb.h:824: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:834: undefined reference to `kyotocabinet::File::recovered() const'
+/usr/local/include/kchashdb.h:920: undefined reference to `kyotocabinet::File::close()'
+/usr/local/include/kchashdb.h:835: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator=(long const&)':
+/usr/local/include/kcthread.h:1002: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::open(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int)':
+/usr/local/include/kchashdb.h:837: undefined reference to `kyotocabinet::LIBVER'
+/usr/local/include/kchashdb.h:838: undefined reference to `kyotocabinet::LIBREV'
+/usr/local/include/kchashdb.h:839: undefined reference to `kyotocabinet::FMTVER'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator=(long const&)':
+/usr/local/include/kcthread.h:1002: undefined reference to `kyotocabinet::AtomicInt64::set(long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::open(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int)':
+/usr/local/include/kchashdb.h:842: undefined reference to `kyotocabinet::File::truncate(long)'
+/usr/local/include/kchashdb.h:843: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:895: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::open(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int)':
+/usr/local/include/kchashdb.h:912: undefined reference to `kyotocabinet::File::close()'
+/usr/local/include/kchashdb.h:851: undefined reference to `kyotocabinet::File::synchronize_whole()'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::open(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int)':
+/usr/local/include/kchashdb.h:899: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::open(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int)':
+/usr/local/include/kchashdb.h:902: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::open(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int)':
+/usr/local/include/kchashdb.h:875: undefined reference to `kyotocabinet::File::close()'
+/usr/local/include/kchashdb.h:876: undefined reference to `kyotocabinet::File::error() const'
+/usr/local/include/kchashdb.h:906: undefined reference to `kyotocabinet::File::size() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::AtomicInt64::operator long() const':
+/usr/local/include/kcthread.h:1011: undefined reference to `kyotocabinet::AtomicInt64::get() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::dump_empty_free_blocks()':
+/usr/local/include/kchashdb.h:3449: undefined reference to `kyotocabinet::File::write(long, void const*, unsigned long)'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::open(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int)':
+/usr/local/include/kchashdb.h:879: undefined reference to `kyotocabinet::File::open(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int, long)'
+/usr/local/include/kchashdb.h:880: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `kyotocabinet::HashDB::dump_empty_free_blocks()':
+/usr/local/include/kchashdb.h:3450: undefined reference to `kyotocabinet::File::error() const'
+/tmp/ccdQkhAW.o: In function `~ScopedRWLock':
+/usr/local/include/kcthread.h:383: undefined reference to `kyotocabinet::RWLock::unlock()'
+/tmp/ccdQkhAW.o:(.rodata._ZTIZN12kyotocabinet6HashDB18scan_parallel_implEPNS_2DB7VisitorEmPNS_7BasicDB15ProgressCheckerEE10ThreadImpl[typeinfo for kyotocabinet::HashDB::scan_parallel_impl(kyotocabinet::DB::Visitor*, unsigned long, kyotocabinet::BasicDB::ProgressChecker*)::ThreadImpl]+0x10): undefined reference to `typeinfo for kyotocabinet::Thread'
+collect2: ld returned 1 exit status
+make: *** [verifier.o] Error 1

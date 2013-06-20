@@ -1,0 +1,258 @@
+==4008== Memcheck, a memory error detector
+==4008== Copyright (C) 2002-2011, and GNU GPL'd, by Julian Seward et al.
+==4008== Using Valgrind-3.7.0 and LibVEX; rerun with -h for copyright info
+==4008== Command: ./prover.o param/sads_param_128.dat input/sads_input_100_1000.dat membership 100
+==4008== Parent PID: 3732
+==4008== 
+--4008-- 
+--4008-- Valgrind options:
+--4008--    --suppressions=/usr/lib/valgrind/debian-libc6-dbg.supp
+--4008--    --leak-check=full
+--4008--    --log-file=./valgrind.log
+--4008--    -v
+--4008--    --track-origins=yes
+--4008-- Contents of /proc/version:
+--4008--   Linux version 3.2.0-23-generic (buildd@crested) (gcc version 4.6.3 (Ubuntu/Linaro 4.6.3-1ubuntu4) ) #36-Ubuntu SMP Tue Apr 10 20:39:51 UTC 2012
+--4008-- Arch and hwcaps: AMD64, amd64-sse3-cx16
+--4008-- Page sizes: currently 4096, max supported 4096
+--4008-- Valgrind library directory: /usr/lib/valgrind
+--4008-- Reading syms from /home/yspark/research/GoogleAnalytics/sads_gdbm2/prover.o (0x400000)
+--4008-- Reading syms from /lib/x86_64-linux-gnu/ld-2.15.so (0x4000000)
+--4008--   Considering /lib/x86_64-linux-gnu/ld-2.15.so ..
+--4008--   .. CRC mismatch (computed 269450ce wanted 94894502)
+--4008--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/ld-2.15.so ..
+--4008--   .. CRC is valid
+--4008-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux (0x38000000)
+--4008--   Considering /usr/lib/valgrind/memcheck-amd64-linux ..
+--4008--   .. CRC mismatch (computed fd32bc40 wanted 1b1bde8c)
+--4008--    object doesn't have a symbol table
+--4008--    object doesn't have a dynamic symbol table
+--4008-- Reading suppressions file: /usr/lib/valgrind/debian-libc6-dbg.supp
+--4008-- Reading suppressions file: /usr/lib/valgrind/default.supp
+==4008== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-4008-by-yspark-on-???
+==4008== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-4008-by-yspark-on-???
+==4008== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-4008-by-yspark-on-???
+==4008== 
+==4008== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==4008== don't want to do, unless you know exactly what you're doing,
+==4008== or are doing some strange experiment):
+==4008==   /usr/lib/valgrind/../../bin/vgdb --pid=4008 ...command...
+==4008== 
+==4008== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==4008==   /path/to/gdb ./prover.o
+==4008== and then give GDB the following command
+==4008==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=4008
+==4008== --pid is optional if only one valgrind process is running
+==4008== 
+--4008-- REDIR: 0x40189e0 (strlen) redirected to 0x380625c7 (???)
+--4008-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so (0x4a25000)
+--4008--   Considering /usr/lib/valgrind/vgpreload_core-amd64-linux.so ..
+--4008--   .. CRC mismatch (computed 8f05ac98 wanted c6d0ab1a)
+--4008--    object doesn't have a symbol table
+--4008-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so (0x4c27000)
+--4008--   Considering /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so ..
+--4008--   .. CRC mismatch (computed fc059af4 wanted ffc668e8)
+--4008--    object doesn't have a symbol table
+--4008-- REDIR: 0x4018850 (index) redirected to 0x4c2bc60 (index)
+--4008-- REDIR: 0x40188d0 (strcmp) redirected to 0x4c2cc20 (strcmp)
+--4008-- Reading syms from /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3 (0x4e32000)
+--4008--   Considering /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3 ..
+--4008--   .. CRC mismatch (computed 37ae07d9 wanted defe77e8)
+--4008--    object doesn't have a symbol table
+--4008-- Reading syms from /usr/local/lib/libgdbm.so.4.0.0 (0x5127000)
+--4008-- Reading syms from /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.16 (0x5330000)
+--4008--   Considering /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.16 ..
+--4008--   .. CRC mismatch (computed ef748751 wanted e44c0328)
+--4008--    object doesn't have a symbol table
+--4008-- Reading syms from /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x5630000)
+--4008--   Considering /lib/x86_64-linux-gnu/libgcc_s.so.1 ..
+--4008--   .. CRC mismatch (computed c8e4b229 wanted 098e39f6)
+--4008--    object doesn't have a symbol table
+--4008-- Reading syms from /lib/x86_64-linux-gnu/libc-2.15.so (0x5846000)
+--4008--   Considering /lib/x86_64-linux-gnu/libc-2.15.so ..
+--4008--   .. CRC mismatch (computed d1cc6f49 wanted 7994f9f0)
+--4008--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libc-2.15.so ..
+--4008--   .. CRC is valid
+--4008-- Reading syms from /lib/x86_64-linux-gnu/libpthread-2.15.so (0x5c05000)
+--4008--   Considering /lib/x86_64-linux-gnu/libpthread-2.15.so ..
+--4008--   .. CRC mismatch (computed 8e430e5b wanted e619a829)
+--4008--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libpthread-2.15.so ..
+--4008--   .. CRC is valid
+--4008-- Reading syms from /lib/x86_64-linux-gnu/libpcre.so.3.12.1 (0x5e22000)
+--4008--   Considering /lib/x86_64-linux-gnu/libpcre.so.3.12.1 ..
+--4008--   .. CRC mismatch (computed fbaf99ff wanted a6117827)
+--4008--    object doesn't have a symbol table
+--4008-- Reading syms from /lib/x86_64-linux-gnu/librt-2.15.so (0x605f000)
+--4008--   Considering /lib/x86_64-linux-gnu/librt-2.15.so ..
+--4008--   .. CRC mismatch (computed aca1815f wanted f26cc34e)
+--4008--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/librt-2.15.so ..
+--4008--   .. CRC is valid
+--4008-- Reading syms from /lib/x86_64-linux-gnu/libm-2.15.so (0x6267000)
+--4008--   Considering /lib/x86_64-linux-gnu/libm-2.15.so ..
+--4008--   .. CRC mismatch (computed e81d4037 wanted fad28d48)
+--4008--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libm-2.15.so ..
+--4008--   .. CRC is valid
+--4008-- REDIR: 0x58d2e40 (strcasecmp) redirected to 0x4a25610 (_vgnU_ifunc_wrapper)
+--4008-- REDIR: 0x58cf1e0 (strnlen) redirected to 0x4a25610 (_vgnU_ifunc_wrapper)
+--4008-- REDIR: 0x58d5110 (strncasecmp) redirected to 0x4a25610 (_vgnU_ifunc_wrapper)
+--4008-- REDIR: 0x58cf2c0 (strncmp) redirected to 0x4a25610 (_vgnU_ifunc_wrapper)
+--4008-- REDIR: 0x58d0bd0 (__GI_strrchr) redirected to 0x4c2ba80 (__GI_strrchr)
+--4008-- REDIR: 0x58cf100 (__GI_strlen) redirected to 0x4c2bfc0 (__GI_strlen)
+--4008-- REDIR: 0x58cd5c0 (strcmp) redirected to 0x4a25610 (_vgnU_ifunc_wrapper)
+--4008-- REDIR: 0x5977e20 (__strcmp_sse42) redirected to 0x4c2cb60 (strcmp)
+--4008-- REDIR: 0x58c8f50 (malloc) redirected to 0x4c2b660 (malloc)
+--4008-- REDIR: 0x58c9560 (free) redirected to 0x4c2a7c0 (free)
+--4008-- REDIR: 0x58d8d10 (strchrnul) redirected to 0x4c2e3b0 (strchrnul)
+--4008-- REDIR: 0x58cf0b0 (strlen) redirected to 0x4a25610 (_vgnU_ifunc_wrapper)
+--4008-- REDIR: 0x59a8be0 (__strlen_sse2_pminub) redirected to 0x4c2bfa0 (strlen)
+--4008-- REDIR: 0x58cea50 (strcpy) redirected to 0x4a25610 (_vgnU_ifunc_wrapper)
+--4008-- REDIR: 0x58dcb70 (__strcpy_sse2_unaligned) redirected to 0x4c2bfe0 (strcpy)
+--4008-- REDIR: 0x58ca2c0 (calloc) redirected to 0x4c29cf0 (calloc)
+==4008== Syscall param write(buf) points to uninitialised byte(s)
+==4008==    at 0x592C910: __write_nocancel (syscall-template.S:82)
+==4008==    by 0x512C441: _gdbm_full_write (fullio.c:54)
+==4008==    by 0x5129261: gdbm_open (gdbmopen.c:311)
+==4008==    by 0x40772C: sgdbm_init() (sads_gdbm.cpp:22)
+==4008==    by 0x4016E7: main (prover.cpp:884)
+==4008==  Address 0x65d9264 is 4 bytes inside a block of size 4,096 alloc'd
+==4008==    at 0x4C2B6CD: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x512917E: gdbm_open (gdbmopen.c:267)
+==4008==    by 0x40772C: sgdbm_init() (sads_gdbm.cpp:22)
+==4008==    by 0x4016E7: main (prover.cpp:884)
+==4008==  Uninitialised value was created by a heap allocation
+==4008==    at 0x4C2B6CD: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x512917E: gdbm_open (gdbmopen.c:267)
+==4008==    by 0x40772C: sgdbm_init() (sads_gdbm.cpp:22)
+==4008==    by 0x4016E7: main (prover.cpp:884)
+==4008== 
+==4008== Syscall param write(buf) points to uninitialised byte(s)
+==4008==    at 0x592C910: __write_nocancel (syscall-template.S:82)
+==4008==    by 0x512C441: _gdbm_full_write (fullio.c:54)
+==4008==    by 0x5129261: gdbm_open (gdbmopen.c:311)
+==4008==    by 0x407754: sgdbm_init() (sads_gdbm.cpp:32)
+==4008==    by 0x4016E7: main (prover.cpp:884)
+==4008==  Address 0x65da854 is 4 bytes inside a block of size 512 alloc'd
+==4008==    at 0x4C2B6CD: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x512917E: gdbm_open (gdbmopen.c:267)
+==4008==    by 0x407754: sgdbm_init() (sads_gdbm.cpp:32)
+==4008==    by 0x4016E7: main (prover.cpp:884)
+==4008==  Uninitialised value was created by a heap allocation
+==4008==    at 0x4C2B6CD: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x512917E: gdbm_open (gdbmopen.c:267)
+==4008==    by 0x407754: sgdbm_init() (sads_gdbm.cpp:32)
+==4008==    by 0x4016E7: main (prover.cpp:884)
+==4008== 
+--4008-- REDIR: 0xffffffffff600000 (???) redirected to 0x380625b3 (???)
+--4008-- REDIR: 0x58d77f0 (memcpy@@GLIBC_2.14) redirected to 0x4a25610 (_vgnU_ifunc_wrapper)
+--4008-- REDIR: 0x598dfa0 (__memcpy_ssse3_back) redirected to 0x4c2cf30 (memcpy@@GLIBC_2.14)
+--4008-- REDIR: 0x58d1600 (bcmp) redirected to 0x4a25610 (_vgnU_ifunc_wrapper)
+--4008-- REDIR: 0x59a3510 (__memcmp_sse4_1) redirected to 0x4c2dca0 (bcmp)
+--4008-- REDIR: 0x58cacc0 (posix_memalign) redirected to 0x4c29c60 (posix_memalign)
+--4008-- REDIR: 0x58d1c20 (memset) redirected to 0x4a25610 (_vgnU_ifunc_wrapper)
+--4008-- REDIR: 0x58d1c60 (__GI_memset) redirected to 0x4c2e080 (memset)
+==4008== 
+==4008== HEAP SUMMARY:
+==4008==     in use at exit: 1,228,056 bytes in 7,139 blocks
+==4008==   total heap usage: 614,036 allocs, 606,897 frees, 4,292,300,736 bytes allocated
+==4008== 
+==4008== Searching for pointers to 7,139 not-freed blocks
+==4008== Checked 33,530,560 bytes
+==4008== 
+==4008== 4,464 bytes in 9 blocks are possibly lost in loss record 19 of 45
+==4008==    at 0x4C29BE8: memalign (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x4C29C97: posix_memalign (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x4E4C0C9: ??? (in /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3)
+==4008==    by 0x4E930C8: g_slice_alloc (in /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3)
+==4008==    by 0x4E7683D: g_list_prepend (in /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3)
+==4008==    by 0x404089: process_membership_query(unsigned long long) (prover.cpp:487)
+==4008==    by 0x4046A5: run_membership_test(char*, unsigned int) (prover.cpp:784)
+==4008==    by 0x401731: main (prover.cpp:889)
+==4008== 
+==4008== 25,600 bytes in 3,200 blocks are possibly lost in loss record 38 of 45
+==4008==    at 0x4C2B6CD: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x4E7FA78: g_malloc (in /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3)
+==4008==    by 0x4E94337: g_memdup (in /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3)
+==4008==    by 0x4040A1: process_membership_query(unsigned long long) (prover.cpp:491)
+==4008==    by 0x4046A5: run_membership_test(char*, unsigned int) (prover.cpp:784)
+==4008==    by 0x401731: main (prover.cpp:889)
+==4008== 
+==4008== 25,600 bytes in 3,200 blocks are possibly lost in loss record 39 of 45
+==4008==    at 0x4C2B6CD: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x4E7FA78: g_malloc (in /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3)
+==4008==    by 0x4E94337: g_memdup (in /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3)
+==4008==    by 0x40407E: process_membership_query(unsigned long long) (prover.cpp:487)
+==4008==    by 0x4046A5: run_membership_test(char*, unsigned int) (prover.cpp:784)
+==4008==    by 0x401731: main (prover.cpp:889)
+==4008== 
+==4008== 111,600 bytes in 225 blocks are possibly lost in loss record 42 of 45
+==4008==    at 0x4C29BE8: memalign (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x4C29C97: posix_memalign (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x4E4C0C9: ??? (in /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3)
+==4008==    by 0x4E930F3: g_slice_alloc (in /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3)
+==4008==    by 0x4E7683D: g_list_prepend (in /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3)
+==4008==    by 0x404089: process_membership_query(unsigned long long) (prover.cpp:487)
+==4008==    by 0x4046A5: run_membership_test(char*, unsigned int) (prover.cpp:784)
+==4008==    by 0x401731: main (prover.cpp:889)
+==4008== 
+==4008== 111,600 bytes in 225 blocks are possibly lost in loss record 43 of 45
+==4008==    at 0x4C29BE8: memalign (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x4C29C97: posix_memalign (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x4E4C0C9: ??? (in /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3)
+==4008==    by 0x4E930F3: g_slice_alloc (in /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3)
+==4008==    by 0x4E7683D: g_list_prepend (in /lib/x86_64-linux-gnu/libglib-2.0.so.0.3200.3)
+==4008==    by 0x4040AC: process_membership_query(unsigned long long) (prover.cpp:491)
+==4008==    by 0x4046A5: run_membership_test(char*, unsigned int) (prover.cpp:784)
+==4008==    by 0x401731: main (prover.cpp:889)
+==4008== 
+==4008== LEAK SUMMARY:
+==4008==    definitely lost: 0 bytes in 0 blocks
+==4008==    indirectly lost: 0 bytes in 0 blocks
+==4008==      possibly lost: 278,864 bytes in 6,859 blocks
+==4008==    still reachable: 949,192 bytes in 280 blocks
+==4008==         suppressed: 0 bytes in 0 blocks
+==4008== Reachable blocks (those to which a pointer was found) are not shown.
+==4008== To see them, rerun with: --leak-check=full --show-reachable=yes
+==4008== 
+==4008== ERROR SUMMARY: 7 errors from 7 contexts (suppressed: 2 from 2)
+==4008== 
+==4008== 1 errors in context 1 of 7:
+==4008== Syscall param write(buf) points to uninitialised byte(s)
+==4008==    at 0x592C910: __write_nocancel (syscall-template.S:82)
+==4008==    by 0x512C441: _gdbm_full_write (fullio.c:54)
+==4008==    by 0x5129261: gdbm_open (gdbmopen.c:311)
+==4008==    by 0x407754: sgdbm_init() (sads_gdbm.cpp:32)
+==4008==    by 0x4016E7: main (prover.cpp:884)
+==4008==  Address 0x65da854 is 4 bytes inside a block of size 512 alloc'd
+==4008==    at 0x4C2B6CD: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x512917E: gdbm_open (gdbmopen.c:267)
+==4008==    by 0x407754: sgdbm_init() (sads_gdbm.cpp:32)
+==4008==    by 0x4016E7: main (prover.cpp:884)
+==4008==  Uninitialised value was created by a heap allocation
+==4008==    at 0x4C2B6CD: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x512917E: gdbm_open (gdbmopen.c:267)
+==4008==    by 0x407754: sgdbm_init() (sads_gdbm.cpp:32)
+==4008==    by 0x4016E7: main (prover.cpp:884)
+==4008== 
+==4008== 
+==4008== 1 errors in context 2 of 7:
+==4008== Syscall param write(buf) points to uninitialised byte(s)
+==4008==    at 0x592C910: __write_nocancel (syscall-template.S:82)
+==4008==    by 0x512C441: _gdbm_full_write (fullio.c:54)
+==4008==    by 0x5129261: gdbm_open (gdbmopen.c:311)
+==4008==    by 0x40772C: sgdbm_init() (sads_gdbm.cpp:22)
+==4008==    by 0x4016E7: main (prover.cpp:884)
+==4008==  Address 0x65d9264 is 4 bytes inside a block of size 4,096 alloc'd
+==4008==    at 0x4C2B6CD: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x512917E: gdbm_open (gdbmopen.c:267)
+==4008==    by 0x40772C: sgdbm_init() (sads_gdbm.cpp:22)
+==4008==    by 0x4016E7: main (prover.cpp:884)
+==4008==  Uninitialised value was created by a heap allocation
+==4008==    at 0x4C2B6CD: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4008==    by 0x512917E: gdbm_open (gdbmopen.c:267)
+==4008==    by 0x40772C: sgdbm_init() (sads_gdbm.cpp:22)
+==4008==    by 0x4016E7: main (prover.cpp:884)
+==4008== 
+--4008-- 
+--4008-- used_suppression:      2 dl-hack3-cond-1
+==4008== 
+==4008== ERROR SUMMARY: 7 errors from 7 contexts (suppressed: 2 from 2)
