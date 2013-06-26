@@ -1,21 +1,11 @@
-This document is based on Ubuntu/Mint Linux.
+1. Directories
+- sads_kc: c++ implementation with Kyoto Cabinet (known to be faster than gdbm)
+- sads_gdbm_c / sads_gdbm_cpp: c/c++ implemenation with GDBM. 
+- sads_mem_c / sads_mem_cpp: c/c++ impelmentation with memory only
+- sads_chris: ruby implementation. crypto part only.
 
-1. Install LAMP stack
-$ sudo apt-get install tasksel
-$ sudo tasksel install lamp-server
-
-2. Install Piwik
-- May need to add "extension=mysqli.so" in /etc/php5/apache2/php.ini.
-- May need to grant privilege to piwik user in mysql.
-mysql> CREATE USER 'piwik'@'localhost' IDENTIFIED BY 'piwik';
-mysql> GRANT ALL PRIVILEGES ON *.* TO 'piwik'@'localhost';
-
-3. Install GSL
-./configure
-make
-sudo make install
-
-4. Install necessary libraries
-sudo apt-get install libglib2.0-dev
-sudo apt-get install libmysql++-dev
-
+2. Files
+- prover.c/prover.cpp: prover
+- verifier.c/verifier.cpp: verifier
+- sads_gdbm.c/sads_gdbm.cpp: GDBM interface
+- sads_kc.cpp: Kyoto Cabinet interface 
