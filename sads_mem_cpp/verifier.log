@@ -1,0 +1,525 @@
+SADS Verifier
+get_initial_digest(0)
+IP conversion: 10.99.0.3 -> 4469227523
+IP conversion: 192.168.0.103 -> 7527202919
+IP conversion: 10.99.0.3 -> 4469227523
+Benchmark Test(Membership): num_nodes(3)update start
+update_partial_digest(): nodeid(1), wrt_nodeid(4469227523), bit_shift(32)
+update_partial_digest(): nodeid(2), wrt_nodeid(4469227523), bit_shift(31)
+update_partial_digest(): nodeid(4), wrt_nodeid(4469227523), bit_shift(30)
+update_partial_digest(): nodeid(8), wrt_nodeid(4469227523), bit_shift(29)
+update_partial_digest(): nodeid(16), wrt_nodeid(4469227523), bit_shift(28)
+update_partial_digest(): nodeid(33), wrt_nodeid(4469227523), bit_shift(27)
+update_partial_digest(): nodeid(66), wrt_nodeid(4469227523), bit_shift(26)
+update_partial_digest(): nodeid(133), wrt_nodeid(4469227523), bit_shift(25)
+update_partial_digest(): nodeid(266), wrt_nodeid(4469227523), bit_shift(24)
+update_partial_digest(): nodeid(532), wrt_nodeid(4469227523), bit_shift(23)
+update_partial_digest(): nodeid(1065), wrt_nodeid(4469227523), bit_shift(22)
+update_partial_digest(): nodeid(2131), wrt_nodeid(4469227523), bit_shift(21)
+update_partial_digest(): nodeid(4262), wrt_nodeid(4469227523), bit_shift(20)
+update_partial_digest(): nodeid(8524), wrt_nodeid(4469227523), bit_shift(19)
+update_partial_digest(): nodeid(17048), wrt_nodeid(4469227523), bit_shift(18)
+update_partial_digest(): nodeid(34097), wrt_nodeid(4469227523), bit_shift(17)
+update_partial_digest(): nodeid(68195), wrt_nodeid(4469227523), bit_shift(16)
+update_partial_digest(): nodeid(136390), wrt_nodeid(4469227523), bit_shift(15)
+update_partial_digest(): nodeid(272780), wrt_nodeid(4469227523), bit_shift(14)
+update_partial_digest(): nodeid(545560), wrt_nodeid(4469227523), bit_shift(13)
+update_partial_digest(): nodeid(1091120), wrt_nodeid(4469227523), bit_shift(12)
+update_partial_digest(): nodeid(2182240), wrt_nodeid(4469227523), bit_shift(11)
+update_partial_digest(): nodeid(4364480), wrt_nodeid(4469227523), bit_shift(10)
+update_partial_digest(): nodeid(8728960), wrt_nodeid(4469227523), bit_shift(9)
+update_partial_digest(): nodeid(17457920), wrt_nodeid(4469227523), bit_shift(8)
+update_partial_digest(): nodeid(34915840), wrt_nodeid(4469227523), bit_shift(7)
+update_partial_digest(): nodeid(69831680), wrt_nodeid(4469227523), bit_shift(6)
+update_partial_digest(): nodeid(139663360), wrt_nodeid(4469227523), bit_shift(5)
+update_partial_digest(): nodeid(279326720), wrt_nodeid(4469227523), bit_shift(4)
+update_partial_digest(): nodeid(558653440), wrt_nodeid(4469227523), bit_shift(3)
+update_partial_digest(): nodeid(1117306880), wrt_nodeid(4469227523), bit_shift(2)
+update_partial_digest(): nodeid(2234613761), wrt_nodeid(4469227523), bit_shift(1)
+update_partial_digest(): nodeid(4469227523), wrt_nodeid(4469227523), bit_shift(0)
+Reached a leaf node
+get_initial_digest(1)
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+update_verifier: (4469227523)mod_q
+update_partial_digest(): nodeid(1), wrt_nodeid(7527202919), bit_shift(32)
+update_partial_digest(): nodeid(3), wrt_nodeid(7527202919), bit_shift(31)
+update_partial_digest(): nodeid(7), wrt_nodeid(7527202919), bit_shift(30)
+update_partial_digest(): nodeid(14), wrt_nodeid(7527202919), bit_shift(29)
+update_partial_digest(): nodeid(28), wrt_nodeid(7527202919), bit_shift(28)
+update_partial_digest(): nodeid(56), wrt_nodeid(7527202919), bit_shift(27)
+update_partial_digest(): nodeid(112), wrt_nodeid(7527202919), bit_shift(26)
+update_partial_digest(): nodeid(224), wrt_nodeid(7527202919), bit_shift(25)
+update_partial_digest(): nodeid(448), wrt_nodeid(7527202919), bit_shift(24)
+update_partial_digest(): nodeid(897), wrt_nodeid(7527202919), bit_shift(23)
+update_partial_digest(): nodeid(1794), wrt_nodeid(7527202919), bit_shift(22)
+update_partial_digest(): nodeid(3589), wrt_nodeid(7527202919), bit_shift(21)
+update_partial_digest(): nodeid(7178), wrt_nodeid(7527202919), bit_shift(20)
+update_partial_digest(): nodeid(14357), wrt_nodeid(7527202919), bit_shift(19)
+update_partial_digest(): nodeid(28714), wrt_nodeid(7527202919), bit_shift(18)
+update_partial_digest(): nodeid(57428), wrt_nodeid(7527202919), bit_shift(17)
+update_partial_digest(): nodeid(114856), wrt_nodeid(7527202919), bit_shift(16)
+update_partial_digest(): nodeid(229712), wrt_nodeid(7527202919), bit_shift(15)
+update_partial_digest(): nodeid(459424), wrt_nodeid(7527202919), bit_shift(14)
+update_partial_digest(): nodeid(918848), wrt_nodeid(7527202919), bit_shift(13)
+update_partial_digest(): nodeid(1837696), wrt_nodeid(7527202919), bit_shift(12)
+update_partial_digest(): nodeid(3675392), wrt_nodeid(7527202919), bit_shift(11)
+update_partial_digest(): nodeid(7350784), wrt_nodeid(7527202919), bit_shift(10)
+update_partial_digest(): nodeid(14701568), wrt_nodeid(7527202919), bit_shift(9)
+update_partial_digest(): nodeid(29403136), wrt_nodeid(7527202919), bit_shift(8)
+update_partial_digest(): nodeid(58806272), wrt_nodeid(7527202919), bit_shift(7)
+update_partial_digest(): nodeid(117612545), wrt_nodeid(7527202919), bit_shift(6)
+update_partial_digest(): nodeid(235225091), wrt_nodeid(7527202919), bit_shift(5)
+update_partial_digest(): nodeid(470450182), wrt_nodeid(7527202919), bit_shift(4)
+update_partial_digest(): nodeid(940900364), wrt_nodeid(7527202919), bit_shift(3)
+update_partial_digest(): nodeid(1881800729), wrt_nodeid(7527202919), bit_shift(2)
+update_partial_digest(): nodeid(3763601459), wrt_nodeid(7527202919), bit_shift(1)
+update_partial_digest(): nodeid(7527202919), wrt_nodeid(7527202919), bit_shift(0)
+Reached a leaf node
+get_initial_digest(1)
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+update_verifier: (7527202919)mod_q
+update_partial_digest(): nodeid(1), wrt_nodeid(4469227523), bit_shift(32)
+update_partial_digest(): nodeid(2), wrt_nodeid(4469227523), bit_shift(31)
+update_partial_digest(): nodeid(4), wrt_nodeid(4469227523), bit_shift(30)
+update_partial_digest(): nodeid(8), wrt_nodeid(4469227523), bit_shift(29)
+update_partial_digest(): nodeid(16), wrt_nodeid(4469227523), bit_shift(28)
+update_partial_digest(): nodeid(33), wrt_nodeid(4469227523), bit_shift(27)
+update_partial_digest(): nodeid(66), wrt_nodeid(4469227523), bit_shift(26)
+update_partial_digest(): nodeid(133), wrt_nodeid(4469227523), bit_shift(25)
+update_partial_digest(): nodeid(266), wrt_nodeid(4469227523), bit_shift(24)
+update_partial_digest(): nodeid(532), wrt_nodeid(4469227523), bit_shift(23)
+update_partial_digest(): nodeid(1065), wrt_nodeid(4469227523), bit_shift(22)
+update_partial_digest(): nodeid(2131), wrt_nodeid(4469227523), bit_shift(21)
+update_partial_digest(): nodeid(4262), wrt_nodeid(4469227523), bit_shift(20)
+update_partial_digest(): nodeid(8524), wrt_nodeid(4469227523), bit_shift(19)
+update_partial_digest(): nodeid(17048), wrt_nodeid(4469227523), bit_shift(18)
+update_partial_digest(): nodeid(34097), wrt_nodeid(4469227523), bit_shift(17)
+update_partial_digest(): nodeid(68195), wrt_nodeid(4469227523), bit_shift(16)
+update_partial_digest(): nodeid(136390), wrt_nodeid(4469227523), bit_shift(15)
+update_partial_digest(): nodeid(272780), wrt_nodeid(4469227523), bit_shift(14)
+update_partial_digest(): nodeid(545560), wrt_nodeid(4469227523), bit_shift(13)
+update_partial_digest(): nodeid(1091120), wrt_nodeid(4469227523), bit_shift(12)
+update_partial_digest(): nodeid(2182240), wrt_nodeid(4469227523), bit_shift(11)
+update_partial_digest(): nodeid(4364480), wrt_nodeid(4469227523), bit_shift(10)
+update_partial_digest(): nodeid(8728960), wrt_nodeid(4469227523), bit_shift(9)
+update_partial_digest(): nodeid(17457920), wrt_nodeid(4469227523), bit_shift(8)
+update_partial_digest(): nodeid(34915840), wrt_nodeid(4469227523), bit_shift(7)
+update_partial_digest(): nodeid(69831680), wrt_nodeid(4469227523), bit_shift(6)
+update_partial_digest(): nodeid(139663360), wrt_nodeid(4469227523), bit_shift(5)
+update_partial_digest(): nodeid(279326720), wrt_nodeid(4469227523), bit_shift(4)
+update_partial_digest(): nodeid(558653440), wrt_nodeid(4469227523), bit_shift(3)
+update_partial_digest(): nodeid(1117306880), wrt_nodeid(4469227523), bit_shift(2)
+update_partial_digest(): nodeid(2234613761), wrt_nodeid(4469227523), bit_shift(1)
+update_partial_digest(): nodeid(4469227523), wrt_nodeid(4469227523), bit_shift(0)
+Reached a leaf node
+get_initial_digest(1)
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+get_binary_representation
+mod_q
+update_verifier: (4469227523)mod_q
+Total time = 0.004117 seconds
+membership verification start
+read_proof(0)
+proof->query_nodeid(4469227523)
+proof->answer(2)
+proof->num_proof_nodeid(64)
+verify proof: (4469227523)
+verify leaf label (4469227523:0)
+get_initial_digest(1)
+verify root digest: (4469227523)
+lchild(2, 62), rchild(3, 63)
+mod_q
+verify intermediate label (2234613761:2)
+mod_q
+verify intermediate label (1117306880:4)
+mod_q
+verify intermediate label (558653440:6)
+mod_q
+verify intermediate label (279326720:8)
+mod_q
+verify intermediate label (139663360:10)
+mod_q
+verify intermediate label (69831680:12)
+mod_q
+verify intermediate label (34915840:14)
+mod_q
+verify intermediate label (17457920:16)
+mod_q
+verify intermediate label (8728960:18)
+mod_q
+verify intermediate label (4364480:20)
+mod_q
+verify intermediate label (2182240:22)
+mod_q
+verify intermediate label (1091120:24)
+mod_q
+verify intermediate label (545560:26)
+mod_q
+verify intermediate label (272780:28)
+mod_q
+verify intermediate label (136390:30)
+mod_q
+verify intermediate label (68195:32)
+mod_q
+verify intermediate label (34097:34)
+mod_q
+verify intermediate label (17048:36)
+mod_q
+verify intermediate label (8524:38)
+mod_q
+verify intermediate label (4262:40)
+mod_q
+verify intermediate label (2131:42)
+mod_q
+verify intermediate label (1065:44)
+mod_q
+verify intermediate label (532:46)
+mod_q
+verify intermediate label (266:48)
+mod_q
+verify intermediate label (133:50)
+mod_q
+verify intermediate label (66:52)
+mod_q
+verify intermediate label (33:54)
+mod_q
+verify intermediate label (16:56)
+mod_q
+verify intermediate label (8:58)
+mod_q
+verify intermediate label (4:60)
+mod_q
+verify intermediate label (2:62)
+mod_q
+read_proof(1)
+proof->query_nodeid(7527202919)
+proof->answer(1)
+proof->num_proof_nodeid(64)
+verify proof: (7527202919)
+verify leaf label (7527202919:0)
+get_initial_digest(1)
+verify root digest: (7527202919)
+lchild(2, 63), rchild(3, 62)
+mod_q
+verify intermediate label (3763601459:2)
+mod_q
+verify intermediate label (1881800729:4)
+mod_q
+verify intermediate label (940900364:6)
+mod_q
+verify intermediate label (470450182:8)
+mod_q
+verify intermediate label (235225091:10)
+mod_q
+verify intermediate label (117612545:12)
+mod_q
+verify intermediate label (58806272:14)
+mod_q
+verify intermediate label (29403136:16)
+mod_q
+verify intermediate label (14701568:18)
+mod_q
+verify intermediate label (7350784:20)
+mod_q
+verify intermediate label (3675392:22)
+mod_q
+verify intermediate label (1837696:24)
+mod_q
+verify intermediate label (918848:26)
+mod_q
+verify intermediate label (459424:28)
+mod_q
+verify intermediate label (229712:30)
+mod_q
+verify intermediate label (114856:32)
+mod_q
+verify intermediate label (57428:34)
+mod_q
+verify intermediate label (28714:36)
+mod_q
+verify intermediate label (14357:38)
+mod_q
+verify intermediate label (7178:40)
+mod_q
+verify intermediate label (3589:42)
+mod_q
+verify intermediate label (1794:44)
+mod_q
+verify intermediate label (897:46)
+mod_q
+verify intermediate label (448:48)
+mod_q
+verify intermediate label (224:50)
+mod_q
+verify intermediate label (112:52)
+mod_q
+verify intermediate label (56:54)
+mod_q
+verify intermediate label (28:56)
+mod_q
+verify intermediate label (14:58)
+mod_q
+verify intermediate label (7:60)
+mod_q
+verify intermediate label (3:62)
+mod_q
+read_proof(2)
+proof->query_nodeid(4469227523)
+proof->answer(2)
+proof->num_proof_nodeid(64)
+verify proof: (4469227523)
+verify leaf label (4469227523:0)
+get_initial_digest(1)
+verify root digest: (4469227523)
+lchild(2, 62), rchild(3, 63)
+mod_q
+verify intermediate label (2234613761:2)
+mod_q
+verify intermediate label (1117306880:4)
+mod_q
+verify intermediate label (558653440:6)
+mod_q
+verify intermediate label (279326720:8)
+mod_q
+verify intermediate label (139663360:10)
+mod_q
+verify intermediate label (69831680:12)
+mod_q
+verify intermediate label (34915840:14)
+mod_q
+verify intermediate label (17457920:16)
+mod_q
+verify intermediate label (8728960:18)
+mod_q
+verify intermediate label (4364480:20)
+mod_q
+verify intermediate label (2182240:22)
+mod_q
+verify intermediate label (1091120:24)
+mod_q
+verify intermediate label (545560:26)
+mod_q
+verify intermediate label (272780:28)
+mod_q
+verify intermediate label (136390:30)
+mod_q
+verify intermediate label (68195:32)
+mod_q
+verify intermediate label (34097:34)
+mod_q
+verify intermediate label (17048:36)
+mod_q
+verify intermediate label (8524:38)
+mod_q
+verify intermediate label (4262:40)
+mod_q
+verify intermediate label (2131:42)
+mod_q
+verify intermediate label (1065:44)
+mod_q
+verify intermediate label (532:46)
+mod_q
+verify intermediate label (266:48)
+mod_q
+verify intermediate label (133:50)
+mod_q
+verify intermediate label (66:52)
+mod_q
+verify intermediate label (33:54)
+mod_q
+verify intermediate label (16:56)
+mod_q
+verify intermediate label (8:58)
+mod_q
+verify intermediate label (4:60)
+mod_q
+verify intermediate label (2:62)
+mod_q
+Total time = 0.009337 seconds
